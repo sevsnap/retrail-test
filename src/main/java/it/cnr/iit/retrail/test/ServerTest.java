@@ -23,6 +23,8 @@ public class ServerTest {
         ucon.addPIP(new TestPIPReputation("bronze"));
         ucon.addPIP(new TestPIPTimer(16));
         ucon.init();
+        ucon.forever();
+        ucon.term();         
     }
     
 }
