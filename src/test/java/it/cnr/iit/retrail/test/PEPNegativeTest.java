@@ -45,8 +45,8 @@ public class PEPNegativeTest {
         log.warn("Setting up environment...");
         try {
             // start server
-            //ucon = UCon.getInstance();
-            //ucon.init();
+            ucon = UCon.getInstance();
+            ucon.init();
             // start client
 
             URL pdpUrl = new URL(pdpUrlString);
@@ -68,7 +68,7 @@ public class PEPNegativeTest {
             pep.endAccess(s);
         }
         pep.term();
-        //ucon.term();
+        ucon.term();
     }
 
     @Before

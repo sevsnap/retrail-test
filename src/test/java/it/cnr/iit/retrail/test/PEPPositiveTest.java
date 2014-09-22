@@ -12,6 +12,7 @@ import it.cnr.iit.retrail.commons.PepAccessResponse;
 import it.cnr.iit.retrail.commons.PepRequestAttribute;
 import it.cnr.iit.retrail.commons.PepSession;
 import it.cnr.iit.retrail.server.UCon;
+import static it.cnr.iit.retrail.server.UCon.getInstance;
 import java.io.IOException;
 import java.net.URL;
 import org.apache.xmlrpc.XmlRpcException;
@@ -47,8 +48,8 @@ public class PEPPositiveTest {
         log.warn("Setting up environment...");
         try {
             // start server
-            //ucon = UCon.getInstance();
-            //ucon.init();
+            ucon = UCon.getInstance();
+            ucon.init();
             // start client
             URL pdpUrl = new URL(pdpUrlString);
             URL myUrl = new URL("http://localhost:8081");
@@ -69,6 +70,7 @@ public class PEPPositiveTest {
             pep.endAccess(s);
         }
         pep.term();
+        ucon.term();
     }
 
     @Before

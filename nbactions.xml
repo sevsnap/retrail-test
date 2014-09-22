@@ -76,11 +76,11 @@
     </action>
     <action>
         <actionName>test.single</actionName>
-        <preAction>build-with-dependencies</preAction>
         <packagings>
             <packaging>*</packaging>
         </packagings>
         <goals>
+            <goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>
             <goal>test-compile</goal>
             <goal>surefire:test</goal>
         </goals>
