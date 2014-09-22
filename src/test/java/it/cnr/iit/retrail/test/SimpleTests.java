@@ -6,6 +6,7 @@
 package it.cnr.iit.retrail.test;
 
 import it.cnr.iit.retrail.client.PEP;
+import it.cnr.iit.retrail.commons.DomUtils;
 import it.cnr.iit.retrail.commons.PepAccessRequest;
 import it.cnr.iit.retrail.commons.PepAccessResponse;
 import it.cnr.iit.retrail.commons.PepRequestAttribute;
@@ -24,20 +25,21 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
 
 /**
  *
  * @author oneadmin
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class PEPNegativeTest {
+public class SimpleTests {
     static final String pdpUrlString = "http://localhost:8080";
-    static final Logger log = LoggerFactory.getLogger(PEPNegativeTest.class);
+    static final Logger log = LoggerFactory.getLogger(SimpleTests.class);
     static UCon ucon = null;
     static PEP pep = null;
     PepAccessRequest pepRequest = null;
 
-    public PEPNegativeTest() {
+    public SimpleTests() {
     }
 
     @BeforeClass
@@ -48,7 +50,6 @@ public class PEPNegativeTest {
             ucon = UCon.getInstance();
             ucon.init();
             // start client
-
             URL pdpUrl = new URL(pdpUrlString);
             URL myUrl = new URL("http://localhost:8081");
             pep = new PEP(pdpUrl, myUrl);
@@ -135,12 +136,201 @@ public class PEPNegativeTest {
     }
     
     /**
+     * Test of hasSession method, of class PEP.
+     * @throws java.io.IOException
+     */
+    @Test
+    public void test1_init() throws IOException {
+        log.info("Check if the server made us recover some local sessions");
+        assertEquals(0, pep.getSessions().size());
+        log.info("Ok, no recovered sessions");
+    }
+
+    /**
+     * Test of echo method, of class PEP.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void test2_Echo() throws Exception {
+        log.info("checking if the server is up and running");
+        String echoTest = "<echoTest/>";
+        Node node = DomUtils.read(echoTest);
+        Node result = pep.echo(node);
+        assertEquals(DomUtils.toString(node), DomUtils.toString(result));
+        log.info("server echo ok");
+    }
+
+    /**
      * Test of tryAccess method, of class PEP.
      *
      * @throws java.lang.Exception
      */
     @Test
-    public void test1_TryWithNull() throws Exception {
+    public void test3_TryEndCycle() throws Exception {
+        log.info("performing a tryAccess-EndAccess short cycle");
+        beforeTryAccess();
+        PepSession pepSession = pep.tryAccess(pepRequest);
+        afterTryAccess(pepSession);
+        beforeEndAccess(pepSession);
+        PepSession pepResponse = pep.endAccess(pepSession);
+        afterEndAccess(pepResponse);
+        afterEndAccess(pepSession);
+        log.info("short cycle ok");
+    }
+
+    /**
+     * Test of tryAccess method, of class PEP.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void test3_TryEndCycleAccessWithCustomId() throws Exception {
+        log.info("TryAccessWithCustomId");
+        beforeTryAccess();
+        PepSession pepSession = pep.tryAccess(pepRequest, "ziopino");
+        afterTryAccess(pepSession);
+        assertEquals("ziopino", pepSession.getCustomId());
+        beforeEndAccess(pepSession);
+        PepSession response = pep.endAccess(null, pepSession.getCustomId());
+        afterEndAccess(response);
+        afterEndAccess(pepSession);
+    }
+
+    /**
+     * Test of assignCustomId method, of class PEP.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void test4_AssignCustomIdByUuid() throws Exception {
+        log.info("AssignCustomIdByUuid");
+        beforeTryAccess();
+        PepSession pepSession = pep.tryAccess(pepRequest, "ziopino");
+        afterTryAccess(pepSession);
+        PepSession assignResponse = pep.assignCustomId(pepSession.getUuid(), null, "ziopino2");
+        assertEquals(pdpUrlString, assignResponse.getUconUrl().toString());
+        assertEquals("ziopino2", assignResponse.getCustomId());
+        assertEquals(pdpUrlString, pepSession.getUconUrl().toString());
+        assertEquals("ziopino2", pepSession.getCustomId());
+        afterTryAccess(assignResponse);
+        afterTryAccess(pepSession);
+        beforeEndAccess(pepSession);
+        beforeEndAccess(assignResponse);
+        PepSession response = pep.endAccess(assignResponse.getUuid(), null);
+        afterEndAccess(response);
+        afterEndAccess(assignResponse);
+        afterEndAccess(pepSession);
+    }
+
+    /**
+     * Test of assignCustomId method, of class PEP.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void test4_AssignCustomIdByCustomId() throws Exception {
+        log.info("AssignCustomIdByCustomId");
+        beforeTryAccess();
+        PepSession pepSession = pep.tryAccess(pepRequest, "ziopino2");
+        afterTryAccess(pepSession);
+        PepSession assignResponse = pep.assignCustomId(null, pepSession.getCustomId(), "ziopino");
+        afterTryAccess(assignResponse);
+        afterTryAccess(pepSession);
+        assertEquals("ziopino", pepSession.getCustomId());
+        assertTrue(pep.hasSession(pepSession));
+        assertEquals("ziopino", assignResponse.getCustomId());
+        assertTrue(pep.hasSession(assignResponse));
+        beforeEndAccess(pepSession);
+        beforeEndAccess(assignResponse);
+        PepSession response = pep.endAccess(null, pepSession.getCustomId());
+        afterEndAccess(response);
+        afterEndAccess(assignResponse);
+        afterEndAccess(pepSession);
+    }
+
+    /**
+     * Test of startAccess method, of class PEP.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void test5_TryStartEndCycle() throws Exception {
+        log.info("testing try - start - end cycle");
+        beforeTryAccess();
+        PepSession pepSession = pep.tryAccess(pepRequest);
+        afterTryAccess(pepSession);
+        beforeStartAccess(pepSession);
+        PepSession startResponse = pep.startAccess(pepSession);
+        afterStartAccess(startResponse);
+        afterStartAccess(pepSession);
+        beforeEndAccess(startResponse);
+        beforeEndAccess(pepSession);
+        PepSession endResponse = pep.endAccess(startResponse);
+        afterEndAccess(endResponse);
+        afterEndAccess(startResponse);
+        afterEndAccess(pepSession);
+        log.info("ok");
+    }
+    
+
+    /**
+     * Test of startAccess method, of class PEP.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void test5_TryStartEndCycleWithUuid() throws Exception {
+        log.info("testing try - start - end cycle");
+        beforeTryAccess();
+        PepSession pepSession = pep.tryAccess(pepRequest);
+        afterTryAccess(pepSession);
+        beforeStartAccess(pepSession);
+        PepSession startResponse = pep.startAccess(pepSession.getUuid(), null);
+        afterStartAccess(pepSession);
+        afterStartAccess(pepSession);
+        beforeEndAccess(startResponse);
+        beforeEndAccess(pepSession);
+        PepSession endResponse = pep.endAccess(pepSession.getUuid(), null);
+        afterEndAccess(endResponse);
+        afterEndAccess(startResponse);
+        afterEndAccess(pepSession);
+        log.info("ok");
+    }
+    
+    /**
+     * Test of startAccess method, of class PEP.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void test5_TryStartEndCycleWithCustomId() throws Exception {
+        log.info("testing try - start - end cycle");
+        beforeTryAccess();
+        PepSession pepSession = pep.tryAccess(pepRequest);
+        afterTryAccess(pepSession);
+        beforeStartAccess(pepSession);
+        PepSession startResponse = pep.startAccess(null, pepSession.getCustomId());
+        afterStartAccess(startResponse);
+        afterStartAccess(pepSession);
+        beforeEndAccess(startResponse);
+        beforeEndAccess(pepSession);
+        PepSession endResponse = pep.endAccess(null, pepSession.getCustomId());
+        afterEndAccess(endResponse);
+        afterEndAccess(startResponse);
+        afterEndAccess(pepSession);
+        log.info("ok");
+    }
+    
+    
+    
+    /**
+     * Test of tryAccess method, of class PEP.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void test6_TryWithNull() throws Exception {
         log.info("start");
         assertEquals(0, pep.getSessions().size());
         try {
@@ -160,7 +350,7 @@ public class PEPNegativeTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void test2_StartNoTry() throws Exception {
+    public void test7_StartNoTry() throws Exception {
         log.info("start");
         try {
             PepSession pepSession = pep.startAccess("unexistentUuid", null);
@@ -178,7 +368,7 @@ public class PEPNegativeTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void test2_StartNoTryWithNull() throws Exception {
+    public void test7_StartNoTryWithNull() throws Exception {
         log.info("start");
         try {
             PepSession pepSession = pep.startAccess(null, null);
@@ -192,7 +382,7 @@ public class PEPNegativeTest {
     }
     
     @Test
-    public void test2_StartNoTryWithUuidEmpty() throws Exception {
+    public void test7_StartNoTryWithUuidEmpty() throws Exception {
         log.info("start");
         try {
             PepSession pepSession = pep.startAccess("", null);
@@ -206,7 +396,7 @@ public class PEPNegativeTest {
     }
     
     @Test
-    public void test2_StartNoTryWithCustomId() throws Exception {
+    public void test7_StartNoTryWithCustomId() throws Exception {
         log.info("start");
         try {
             PepSession pepSession = pep.startAccess(null, "unexistentCustomId");
@@ -220,7 +410,7 @@ public class PEPNegativeTest {
     }
 
     @Test
-    public void test2_StartNoTryWithCustomIdEmpty() throws Exception {
+    public void test7_StartNoTryWithCustomIdEmpty() throws Exception {
         log.info("start");
         try {
             PepSession pepSession = pep.startAccess(null, "");
@@ -239,7 +429,7 @@ public class PEPNegativeTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void test3_EndNoTry() throws Exception {
+    public void test8_EndNoTry() throws Exception {
         log.info("start");
         try {
             PepSession pepSession = pep.endAccess("unexistentUuid", null);
@@ -253,7 +443,7 @@ public class PEPNegativeTest {
     }
     
     @Test
-    public void test3_EndNoTryEmpty() throws Exception {
+    public void test8_EndNoTryEmpty() throws Exception {
         log.info("start");
         try {
             PepSession pepSession = pep.endAccess("", null);
@@ -267,7 +457,7 @@ public class PEPNegativeTest {
     }
    
     @Test
-    public void test3_EndNoTryCustomId() throws Exception {
+    public void test8_EndNoTryCustomId() throws Exception {
         log.info("start");
         try {
             PepSession pepSession = pep.endAccess(null, "badCustomId");
@@ -280,7 +470,7 @@ public class PEPNegativeTest {
         log.info("end");
     }
     @Test
-    public void test3_EndNoTryCustomIdEmpty() throws Exception {
+    public void test8_EndNoTryCustomIdEmpty() throws Exception {
         log.info("start");
         try {
             PepSession pepSession = pep.endAccess(null, "");
@@ -294,7 +484,7 @@ public class PEPNegativeTest {
     }
     
     @Test
-    public void test3_EndTryWithNull() throws Exception {
+    public void test9_EndTryWithNull() throws Exception {
         log.info("start");
         try {
             PepSession pepSession = pep.endAccess(null, null);
@@ -313,7 +503,7 @@ public class PEPNegativeTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void test4_AssignNoTry() throws Exception {
+    public void testA_AssignNoTry() throws Exception {
         log.info("start");
         try {
             PepSession pepSession = pep.assignCustomId("unexistentUuid", null, null);
@@ -333,7 +523,7 @@ public class PEPNegativeTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void test4_TryAssignWithNullId() throws Exception {
+    public void testB_TryAssignWithNullId() throws Exception {
         log.info("start");
         PepSession pepSession = pep.tryAccess(pepRequest);
         assertEquals(1, pep.getSessions().size());
@@ -357,7 +547,7 @@ public class PEPNegativeTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void test5_EndTwice() throws Exception {
+    public void testC_EndTwice() throws Exception {
         log.info("start");
         PepSession pepSession = pep.tryAccess(pepRequest, "ziopino2");
         pep.assignCustomId(null, pepSession.getCustomId(), "ziopino");
@@ -373,7 +563,7 @@ public class PEPNegativeTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void test5_StartTwice() throws Exception {
+    public void testD_StartTwice() throws Exception {
         log.info("start");
         PepSession pepSession = pep.tryAccess(pepRequest);
         PepSession startResponse = pep.startAccess(pepSession);
@@ -394,7 +584,7 @@ public class PEPNegativeTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void test6_AssignWithNoIds() throws Exception {
+    public void testE_AssignWithNoIds() throws Exception {
         log.info("start");
         PepSession pepSession = pep.tryAccess(pepRequest);
         assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
@@ -411,4 +601,5 @@ public class PEPNegativeTest {
         log.info("end");
     }
 
+    
 }
