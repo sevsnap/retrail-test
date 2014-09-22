@@ -95,7 +95,7 @@ public class PEPNegativeTest {
     public void tearDown() throws Exception {
     }
 
-       private void beforeTryAccess() {
+    private void beforeTryAccess() {
         assertEquals(0, pep.getSessions().size());        
     }
     
@@ -172,7 +172,7 @@ public class PEPNegativeTest {
         assertEquals(0, pep.getSessions().size());
         log.info("end");
     }
-       /**
+    /**
      * Test of tryAccess method, of class PEP.
      *
      * @throws java.lang.Exception

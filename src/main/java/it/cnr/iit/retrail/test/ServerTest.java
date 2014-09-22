@@ -15,7 +15,10 @@ import it.cnr.iit.retrail.server.UCon;
 public class ServerTest {
 
     public static void main(String[] args) throws Exception {
-        UCon ucon = UCon.getInstance();
+        UCon ucon = UCon.getInstance(
+                ServerTest.class.getResource("/META-INF/policies/pre"), 
+                ServerTest.class.getResource("/META-INF/policies/on"), 
+                ServerTest.class.getResource("/META-INF/policies/post"));
         ucon.addPIP(new TestPIPSessions(1));
         ucon.addPIP(new TestPIPReputation("bronze"));
         ucon.addPIP(new TestPIPTimer(16));
