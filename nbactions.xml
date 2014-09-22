@@ -17,6 +17,7 @@
     </action>
     <action>
         <actionName>debug</actionName>
+        <preAction>build-with-dependencies</preAction>
         <packagings>
             <packaging>jar</packaging>
         </packagings>
@@ -38,6 +39,7 @@
         </packagings>
         <goals>
             <goal>process-classes</goal>
+            <goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
@@ -47,6 +49,7 @@
     </action>
     <action>
         <actionName>run.single.main</actionName>
+        <preAction>build-with-dependencies</preAction>
         <packagings>
             <packaging>*</packaging>
         </packagings>
@@ -63,6 +66,7 @@
     </action>
     <action>
         <actionName>test</actionName>
+        <preAction>build-with-dependencies</preAction>
         <packagings>
             <packaging>*</packaging>
         </packagings>
@@ -72,6 +76,7 @@
     </action>
     <action>
         <actionName>test.single</actionName>
+        <preAction>build-with-dependencies</preAction>
         <packagings>
             <packaging>*</packaging>
         </packagings>
@@ -83,5 +88,99 @@
             <test>${packageClassName}</test>
         </properties>
     </action>
+    <action>
+            <actionName>build</actionName>
+            <packagings>
+                <packaging>*</packaging>
+            </packagings>
+            <goals>
+                <goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>
+                <goal>install</goal>
+            </goals>
+        </action>
+    <action>
+            <actionName>clean</actionName>
+            <packagings>
+                <packaging>*</packaging>
+            </packagings>
+            <goals>
+                <goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>
+                <goal>clean</goal>
+            </goals>
+        </action>
+    <action>
+            <actionName>rebuild</actionName>
+            <preAction>build-with-dependencies</preAction>
+            <packagings>
+                <packaging>*</packaging>
+            </packagings>
+            <goals>
+                <goal>clean</goal>
+                <goal>install</goal>
+            </goals>
+        </action>
+    <action>
+            <actionName>debug.single.main</actionName>
+            <preAction>build-with-dependencies</preAction>
+            <packagings>
+                <packaging>*</packaging>
+            </packagings>
+            <goals>
+                <goal>process-classes</goal>
+                <goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
+            </goals>
+            <properties>
+                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath ${packageClassName}</exec.args>
+                <exec.executable>java</exec.executable>
+                <exec.classpathScope>${classPathScope}</exec.classpathScope>
+                <jpda.listen>true</jpda.listen>
+            </properties>
+        </action>
+    <action>
+            <actionName>debug.test.single</actionName>
+            <preAction>build-with-dependencies</preAction>
+            <packagings>
+                <packaging>*</packaging>
+            </packagings>
+            <goals>
+                <goal>test-compile</goal>
+                <goal>surefire:test</goal>
+            </goals>
+            <properties>
+                <test>${packageClassName}</test>
+                <forkMode>once</forkMode>
+                <maven.surefire.debug>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address}</maven.surefire.debug>
+                <jpda.listen>true</jpda.listen>
+            </properties>
+        </action>
+    <action>
+            <actionName>profile.single.main</actionName>
+            <preAction>build-with-dependencies</preAction>
+            <packagings>
+                <packaging>*</packaging>
+            </packagings>
+            <goals>
+                <goal>process-classes</goal>
+                <goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
+            </goals>
+            <properties>
+                <exec.args>-classpath %classpath ${packageClassName}</exec.args>
+                <exec.executable>java</exec.executable>
+                <exec.classpathScope>${classPathScope}</exec.classpathScope>
+            </properties>
+        </action>
+    <action>
+            <actionName>javadoc</actionName>
+            <preAction>build-with-dependencies</preAction>
+            <packagings>
+                <packaging>*</packaging>
+            </packagings>
+            <goals>
+                <goal>generate-sources</goal>
+                <goal>javadoc:javadoc</goal>
+            </goals>
+        </action>
    
 </actions>
