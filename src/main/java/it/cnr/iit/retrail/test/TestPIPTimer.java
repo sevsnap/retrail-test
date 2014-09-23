@@ -18,18 +18,18 @@ import org.slf4j.LoggerFactory;
  * @author kicco
  */
 public class TestPIPTimer extends StandAlonePIP {
-    final private int timeToGo;
+    final protected int maxDuration;
     final private int resolution = 1;
     
     public TestPIPTimer(int timeToGo) {
         super();
         this.log = LoggerFactory.getLogger(TestPIPTimer.class);
-        this.timeToGo = timeToGo;
+        this.maxDuration = timeToGo;
     }
     
     @Override
     public void onBeforeStartAccess(PepAccessRequest request, PepSession session) {
-        PepRequestAttribute a = newAttribute("timer", "http://www.w3.org/2001/XMLSchema#integer", Integer.toString(timeToGo), "http://localhost:8080/federation-id-prov/saml", "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject");
+        PepRequestAttribute a = newAttribute("timer", "http://www.w3.org/2001/XMLSchema#integer", Integer.toString(maxDuration), "http://localhost:8080/federation-id-prov/saml", "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject");
         request.add(a);
     }
 

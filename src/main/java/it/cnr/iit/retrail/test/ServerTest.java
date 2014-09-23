@@ -19,7 +19,7 @@ public class ServerTest {
                 ServerTest.class.getResource("/META-INF/policies/pre"), 
                 ServerTest.class.getResource("/META-INF/policies/on"), 
                 ServerTest.class.getResource("/META-INF/policies/post"));
-        ucon.addPIP(new TestPIPSessions(1));
+        ucon.addPIP(new TestPIPSessions());
         TestPIPReputation reputation = new TestPIPReputation();
         reputation.reputationMap.put("fedoraRole", "bronze");
         ucon.addPIP(reputation);

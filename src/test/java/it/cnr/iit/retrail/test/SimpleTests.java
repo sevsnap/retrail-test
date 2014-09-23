@@ -99,7 +99,7 @@ public class SimpleTests {
         assertTrue(pep.hasSession(pepSession));
         assertEquals(1, pep.getSessions().size());
         assertEquals(PepSession.Status.TRY, pepSession.getStatus());
-        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
+        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.getDecision());
         assertEquals(pdpUrlString, pepSession.getUconUrl().toString());
         return pepSession;
     }
@@ -111,7 +111,7 @@ public class SimpleTests {
 
     private void afterStartAccess(PepSession pepSession) throws Exception {
         assertEquals(1, pep.getSessions().size());
-        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
+        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.getDecision());
         assertEquals(PepSession.Status.ONGOING, pepSession.getStatus());
     }
 
@@ -583,13 +583,13 @@ public class SimpleTests {
     public void testE_AssignWithNoIds() throws Exception {
         log.info("start");
         PepSession pepSession = pep.tryAccess(pepRequest);
-        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
+        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.getDecision());
         assertEquals(PepSession.Status.TRY, pepSession.getStatus());
         PepSession response = pep.startAccess(pepSession);
         log.info("response {}", response);
-        assertEquals(PepAccessResponse.DecisionEnum.Permit, response.decision);
+        assertEquals(PepAccessResponse.DecisionEnum.Permit, response.getDecision());
         assertEquals(PepSession.Status.ONGOING, response.getStatus());
-        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
+        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.getDecision());
         assertEquals(PepSession.Status.ONGOING, pepSession.getStatus());
         response = pep.endAccess(response);
         assertEquals(PepSession.Status.DELETED, response.getStatus());

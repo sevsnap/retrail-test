@@ -18,13 +18,11 @@ import org.slf4j.LoggerFactory;
 // Expiring attribute handler
 public class TestPIPSessions extends PIP {
 
-    private int sessions = 0;
-    final private int maxSessions;
+    protected int sessions = 0;
     
-    public TestPIPSessions(int maxSessions) {
+    public TestPIPSessions() {
         super();
         this.log = LoggerFactory.getLogger(TestPIPSessions.class);
-        this.maxSessions = maxSessions;
     }
 
     @Override
@@ -43,9 +41,17 @@ public class TestPIPSessions extends PIP {
     }
     
     @Override
-    public void onBeforeEndAccess(PepAccessRequest request, PepSession session) {
-        if(session.getStatus() == PepSession.Status.ONGOING)
-           sessions--;
-        log.info("Number of open sessions: " + sessions);
+    public void onAfterStartAccess(PepAccessRequest request, PepSession session) {
+        if(session.getStatus() != PepSession.Status.ONGOING)
+            sessions--;
+        log.info("Number of open sessions: {}, status = {}", sessions, session.getStatus());
     }
+    
+    @Override
+    public void onBeforeEndAccess(PepAccessRequest request, PepSession session) {
+        if(session.getStatus() != PepSession.Status.TRY)
+           sessions--;
+        log.info("Number of open sessions: {}, status = {}", sessions, session.getStatus());
+    }
+    
 }
