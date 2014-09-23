@@ -12,6 +12,7 @@ import it.cnr.iit.retrail.commons.PepAccessResponse;
 import it.cnr.iit.retrail.commons.PepRequestAttribute;
 import it.cnr.iit.retrail.commons.PepSession;
 import it.cnr.iit.retrail.server.UCon;
+import static it.cnr.iit.retrail.test.PIPTests.pep;
 import java.io.IOException;
 import java.net.URL;
 import org.apache.xmlrpc.XmlRpcException;
@@ -65,7 +66,8 @@ public class SimpleTests {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        for (PepSession s : pep.getSessions()) {
+        while (pep.getSessions().size() > 0) {
+            PepSession s = pep.getSessions().iterator().next();
             pep.endAccess(s);
         }
         pep.term();
@@ -80,13 +82,6 @@ public class SimpleTests {
                     "urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination",
                     " ",
                     "issuer");
-            PepRequestAttribute attribute = new PepRequestAttribute(
-                    "urn:fedora:names:fedora:2.1:resource:datastream:id",
-                    PepRequestAttribute.DATATYPES.STRING,
-                    "FOPDISSEM",
-                    "issuer",
-                    PepRequestAttribute.CATEGORIES.RESOURCE);
-            pepRequest.add(attribute);
         } catch (Exception e) {
             fail("unexpected exception: " + e.getMessage());
         }
@@ -125,6 +120,7 @@ public class SimpleTests {
         assertNotEquals(PepSession.Status.DELETED, pepSession.getStatus());
         assertNotEquals(PepSession.Status.UNKNOWN, pepSession.getStatus());
         assertNotEquals(PepSession.Status.REVOKED, pepSession.getStatus());
+        assertNotEquals(PepSession.Status.REJECTED, pepSession.getStatus());
         assertTrue(pep.hasSession(pepSession));
     }
     

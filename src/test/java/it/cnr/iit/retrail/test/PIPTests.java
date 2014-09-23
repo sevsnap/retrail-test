@@ -1,0 +1,261 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package it.cnr.iit.retrail.test;
+
+import it.cnr.iit.retrail.client.PEP;
+import it.cnr.iit.retrail.commons.DomUtils;
+import it.cnr.iit.retrail.commons.PepAccessRequest;
+import it.cnr.iit.retrail.commons.PepAccessResponse;
+import it.cnr.iit.retrail.commons.PepRequestAttribute;
+import it.cnr.iit.retrail.commons.PepSession;
+import it.cnr.iit.retrail.server.UCon;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Iterator;
+import org.apache.xmlrpc.XmlRpcException;
+import org.junit.After;
+import org.junit.AfterClass;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+
+/**
+ *
+ * @author oneadmin
+ */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class PIPTests {
+
+    static final String pdpUrlString = "http://localhost:8080";
+    static final Logger log = LoggerFactory.getLogger(PIPTests.class);
+    static UCon ucon = null;
+    static PEP pep = null;
+    PepAccessRequest pepRequest = null;
+
+    public PIPTests() {
+    }
+
+    @BeforeClass
+    public static void setUpClass() {
+        log.warn("Setting up environment...");
+        try {
+            // start server
+            ucon = UCon.getInstance(
+                    ServerTest.class.getResource("/META-INF/policies/pre"),
+                    ServerTest.class.getResource("/META-INF/policies/on"),
+                    ServerTest.class.getResource("/META-INF/policies/post"));
+            ucon.addPIP(new TestPIPSessions(1));
+            TestPIPReputation reputation = new TestPIPReputation();
+            reputation.reputationMap.put("fedoraRole", "bronze");
+            reputation.reputationMap.put("fedoraBadReputation", "bad");
+            ucon.addPIP(reputation);
+            ucon.addPIP(new TestPIPTimer(2));
+            ucon.init();
+
+            // start client
+            URL pdpUrl = new URL(pdpUrlString);
+            URL myUrl = new URL("http://localhost:8081");
+            pep = new PEP(pdpUrl, myUrl);
+            // clean up previous sessions, if any, by clearing the recoverable
+            // access flag. This ensures the next heartbeat we'll have a clean
+            // ucon status (the first heartbeat is waited by init()).
+            pep.setAccessRecoverableByDefault(false);
+            pep.init();        // We should have no sessions now
+        } catch (XmlRpcException | IOException e) {
+            fail("unexpected exception: " + e.getMessage());
+        }
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        while (pep.getSessions().size() > 0) {
+            PepSession s = pep.getSessions().iterator().next();
+            pep.endAccess(s);
+        }
+        pep.term();
+        ucon.term();
+    }
+
+    @Before
+    public void setUp() {
+        try {
+            pepRequest = PepAccessRequest.newInstance(
+                    "fedoraRole",
+                    "urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination",
+                    " ",
+                    "issuer");
+            PepRequestAttribute attribute = new PepRequestAttribute(
+                    "urn:fedora:names:fedora:2.1:resource:datastream:id",
+                    PepRequestAttribute.DATATYPES.STRING,
+                    "FOPDISSEM",
+                    "issuer",
+                    PepRequestAttribute.CATEGORIES.RESOURCE);
+            pepRequest.add(attribute);
+        } catch (Exception e) {
+            fail("unexpected exception: " + e.getMessage());
+        }
+    }
+
+    @After
+    public void tearDown() throws Exception {
+    }
+
+    private void beforeTryAccess() {
+        assertEquals(0, pep.getSessions().size());
+    }
+
+    private PepSession afterTryAccess(PepSession pepSession) throws Exception {
+        assertTrue(pep.hasSession(pepSession));
+        assertEquals(1, pep.getSessions().size());
+        assertEquals(PepSession.Status.TRY, pepSession.getStatus());
+        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
+        assertEquals(pdpUrlString, pepSession.getUconUrl().toString());
+        return pepSession;
+    }
+
+    private void beforeStartAccess(PepSession pepSession) throws Exception {
+        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
+        assertEquals(PepSession.Status.TRY, pepSession.getStatus());
+    }
+
+    private void afterStartAccess(PepSession pepSession) throws Exception {
+        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
+        assertEquals(PepSession.Status.ONGOING, pepSession.getStatus());
+    }
+
+    private void beforeEndAccess(PepSession pepSession) throws Exception {
+        assertEquals(1, pep.getSessions().size());
+        assertNotEquals(PepSession.Status.DELETED, pepSession.getStatus());
+        assertNotEquals(PepSession.Status.UNKNOWN, pepSession.getStatus());
+        assertNotEquals(PepSession.Status.REVOKED, pepSession.getStatus());
+        assertNotEquals(PepSession.Status.REJECTED, pepSession.getStatus());
+        assertTrue(pep.hasSession(pepSession));
+    }
+
+    private void afterEndAccess(PepSession response) throws Exception {
+        assertFalse(pep.hasSession(response));
+        assertEquals(0, pep.getSessions().size());
+        assertEquals(pdpUrlString, response.getUconUrl().toString());
+        assertEquals(PepSession.Status.DELETED, response.getStatus());
+    }
+
+    /**
+     * Test of tryAccess method, of class PEP.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void test1_TryEndCycle() throws Exception {
+        log.info("testing pre-access policy only");
+        beforeTryAccess();
+        PepSession pepSession = pep.tryAccess(pepRequest);
+        afterTryAccess(pepSession);
+        beforeEndAccess(pepSession);
+        PepSession pepResponse = pep.endAccess(pepSession);
+        afterEndAccess(pepResponse);
+        afterEndAccess(pepSession);
+        log.info("short cycle ok");
+    }
+
+    /**
+     * Test of startAccess method, of class PEP.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void test2_TryStartEndCycle() throws Exception {
+        log.info("testing on-access policy");
+        beforeTryAccess();
+        PepSession pepSession = pep.tryAccess(pepRequest);
+        afterTryAccess(pepSession);
+        beforeStartAccess(pepSession);
+        PepSession startResponse = pep.startAccess(pepSession);
+        afterStartAccess(startResponse);
+        afterStartAccess(pepSession);
+        beforeEndAccess(startResponse);
+        beforeEndAccess(pepSession);
+        PepSession endResponse = pep.endAccess(startResponse);
+        afterEndAccess(endResponse);
+        afterEndAccess(startResponse);
+        afterEndAccess(pepSession);
+        log.info("ok");
+    }
+    
+    @Test
+    public void test3_TryWithBadReputation() throws Exception {
+        log.info("testing access with bad reputation");
+        PepAccessRequest req = PepAccessRequest.newInstance(
+                    "fedoraBadReputation",
+                    "urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination",
+                    " ",
+                    "issuer");
+        PepSession pepSession = pep.tryAccess(req);
+        assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
+        assertEquals(PepSession.Status.REJECTED, pepSession.getStatus());
+        assertEquals(0, pep.getSessions().size());
+        log.info("ok");
+    }
+    
+    @Test
+    public void test3_TryWithUnknownSubject() throws Exception {
+        log.info("testing access with unknown subject");
+        PepAccessRequest req = PepAccessRequest.newInstance(
+                    "unknownSubject",
+                    "urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination",
+                    " ",
+                    "issuer");
+        PepSession pepSession = pep.tryAccess(req);
+        assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
+        assertEquals(PepSession.Status.REJECTED, pepSession.getStatus());
+        assertEquals(0, pep.getSessions().size());
+        
+        log.info("ok");
+    }
+
+    @Test
+    public void test4_ConcurrentTryAccess() throws Exception {
+        log.info("testing concurrent try access (should be allowed to both)");
+        beforeTryAccess();
+        PepSession pepSession1 = pep.tryAccess(pepRequest);
+        afterTryAccess(pepSession1);
+        PepSession pepSession2 = pep.tryAccess(pepRequest);
+        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession2.decision);
+        assertEquals(2, pep.getSessions().size());
+        pep.endAccess(pepSession2);
+        pep.endAccess(pepSession1);
+        afterEndAccess(pepSession1);
+        log.info("ok, 2 concurrent tries admitted");
+    }
+    
+    @Test
+    public void test5_ConcurrentStartAccess() throws Exception {
+        log.info("testing concurrent start access (should be denied to the second one)");
+        beforeTryAccess();
+        PepSession pepSession1 = pep.tryAccess(pepRequest);
+        afterTryAccess(pepSession1);
+        PepSession pepSession2 = pep.tryAccess(pepRequest);
+        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession2.decision);
+        assertEquals(2, pep.getSessions().size());
+        beforeStartAccess(pepSession1);
+        pepSession1 = pep.startAccess(pepSession1);
+        afterStartAccess(pepSession1);
+        pepSession2 = pep.startAccess(pepSession2);
+        assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession2.decision);
+        assertNotEquals(PepSession.Status.TRY, pepSession2.getStatus());
+        assertEquals(2, pep.getSessions().size());
+        pep.endAccess(pepSession2);
+        pep.endAccess(pepSession1);
+        afterEndAccess(pepSession1);
+        afterEndAccess(pepSession2);
+        log.info("ok, 2 concurrent tries admitted");
+    }
+}

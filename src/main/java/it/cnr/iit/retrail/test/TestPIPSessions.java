@@ -1,12 +1,13 @@
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
- * and onTryAccess the template in the editor.
+ * and onBeforeTryAccess the template in the editor.
  */
 package it.cnr.iit.retrail.test;
 
 import it.cnr.iit.retrail.commons.PepAccessRequest;
 import it.cnr.iit.retrail.commons.PepRequestAttribute;
+import it.cnr.iit.retrail.commons.PepSession;
 import it.cnr.iit.retrail.server.pip.PIP;
 import org.slf4j.LoggerFactory;
 
@@ -27,16 +28,24 @@ public class TestPIPSessions extends PIP {
     }
 
     @Override
-    public void onTryAccess(PepAccessRequest request) {
-        sessions++;
+    public void onBeforeTryAccess(PepAccessRequest request) {
         log.info("Number of open sessions: " + sessions);
         PepRequestAttribute test = newAttribute("openSessions", "http://www.w3.org/2001/XMLSchema#integer", Integer.toString(sessions), "http://localhost:8080/federation-id-prov/saml", "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject");
         request.add(test);
     }
 
     @Override
-    public void onEndAccess(PepAccessRequest request) {
-        sessions--;
+    public void onBeforeStartAccess(PepAccessRequest request, PepSession session) {
+        sessions++;
+        log.info("Number of open sessions: " + sessions);
+        PepRequestAttribute test = newAttribute("openSessions", "http://www.w3.org/2001/XMLSchema#integer", Integer.toString(sessions), "http://localhost:8080/federation-id-prov/saml", "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject");
+        request.add(test);
+    }
+    
+    @Override
+    public void onBeforeEndAccess(PepAccessRequest request, PepSession session) {
+        if(session.getStatus() == PepSession.Status.ONGOING)
+           sessions--;
         log.info("Number of open sessions: " + sessions);
     }
 }
