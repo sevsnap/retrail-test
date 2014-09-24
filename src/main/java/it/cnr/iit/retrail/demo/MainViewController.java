@@ -72,17 +72,46 @@ public class MainViewController extends AnchorPane implements Initializable {
         
     }
     
-    
-    public void processLogin(ActionEvent event) {
+    public void processUserGoingToDoor(ActionEvent event) throws Exception {
         if (application == null){
             // We are running in isolated FXML, possibly in Scene Builder.
             // NO-OP.
             errorMessage.setText("Hello " + userId.getText());
         } else {
-            if (!application.userLogging(userId.getText(), password.getText())){
-                errorMessage.setText("Username/Password is incorrect");
+            if (!application.userGoingToDoor(userId.getText())){
+                errorMessage.setText("User "+userId.getText()+" is not allowed to stand at the door");
             }
-                else errorMessage.setText("Hello " + userId.getText());
+                else errorMessage.setText("User " + userId.getText()+" standing in front of the door");
         }
+    }
+    
+    public void processUserEnteringRoom(ActionEvent event) throws Exception {
+        if (application == null){
+            // We are running in isolated FXML, possibly in Scene Builder.
+            // NO-OP.
+            errorMessage.setText("Hello " + userId.getText());
+        } else {
+            if (!application.userEnteringRoom(userId.getText())){
+                errorMessage.setText("User "+userId.getText()+" is not allowed to enter the room");
+            }
+                else errorMessage.setText("User " + userId.getText()+" entered the room");
+        }
+    }
+    
+    public void processUserLeaving(ActionEvent event) throws Exception {
+        if (application == null){
+            // We are running in isolated FXML, possibly in Scene Builder.
+            // NO-OP.
+            errorMessage.setText("Hello " + userId.getText());
+        } else {
+            if (!application.userLeaving(userId.getText())){
+                errorMessage.setText("User "+userId.getText()+" is not allowed to leave");
+            }
+                else errorMessage.setText("User " + userId.getText()+" gone away");
+        }
+    }
+    
+    public void onUserMustLeaveRoom(String id) {
+        errorMessage.setText("User " + id+" must leave room immediately!");
     }
 }

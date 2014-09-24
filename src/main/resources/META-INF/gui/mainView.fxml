@@ -31,7 +31,11 @@
         </VBox>
       </children>
     </AnchorPane>
-    <Button id="button1" fx:id="login" defaultButton="true" onAction="#processLogin" prefHeight="70.0" prefWidth="400.0" text="Login" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
+    <HBox id="hBox2" alignment="CENTER" prefHeight="25.0" prefWidth="418.0" AnchorPane.bottomAnchor="156.0" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="41.0">
+        <Button id="button1" fx:id="login" defaultButton="true" onAction="#processUserGoingToDoor" prefHeight="70.0" prefWidth="400.0" text="Go to door" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
+        <Button id="button2" fx:id="login2" defaultButton="true" onAction="#processUserEnteringRoom" prefHeight="70.0" prefWidth="400.0" text="Enter room" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
+        <Button id="button3" fx:id="login3" defaultButton="true" onAction="#processUserLeaving" prefHeight="70.0" prefWidth="400.0" text="Leave" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
+    </HBox>
     <HBox id="hBox1" alignment="CENTER" prefHeight="25.0" prefWidth="418.0" AnchorPane.bottomAnchor="156.0" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="41.0">
       <children>
         <Label id="label2" fx:id="errorMessage" />

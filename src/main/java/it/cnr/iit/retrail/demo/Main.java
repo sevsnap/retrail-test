@@ -31,13 +31,7 @@ public class Main extends Application {
     private User loggedUser;
     private final double MINIMUM_WINDOW_WIDTH = 390.0;
     private final double MINIMUM_WINDOW_HEIGHT = 500.0;
-    
-    private final String pdpUrlString = "http://localhost:8080";
-    private final String pepUrlString = "http://localhost:8081";
-    private UCon ucon;
-    private Authenticator authenticator;
-    private TestPIPSessions pipSessions;
-    private TestPIPTimer pipTimer;
+
 
     /**
      * @param args the command line arguments
@@ -47,53 +41,23 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
-        try {
-             log.info("Setting up Ucon server...");
-            ucon = UCon.getInstance(
-                    getClass().getResource("/META-INF/policies/pre"),
-                    getClass().getResource("/META-INF/policies/on"),
-                    getClass().getResource("/META-INF/policies/post"));
-            pipSessions = new TestPIPSessions();
-            ucon.addPIP(pipSessions);
-            TestPIPReputation reputation = new TestPIPReputation();
-            reputation.reputationMap.put("carniani", "bronze");
-            reputation.reputationMap.put("mori", "gold");
-            ucon.addPIP(reputation);
-            pipTimer = new TestPIPTimer(2);
-            ucon.addPIP(pipTimer);
-            ucon.init();
-            
-            log.info("Setting up PEP client...");
-            URL pdpUrl = new URL(pdpUrlString);
-            URL myUrl = new URL(pepUrlString);
-            authenticator = new Authenticator(pdpUrl, myUrl);
-            // clean up previous sessions, if any, by clearing the recoverable
-            // access flag. This ensures the next heartbeat we'll have a clean
-            // ucon status (the first heartbeat is waited by init()).
-            authenticator.setAccessRecoverableByDefault(false);
-            authenticator.init();        // We should have no sessions now
-            
-            log.info("Firing GUI...");
-            stage = primaryStage;
-            stage.setTitle("reTRAIL demonstrator");
-            stage.setMinWidth(MINIMUM_WINDOW_WIDTH);
-            stage.setMinHeight(MINIMUM_WINDOW_HEIGHT);
-            gotoMainView();
-            primaryStage.show();
-            
-        } catch (IOException | XmlRpcException ex) {
-            log.error("unexpected exception: {}", ex.getMessage());
-        }
+    public void start(Stage primaryStage) throws Exception {
+        log.info("Firing GUI...");
+        stage = primaryStage;
+        stage.setTitle("reTRAIL demonstrator");
+        stage.setMinWidth(MINIMUM_WINDOW_WIDTH);
+        stage.setMinHeight(MINIMUM_WINDOW_HEIGHT);
+        gotoMainView();
+        primaryStage.show();
     }
 
     public User getLoggedUser() {
         return loggedUser;
     }
         
-    public boolean userLogging(String userId, String password){
-        if (authenticator.validate(userId, password)) {
-            loggedUser = User.of(userId);
+    public boolean userGoingToDoor(String userId) throws Exception {
+        User user = User.getInstance(userId);
+        if (user.goToDoor()) {
             gotoProfile();
             return true;
         } else {
@@ -101,6 +65,26 @@ public class Main extends Application {
         }
     }
     
+    public boolean userEnteringRoom(String userId) throws Exception {
+        User user = User.getInstance(userId);
+        if (user.enterRoom()) {
+            gotoProfile();
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public boolean userLeaving(String userId) throws Exception {
+        User user = User.getInstance(userId);
+        if (user.leave()) {
+            gotoProfile();
+            return true;
+        } else {
+            return false;
+        }
+    }
+   
     void userLogout(){
         loggedUser = null;
         gotoMainView();
@@ -118,6 +102,7 @@ public class Main extends Application {
     private void gotoMainView() {
         try {
             MainViewController login = (MainViewController) replaceSceneContent("/META-INF/gui/mainView.fxml");
+            UsageController.getInstance().setMain(login);
             login.setApp(this);
         } catch (Exception ex) {
             log.error(ex.getMessage());
