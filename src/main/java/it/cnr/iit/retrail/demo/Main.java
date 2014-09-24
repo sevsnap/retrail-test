@@ -76,7 +76,7 @@ public class Main extends Application {
             
             log.info("Firing GUI...");
             stage = primaryStage;
-            stage.setTitle("FXML Login Sample");
+            stage.setTitle("reTRAIL demonstrator");
             stage.setMinWidth(MINIMUM_WINDOW_WIDTH);
             stage.setMinHeight(MINIMUM_WINDOW_HEIGHT);
             gotoMainView();
