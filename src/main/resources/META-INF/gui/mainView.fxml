@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
+<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import java.net.*?>
 <?import java.util.*?>
@@ -8,33 +11,50 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="500.0" styleClass="background" xmlns:fx="http://javafx.com/fxml" fx:controller="it.cnr.iit.retrail.demo.MainViewController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="500.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.cnr.iit.retrail.demo.MainViewController">
   <children>
     <AnchorPane id="anchorPane2" prefHeight="300.0" prefWidth="500.0" styleClass="top-segment" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-      <children>
-        <VBox id="VBox" alignment="CENTER" prefHeight="300.0" prefWidth="421.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="29.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="0.0">
-          <children>
-            <AnchorPane id="AnchorPane" prefHeight="180.0" prefWidth="430.0">
-              <children>
-                <Label id="label1" layoutX="14.0" layoutY="67.0" text="Username" />
-                <TextField id="textField1" fx:id="userId" layoutY="86.0" prefWidth="415.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" />
-                <ImageView id="app-login-logo" layoutY="-12.0">
-                  <image>
-                    <Image url="@logo.png" preserveRatio="true" smooth="true" />
-                  </image>
-                </ImageView>
-              </children>
-            </AnchorPane>
-          </children>
-        </VBox>
-      </children>
+         <children>
+            <BorderPane fx:id="user1" layoutX="14.0" layoutY="100.0" prefHeight="90.0" prefWidth="130.0">
+               <left>
+                  <ImageView fitHeight="31.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+                     <image>
+                        <Image url="@arrowLeft.png" />
+                     </image>
+                  </ImageView>
+               </left>
+               <right>
+                  <ImageView fitHeight="31.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+                     <image>
+                        <Image url="@arrowRight.png" />
+                     </image>
+                  </ImageView>
+               </right>
+               <center>
+                  <ImageView fitHeight="70.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+                     <image>
+                        <Image url="@userGray.png" />
+                     </image>
+                  </ImageView>
+               </center>
+               <bottom>
+                  <Label prefHeight="18.0" prefWidth="69.0" text="Unknown" textAlignment="RIGHT" BorderPane.alignment="CENTER">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Label>
+               </bottom>
+            </BorderPane>
+         </children>
     </AnchorPane>
-    <HBox id="hBox2" alignment="CENTER" prefHeight="25.0" prefWidth="418.0" AnchorPane.bottomAnchor="156.0" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="41.0">
-        <Button id="button1" fx:id="goToDoor" defaultButton="true" onAction="#processUserGoingToDoor" prefHeight="70.0" prefWidth="400.0" text="Go to door" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
-        <Button id="button2" fx:id="enterRoom" defaultButton="true" onAction="#processUserEnteringRoom" prefHeight="70.0" prefWidth="400.0" text="Enter room" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
-        <Button id="button3" fx:id="leave" defaultButton="true" onAction="#processUserLeaving" prefHeight="70.0" prefWidth="400.0" text="Leave" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
+    <HBox id="hBox2" alignment="CENTER" layoutX="41.0" layoutY="365.0" prefHeight="25.0" prefWidth="418.0" AnchorPane.bottomAnchor="84.0" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="41.0">
+       <children>
+           <Button id="button1" fx:id="goToDoorButton" defaultButton="true" onAction="#processUserGoingToDoor" prefHeight="70.0" prefWidth="400.0" text="Go to door" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
+           <Button id="button2" fx:id="enterRoomButton" defaultButton="true" onAction="#processUserEnteringRoom" prefHeight="70.0" prefWidth="400.0" text="Enter room" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
+           <Button id="button3" fx:id="leaveButton" defaultButton="true" onAction="#processUserLeaving" prefHeight="70.0" prefWidth="400.0" text="Leave" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
+       </children>
     </HBox>
-    <HBox id="hBox1" alignment="CENTER" prefHeight="25.0" prefWidth="418.0" AnchorPane.bottomAnchor="156.0" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="41.0">
+    <HBox id="hBox1" alignment="CENTER" layoutX="43.0" layoutY="427.0" prefHeight="25.0" prefWidth="418.0" AnchorPane.bottomAnchor="48.0" AnchorPane.leftAnchor="43.0" AnchorPane.rightAnchor="39.0">
       <children>
         <Label id="label2" fx:id="errorMessage" />
       </children>

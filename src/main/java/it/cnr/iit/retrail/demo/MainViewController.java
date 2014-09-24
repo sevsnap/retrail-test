@@ -1,117 +1,201 @@
 /*
- * Copyright (c) 2008, 2012 Oracle and/or its affiliates.
- * All rights reserved. Use is subject to license terms.
- *
- * This file is available and licensed under the following license:
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- *  - Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *  - Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation nor the names of its
- *    contributors may be used to endorse or promote products derived
- *    from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package it.cnr.iit.retrail.demo;
 
-import java.awt.Color;
+import it.cnr.iit.retrail.commons.PepSession;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
+import org.slf4j.LoggerFactory;
 
 /**
- * Login Controller.
+ * Main View Controller.
  */
 public class MainViewController extends AnchorPane implements Initializable {
 
     @FXML
-    TextField userId;
+    BorderPane user1;
     @FXML
-    Button goToDoor;
+    Button goToDoorButton;
     @FXML
-    Button enterRoom;
+    Button enterRoomButton;
     @FXML
-    Button leave;
+    Button leaveButton;
     @FXML
     Label errorMessage;
 
     private Main application;
-    
-    
-    public void setApp(Main application){
+    private String userId = "carniani";
+
+    static final org.slf4j.Logger log = LoggerFactory.getLogger(MainViewController.class);
+
+    public void setApp(Main application) {
         this.application = application;
     }
-    
+
+    private void addHandlers(BorderPane userView) {
+        userView.getLeft().setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent t) {
+                try {
+                    processUserLeaving(null);
+                } catch (Exception ex) {
+                    log.error(ex.getMessage());
+                }
+            }
+        });
+        userView.getRight().setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent t) {
+                try {
+                    User user = User.getInstance(userId);
+                    if (user.getStatus() == PepSession.Status.TRY) {
+                        processUserEnteringRoom(null);
+                    } else {
+                        processUserGoingToDoor(null);
+                    }
+                } catch (Exception ex) {
+                    log.error(ex.getMessage());
+                }
+            }
+        });
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        errorMessage.setText("");
-        userId.setPromptText("user");   
+        try {
+            showMessage("Welcome!");
+            User user = User.getInstance(userId);
+            updateUserView(user1, user);
+            goToDoorButton.setDisable(false);
+            enterRoomButton.setDisable(true);
+            leaveButton.setDisable(true);
+            addHandlers(user1);
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
     }
-    
+
+    private void updateUserView(BorderPane userView, User user) {
+        String name;
+        int x;
+        ImageView icon = (ImageView) userView.getCenter();
+        ImageView leftArrow = (ImageView) userView.getLeft();
+        ImageView rightArrow = (ImageView) userView.getRight();
+        Label label = (Label) userView.getBottom();
+        label.setTextAlignment(TextAlignment.CENTER);
+        label.setAlignment(Pos.CENTER);
+        switch (user.getStatus()) {
+            default:
+                name = "/META-INF/gui/userGray.png";
+                x = 0;
+                goToDoorButton.setDisable(false);
+                enterRoomButton.setDisable(true);
+                leaveButton.setDisable(true);
+                leftArrow.setVisible(false);
+                rightArrow.setVisible(true);
+                break;
+            case TRY:
+                name = "/META-INF/gui/userBlue.png";
+                x = 300;
+                goToDoorButton.setDisable(true);
+                enterRoomButton.setDisable(false);
+                leaveButton.setDisable(false);
+                leftArrow.setVisible(true);
+                rightArrow.setVisible(true);
+                break;
+            case ONGOING:
+                name = "/META-INF/gui/userGreen.png";
+                x = 600;
+                goToDoorButton.setDisable(true);
+                enterRoomButton.setDisable(true);
+                leaveButton.setDisable(false);
+                leftArrow.setVisible(true);
+                rightArrow.setVisible(false);
+
+                break;
+            case REVOKED:
+                name = "/META-INF/gui/userRed.png";
+                x = 600;
+                goToDoorButton.setDisable(true);
+                enterRoomButton.setDisable(true);
+                leaveButton.setDisable(false);
+                leftArrow.setVisible(true);
+                rightArrow.setVisible(false);
+                break;
+        }
+        InputStream is = getClass().getResourceAsStream(name);
+        Image image = new Image(is);
+        icon.setImage(image);
+        TranslateTransition tt = new TranslateTransition(Duration.millis(500), user1);
+        tt.setToX(x);
+        tt.play();
+        label.setText(user.getCustomId());
+    }
+
     public void processUserGoingToDoor(ActionEvent event) throws Exception {
-        if (application == null){
-            // We are running in isolated FXML, possibly in Scene Builder.
-            // NO-OP.
-            errorMessage.setText("Hello " + userId.getText());
+        User user = User.getInstance(userId);
+        if (!user.goToDoor()) {
+            showError("User " + userId + " is not allowed to stand at the door");
         } else {
-            User user = User.getInstance(userId.getText());
-            if(!user.goToDoor()) 
-                errorMessage.setText("User "+userId.getText()+" is not allowed to stand at the door");
-            else errorMessage.setText("User " + userId.getText()+" standing in front of the door");
+            showMessage("User " + userId + " standing in front of the door");
+            updateUserView(user1, user);
         }
     }
-    
+
     public void processUserEnteringRoom(ActionEvent event) throws Exception {
-        if (application == null){
-            // We are running in isolated FXML, possibly in Scene Builder.
-            // NO-OP.
-            errorMessage.setText("Hello " + userId.getText());
+        User user = User.getInstance(userId);
+        if (!user.enterRoom()) {
+            showError("User " + userId + " is not allowed to enter the room");
         } else {
-            User user = User.getInstance(userId.getText());
-            if(!user.enterRoom()) 
-                errorMessage.setText("User "+userId.getText()+" is not allowed to enter the room");
-                else errorMessage.setText("User " + userId.getText()+" entered the room");
+            showMessage("User " + userId + " entered the room");
+            updateUserView(user1, user);
         }
     }
-    
+
     public void processUserLeaving(ActionEvent event) throws Exception {
-        if (application == null){
-            // We are running in isolated FXML, possibly in Scene Builder.
-            // NO-OP.
-            errorMessage.setText("Hello " + userId.getText());
+        User user = User.getInstance(userId);
+        if (!user.leave()) {
+            showError("User " + userId + " is not allowed to leave");
         } else {
-            User user = User.getInstance(userId.getText());
-            if(!user.leave()) 
-                errorMessage.setText("User "+userId.getText()+" is not allowed to leave");
-                else errorMessage.setText("User " + userId.getText()+" gone away");
+            showMessage("User " + userId + " gone away");
+            updateUserView(user1, user);
         }
     }
-    
-    public void onUserMustLeaveRoom(String id) {
-        errorMessage.setText("User " + id+" must leave room immediately!");
+
+    public void onUserMustLeaveRoom(String userId) throws Exception {
+        User user = User.getInstance(userId);
+        showError("User " + userId + " must leave room immediately!");
+        updateUserView(user1, user);
+    }
+
+    private void showError(String error) {
+        errorMessage.setTextFill(Color.RED);
+        errorMessage.setText(error);
+    }
+
+    private void showMessage(String message) {
+        errorMessage.setTextFill(Color.WHITE);
+        errorMessage.setText(message);
     }
 }
