@@ -11,7 +11,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-classpath %classpath it.cnr.iit.retrail.test.ServerTest</exec.args>
+            <exec.args>-classpath %classpath it.cnr.iit.retrail.demo.Main</exec.args>
             <exec.executable>java</exec.executable>
         </properties>
     </action>
@@ -27,7 +27,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath it.cnr.iit.retrail.test.ServerTest</exec.args>
+            <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath it.cnr.iit.retrail.demo.Main</exec.args>
             <exec.executable>java</exec.executable>
             <jpda.listen>true</jpda.listen>
         </properties>
@@ -43,7 +43,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-classpath %classpath it.cnr.iit.retrail.test.ServerTest</exec.args>
+            <exec.args>-classpath %classpath it.cnr.iit.retrail.demo.Main</exec.args>
             <exec.executable>java</exec.executable>
         </properties>
     </action>
@@ -66,11 +66,12 @@
     </action>
     <action>
         <actionName>test</actionName>
-        <preAction>build-with-dependencies</preAction>
         <packagings>
             <packaging>*</packaging>
         </packagings>
         <goals>
+            <goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>
+            <goal>test-compile</goal>
             <goal>test</goal>
         </goals>
     </action>

@@ -54,9 +54,9 @@ public class PIPTests {
         try {
             // start server
             ucon = UCon.getInstance(
-                    ServerTest.class.getResource("/META-INF/policies/pre"),
-                    ServerTest.class.getResource("/META-INF/policies/on"),
-                    ServerTest.class.getResource("/META-INF/policies/post"));
+                    PIPTests.class.getResource("/META-INF/policies/pre"),
+                    PIPTests.class.getResource("/META-INF/policies/on"),
+                    PIPTests.class.getResource("/META-INF/policies/post"));
             pipSessions = new TestPIPSessions();
             ucon.addPIP(pipSessions);
             TestPIPReputation reputation = new TestPIPReputation();
