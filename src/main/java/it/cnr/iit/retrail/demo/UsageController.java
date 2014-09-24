@@ -10,8 +10,6 @@ import it.cnr.iit.retrail.test.TestPIPSessions;
 import it.cnr.iit.retrail.test.TestPIPTimer;
 import java.net.URL;
 import java.net.UnknownHostException;
-import javafx.event.Event;
-import javafx.event.EventType;
 
 import org.apache.xmlrpc.XmlRpcException;
 
@@ -43,7 +41,7 @@ public class UsageController extends PEP {
             reputation.reputationMap.put("carniani", "bronze");
             reputation.reputationMap.put("mori", "gold");
             ucon.addPIP(reputation);
-            pipTimer = new TestPIPTimer(2);
+            pipTimer = new TestPIPTimer(10);
             ucon.addPIP(pipTimer);
             ucon.init();
 

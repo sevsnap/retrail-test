@@ -51,9 +51,11 @@ public class MainViewController extends AnchorPane implements Initializable {
     @FXML
     TextField userId;
     @FXML
-    PasswordField password;
+    Button goToDoor;
     @FXML
-    Button login;
+    Button enterRoom;
+    @FXML
+    Button leave;
     @FXML
     Label errorMessage;
 
@@ -67,9 +69,7 @@ public class MainViewController extends AnchorPane implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         errorMessage.setText("");
-        userId.setPromptText("demo");
-        password.setPromptText("demo");
-        
+        userId.setPromptText("user");   
     }
     
     public void processUserGoingToDoor(ActionEvent event) throws Exception {
@@ -78,10 +78,10 @@ public class MainViewController extends AnchorPane implements Initializable {
             // NO-OP.
             errorMessage.setText("Hello " + userId.getText());
         } else {
-            if (!application.userGoingToDoor(userId.getText())){
+            User user = User.getInstance(userId.getText());
+            if(!user.goToDoor()) 
                 errorMessage.setText("User "+userId.getText()+" is not allowed to stand at the door");
-            }
-                else errorMessage.setText("User " + userId.getText()+" standing in front of the door");
+            else errorMessage.setText("User " + userId.getText()+" standing in front of the door");
         }
     }
     
@@ -91,9 +91,9 @@ public class MainViewController extends AnchorPane implements Initializable {
             // NO-OP.
             errorMessage.setText("Hello " + userId.getText());
         } else {
-            if (!application.userEnteringRoom(userId.getText())){
+            User user = User.getInstance(userId.getText());
+            if(!user.enterRoom()) 
                 errorMessage.setText("User "+userId.getText()+" is not allowed to enter the room");
-            }
                 else errorMessage.setText("User " + userId.getText()+" entered the room");
         }
     }
@@ -104,9 +104,9 @@ public class MainViewController extends AnchorPane implements Initializable {
             // NO-OP.
             errorMessage.setText("Hello " + userId.getText());
         } else {
-            if (!application.userLeaving(userId.getText())){
+            User user = User.getInstance(userId.getText());
+            if(!user.leave()) 
                 errorMessage.setText("User "+userId.getText()+" is not allowed to leave");
-            }
                 else errorMessage.setText("User " + userId.getText()+" gone away");
         }
     }

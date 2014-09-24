@@ -18,8 +18,6 @@
               <children>
                 <Label id="label1" layoutX="14.0" layoutY="67.0" text="Username" />
                 <TextField id="textField1" fx:id="userId" layoutY="86.0" prefWidth="415.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" />
-                <Label id="label1" layoutX="14.0" layoutY="139.0" text="Password" />
-                <PasswordField id="passwordField1" fx:id="password" layoutY="157.0" prefWidth="415.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" />
                 <ImageView id="app-login-logo" layoutY="-12.0">
                   <image>
                     <Image url="@logo.png" preserveRatio="true" smooth="true" />
@@ -32,9 +30,9 @@
       </children>
     </AnchorPane>
     <HBox id="hBox2" alignment="CENTER" prefHeight="25.0" prefWidth="418.0" AnchorPane.bottomAnchor="156.0" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="41.0">
-        <Button id="button1" fx:id="login" defaultButton="true" onAction="#processUserGoingToDoor" prefHeight="70.0" prefWidth="400.0" text="Go to door" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
-        <Button id="button2" fx:id="login2" defaultButton="true" onAction="#processUserEnteringRoom" prefHeight="70.0" prefWidth="400.0" text="Enter room" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
-        <Button id="button3" fx:id="login3" defaultButton="true" onAction="#processUserLeaving" prefHeight="70.0" prefWidth="400.0" text="Leave" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
+        <Button id="button1" fx:id="goToDoor" defaultButton="true" onAction="#processUserGoingToDoor" prefHeight="70.0" prefWidth="400.0" text="Go to door" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
+        <Button id="button2" fx:id="enterRoom" defaultButton="true" onAction="#processUserEnteringRoom" prefHeight="70.0" prefWidth="400.0" text="Enter room" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
+        <Button id="button3" fx:id="leave" defaultButton="true" onAction="#processUserLeaving" prefHeight="70.0" prefWidth="400.0" text="Leave" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
     </HBox>
     <HBox id="hBox1" alignment="CENTER" prefHeight="25.0" prefWidth="418.0" AnchorPane.bottomAnchor="156.0" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="41.0">
       <children>
