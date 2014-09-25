@@ -44,7 +44,7 @@ public class User {
     }
 
     public String getCustomId() {
-        return pepSession == null ? "?" : pepSession.getCustomId();
+        return pepSession == null ||  pepSession.getCustomId().length() == 0? "?" : pepSession.getCustomId();
     }
 
     public boolean goToDoor() {
@@ -81,6 +81,7 @@ public class User {
         try {
             pepSession = UsageController.getInstance().endAccess(pepSession);
             ok = pepSession.getStatus() == PepSession.Status.DELETED;
+            pepSession.setCustomId("");
         } catch (Exception e) {
             log.error("Unexpected exception: {}", e.getMessage());
         }

@@ -21,8 +21,8 @@ public class Main extends Application {
     static final Logger log = LoggerFactory.getLogger(Main.class);
 
     private Stage stage;
-    private final double MINIMUM_WINDOW_WIDTH = 390.0;
-    private final double MINIMUM_WINDOW_HEIGHT = 500.0;
+    private final double MINIMUM_WINDOW_WIDTH = 800.0;
+    private final double MINIMUM_WINDOW_HEIGHT = 450.0;
 
     /**
      * @param args the command line arguments
@@ -54,7 +54,7 @@ public class Main extends Application {
         } finally {
             in.close();
         } 
-        Scene scene = new Scene(page, 800, 600);
+        Scene scene = new Scene(page);
         stage.setScene(scene);
         stage.sizeToScene();
         return (Initializable) loader.getController();

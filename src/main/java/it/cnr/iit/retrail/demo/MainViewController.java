@@ -56,8 +56,12 @@ public class MainViewController extends AnchorPane implements Initializable {
                 try {
                     if (!user.leave()) {
                         showError("User " + userId + " is not allowed to leave");
+                    } else if (user.getStatus() == PepSession.Status.REVOKED) {
+                        showMessage("User " + userId + " jas left the room");
+                        playSound("/META-INF/gui/exit.wav");
                     } else {
-                        showMessage("User " + userId + " gone away");
+                        showMessage("User " + userId + " has left the entrance door");
+                        playSound("/META-INF/gui/walkAway.wav");
                     }
                     updateUserView(userView);
                 } catch (Exception ex) {
@@ -114,6 +118,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                             Main.class.getResourceAsStream(name));
                     clip.open(inputStream);
                     clip.start();
+                    inputStream.close();
                 } catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
                     log.error(e.getMessage());
                 }

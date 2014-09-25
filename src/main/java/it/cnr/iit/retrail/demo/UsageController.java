@@ -38,8 +38,8 @@ public class UsageController extends PEP {
             pipSessions = new TestPIPSessions();
             ucon.addPIP(pipSessions);
             TestPIPReputation reputation = new TestPIPReputation();
-            reputation.reputationMap.put("carniani", "bronze");
-            reputation.reputationMap.put("mori", "bronze");
+            reputation.reputationMap.put("Carniani", "bronze");
+            reputation.reputationMap.put("Mori", "bronze");
             ucon.addPIP(reputation);
             pipTimer = new TestPIPTimer(10);
             ucon.addPIP(pipTimer);
