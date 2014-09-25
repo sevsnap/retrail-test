@@ -26,6 +26,8 @@ import javafx.util.Duration;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import org.slf4j.LoggerFactory;
@@ -114,11 +116,23 @@ public class MainViewController extends AnchorPane implements Initializable {
             public void run() {
                 try {
                     Clip clip = AudioSystem.getClip();
-                    AudioInputStream inputStream = AudioSystem.getAudioInputStream(
-                            Main.class.getResourceAsStream(name));
-                    clip.open(inputStream);
-                    clip.start();
-                    inputStream.close();
+                    clip.addLineListener(new LineListener() {
+                        @Override
+                        public void update(LineEvent event) {
+                            if (event.getType() == LineEvent.Type.STOP) {
+                                if (event.getLine() instanceof Clip) {
+                                    log.debug("end of {} playback", name);
+                                    event.getLine().close();
+                                 }
+                            }
+                        }
+                    });             
+                    try (AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+                            Main.class.getResourceAsStream(name))) {
+                        clip.open(inputStream);
+                        log.debug("playing {}", name);
+                        clip.start();
+                    }
                 } catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
                     log.error(e.getMessage());
                 }
@@ -164,9 +178,10 @@ public class MainViewController extends AnchorPane implements Initializable {
                 rightArrow.setVisible(false);
                 break;
         }
-        InputStream is = getClass().getResourceAsStream(name);
-        Image image = new Image(is);
-        is.close();
+        Image image;
+        try (InputStream is = getClass().getResourceAsStream(name)) {
+            image = new Image(is);
+        }
         icon.setImage(image);
         TranslateTransition tt = new TranslateTransition(Duration.millis(500), userView);
         tt.setToX(x);
