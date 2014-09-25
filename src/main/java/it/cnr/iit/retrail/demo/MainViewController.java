@@ -166,6 +166,7 @@ public class MainViewController extends AnchorPane implements Initializable {
         }
         InputStream is = getClass().getResourceAsStream(name);
         Image image = new Image(is);
+        is.close();
         icon.setImage(image);
         TranslateTransition tt = new TranslateTransition(Duration.millis(500), userView);
         tt.setToX(x);
