@@ -1,7 +1,4 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and onBeforeTryAccess the template in the editor.
  */
 
 package it.cnr.iit.retrail.test;
@@ -21,10 +18,10 @@ public class TestPIPTimer extends StandAlonePIP {
     final protected int maxDuration;
     final private int resolution = 1;
     
-    public TestPIPTimer(int timeToGo) {
+    public TestPIPTimer(int maxDuration) {
         super();
         this.log = LoggerFactory.getLogger(TestPIPTimer.class);
-        this.maxDuration = timeToGo;
+        this.maxDuration = maxDuration;
     }
     
     @Override

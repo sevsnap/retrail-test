@@ -23,10 +23,14 @@ public class User {
     }
 
     static public User getInstance(String id) throws Exception {
-        User user = users.get(id);
-        if(user == null) {
-            user = new User(id);
-            users.put(id, user);
+        User user = null;
+        synchronized (users) {
+            user = users.get(id);
+            if (user == null) {
+                log.warn("user \"{}\" (size={}) not cached, creating new", id, id.length());
+                user = new User(id);
+                users.put(id, user);
+            }
         }
         return user;
     }
@@ -34,17 +38,15 @@ public class User {
     public String getId() {
         return id;
     }
-    
-    public PepSession.Status getStatus() {
-        return pepSession == null? PepSession.Status.UNKNOWN : pepSession.getStatus();
+
+    public synchronized PepSession.Status getStatus() {
+        return pepSession == null ? PepSession.Status.UNKNOWN : pepSession.getStatus();
     }
 
-    
     public String getCustomId() {
-        return pepSession == null? "?" : pepSession.getCustomId();
+        return pepSession == null ? "?" : pepSession.getCustomId();
     }
 
-    
     public boolean goToDoor() {
         boolean ok = false;
         try {
@@ -79,12 +81,15 @@ public class User {
         try {
             pepSession = UsageController.getInstance().endAccess(pepSession);
             ok = pepSession.getStatus() == PepSession.Status.DELETED;
-            if(ok)
-                users.remove(id);
         } catch (Exception e) {
             log.error("Unexpected exception: {}", e.getMessage());
         }
         return ok;
+    }
+
+    @Override
+    public String toString() {
+        return "User " + id + " [status=" + getStatus() + "]";
     }
 
 }

@@ -24,7 +24,6 @@ public class Main extends Application {
     private final double MINIMUM_WINDOW_WIDTH = 390.0;
     private final double MINIMUM_WINDOW_HEIGHT = 500.0;
 
-
     /**
      * @param args the command line arguments
      */
@@ -39,18 +38,9 @@ public class Main extends Application {
         stage.setTitle("reTRAIL demonstrator");
         stage.setMinWidth(MINIMUM_WINDOW_WIDTH);
         stage.setMinHeight(MINIMUM_WINDOW_HEIGHT);
-        gotoMainView();
+        MainViewController mainViewController = (MainViewController) replaceSceneContent("/META-INF/gui/mainView.fxml");
+        UsageController.getInstance().setMain(mainViewController);
         primaryStage.show();
-    }
-
-    private void gotoMainView() {
-        try {
-            MainViewController login = (MainViewController) replaceSceneContent("/META-INF/gui/mainView.fxml");
-            UsageController.getInstance().setMain(login);
-            login.setApp(this);
-        } catch (Exception ex) {
-            log.error(ex.getMessage());
-        }
     }
 
     private Initializable replaceSceneContent(String fxml) throws Exception {
