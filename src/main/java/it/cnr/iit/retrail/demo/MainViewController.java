@@ -56,14 +56,17 @@ public class MainViewController extends AnchorPane implements Initializable {
             @Override
             public void handle(MouseEvent t) {
                 try {
+                    PepSession.Status prevStatus = user.getStatus();
+                    log.info("User: {}", user);
                     if (!user.leave()) {
                         showError("User " + userId + " is not allowed to leave");
-                    } else if (user.getStatus() == PepSession.Status.REVOKED) {
+                    } else if (prevStatus == PepSession.Status.REVOKED || prevStatus == PepSession.Status.ONGOING) {
                         showMessage("User " + userId + " jas left the room");
-                        playSound("/META-INF/gui/exit.wav");
+                        playSound("/META-INF/gui/doorShut.wav");
+                        playSound("/META-INF/gui/footsteps.wav");
                     } else {
                         showMessage("User " + userId + " has left the entrance door");
-                        playSound("/META-INF/gui/walkAway.wav");
+                        playSound("/META-INF/gui/footsteps.wav");
                     }
                     updateUserView(userView);
                 } catch (Exception ex) {
@@ -81,6 +84,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                             playSound("/META-INF/gui/denied.wav");
                         } else {
                             showMessage("User " + userId + " entered the room");
+                            playSound("/META-INF/gui/doorShut.wav");
                             playSound("/META-INF/gui/entrance.wav");
                         }
                     } else if (!user.goToDoor()) {
@@ -88,6 +92,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                         playSound("/META-INF/gui/tryFail.wav");
                     } else {
                         showMessage("User " + userId + " standing in front of the door");
+                        playSound("/META-INF/gui/footsteps.wav");
                         playSound("/META-INF/gui/tryOk.wav");
                     }
                     updateUserView(userView);
