@@ -1,6 +1,8 @@
 /*
- * Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+ * CNR - IIT
+ * Coded by: 2014 Enrico "KMcC;) Carniani
  */
+
 package it.cnr.iit.retrail.demo;
 
 import static it.cnr.iit.retrail.demo.Main.log;

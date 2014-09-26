@@ -1,18 +1,16 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * CNR - IIT
+ * Coded by: 2014 Enrico "KMcC;) Carniani
  */
+
 package it.cnr.iit.retrail.test;
 
 import it.cnr.iit.retrail.client.PEP;
 import it.cnr.iit.retrail.commons.DomUtils;
 import it.cnr.iit.retrail.commons.PepAccessRequest;
 import it.cnr.iit.retrail.commons.PepAccessResponse;
-import it.cnr.iit.retrail.commons.PepRequestAttribute;
 import it.cnr.iit.retrail.commons.PepSession;
 import it.cnr.iit.retrail.server.UCon;
-import static it.cnr.iit.retrail.test.PIPTests.pep;
 import java.io.IOException;
 import java.net.URL;
 import org.apache.xmlrpc.XmlRpcException;
