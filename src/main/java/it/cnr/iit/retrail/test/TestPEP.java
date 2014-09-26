@@ -5,7 +5,7 @@
 
 package it.cnr.iit.retrail.test;
 
-import it.cnr.iit.retrail.client.PEP;
+import it.cnr.iit.retrail.client.impl.PEP;
 import it.cnr.iit.retrail.commons.PepSession;
 import java.net.URL;
 import java.net.UnknownHostException;

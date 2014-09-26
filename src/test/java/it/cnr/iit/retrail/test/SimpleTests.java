@@ -5,12 +5,14 @@
 
 package it.cnr.iit.retrail.test;
 
-import it.cnr.iit.retrail.client.PEP;
+import it.cnr.iit.retrail.client.impl.PEP;
+import it.cnr.iit.retrail.client.PEPInterface;
 import it.cnr.iit.retrail.commons.DomUtils;
 import it.cnr.iit.retrail.commons.PepAccessRequest;
 import it.cnr.iit.retrail.commons.PepAccessResponse;
 import it.cnr.iit.retrail.commons.PepSession;
-import it.cnr.iit.retrail.server.UCon;
+import it.cnr.iit.retrail.server.UConInterface;
+import it.cnr.iit.retrail.server.impl.UCon;
 import java.io.IOException;
 import java.net.URL;
 import org.apache.xmlrpc.XmlRpcException;
@@ -34,15 +36,15 @@ import org.w3c.dom.Node;
 public class SimpleTests {
     static final String pdpUrlString = "http://localhost:8080";
     static final Logger log = LoggerFactory.getLogger(SimpleTests.class);
-    static UCon ucon = null;
-    static PEP pep = null;
+    static UConInterface ucon = null;
+    static PEPInterface pep = null;
     PepAccessRequest pepRequest = null;
 
     public SimpleTests() {
     }
 
     @BeforeClass
-    public static void setUpClass() {
+    public static void setUpClass() throws Exception {
         log.warn("Setting up environment...");
         try {
             // start server
@@ -150,7 +152,7 @@ public class SimpleTests {
         log.info("checking if the server is up and running");
         String echoTest = "<echoTest/>";
         Node node = DomUtils.read(echoTest);
-        Node result = pep.echo(node);
+        Node result = ((PEP)pep).echo(node);
         assertEquals(DomUtils.toString(node), DomUtils.toString(result));
         log.info("server echo ok");
     }
@@ -186,7 +188,7 @@ public class SimpleTests {
         afterTryAccess(pepSession);
         assertEquals("ziopino", pepSession.getCustomId());
         beforeEndAccess(pepSession);
-        PepSession response = pep.endAccess(null, pepSession.getCustomId());
+        PepSession response = ((PEP)pep).endAccess(null, pepSession.getCustomId());
         afterEndAccess(response);
         afterEndAccess(pepSession);
     }
@@ -202,7 +204,7 @@ public class SimpleTests {
         beforeTryAccess();
         PepSession pepSession = pep.tryAccess(pepRequest, "ziopino");
         afterTryAccess(pepSession);
-        PepSession assignResponse = pep.assignCustomId(pepSession.getUuid(), null, "ziopino2");
+        PepSession assignResponse = ((PEP)pep).assignCustomId(pepSession.getUuid(), null, "ziopino2");
         assertEquals(pdpUrlString, assignResponse.getUconUrl().toString());
         assertEquals("ziopino2", assignResponse.getCustomId());
         assertEquals(pdpUrlString, pepSession.getUconUrl().toString());
@@ -211,7 +213,7 @@ public class SimpleTests {
         afterTryAccess(pepSession);
         beforeEndAccess(pepSession);
         beforeEndAccess(assignResponse);
-        PepSession response = pep.endAccess(assignResponse.getUuid(), null);
+        PepSession response = ((PEP)pep).endAccess(assignResponse.getUuid(), null);
         afterEndAccess(response);
         afterEndAccess(assignResponse);
         afterEndAccess(pepSession);
@@ -228,7 +230,7 @@ public class SimpleTests {
         beforeTryAccess();
         PepSession pepSession = pep.tryAccess(pepRequest, "ziopino2");
         afterTryAccess(pepSession);
-        PepSession assignResponse = pep.assignCustomId(null, pepSession.getCustomId(), "ziopino");
+        PepSession assignResponse = ((PEP)pep).assignCustomId(null, pepSession.getCustomId(), "ziopino");
         afterTryAccess(assignResponse);
         afterTryAccess(pepSession);
         assertEquals("ziopino", pepSession.getCustomId());
@@ -237,7 +239,7 @@ public class SimpleTests {
         assertTrue(pep.hasSession(assignResponse));
         beforeEndAccess(pepSession);
         beforeEndAccess(assignResponse);
-        PepSession response = pep.endAccess(null, pepSession.getCustomId());
+        PepSession response = ((PEP)pep).endAccess(null, pepSession.getCustomId());
         afterEndAccess(response);
         afterEndAccess(assignResponse);
         afterEndAccess(pepSession);
@@ -280,12 +282,12 @@ public class SimpleTests {
         PepSession pepSession = pep.tryAccess(pepRequest);
         afterTryAccess(pepSession);
         beforeStartAccess(pepSession);
-        PepSession startResponse = pep.startAccess(pepSession.getUuid(), null);
+        PepSession startResponse = ((PEP)pep).startAccess(pepSession.getUuid(), null);
         afterStartAccess(pepSession);
         afterStartAccess(pepSession);
         beforeEndAccess(startResponse);
         beforeEndAccess(pepSession);
-        PepSession endResponse = pep.endAccess(pepSession.getUuid(), null);
+        PepSession endResponse = ((PEP)pep).endAccess(pepSession.getUuid(), null);
         afterEndAccess(endResponse);
         afterEndAccess(startResponse);
         afterEndAccess(pepSession);
@@ -304,12 +306,12 @@ public class SimpleTests {
         PepSession pepSession = pep.tryAccess(pepRequest);
         afterTryAccess(pepSession);
         beforeStartAccess(pepSession);
-        PepSession startResponse = pep.startAccess(null, pepSession.getCustomId());
+        PepSession startResponse = ((PEP)pep).startAccess(null, pepSession.getCustomId());
         afterStartAccess(startResponse);
         afterStartAccess(pepSession);
         beforeEndAccess(startResponse);
         beforeEndAccess(pepSession);
-        PepSession endResponse = pep.endAccess(null, pepSession.getCustomId());
+        PepSession endResponse = ((PEP)pep).endAccess(null, pepSession.getCustomId());
         afterEndAccess(endResponse);
         afterEndAccess(startResponse);
         afterEndAccess(pepSession);
@@ -347,7 +349,7 @@ public class SimpleTests {
     public void test7_StartNoTry() throws Exception {
         log.info("start");
         try {
-            PepSession pepSession = pep.startAccess("unexistentUuid", null);
+            PepSession pepSession = ((PEP)pep).startAccess("unexistentUuid", null);
             //assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
             fail("Must throw XmlRcpException, got instead " +  pepSession);
         } catch(XmlRpcException e) {
@@ -365,7 +367,7 @@ public class SimpleTests {
     public void test7_StartNoTryWithNull() throws Exception {
         log.info("start");
         try {
-            PepSession pepSession = pep.startAccess(null, null);
+            PepSession pepSession = ((PEP)pep).startAccess(null, null);
             //assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
             fail("Must throw XmlRcpException, got instead " +  pepSession);
         } catch(XmlRpcException e) {
@@ -379,7 +381,7 @@ public class SimpleTests {
     public void test7_StartNoTryWithUuidEmpty() throws Exception {
         log.info("start");
         try {
-            PepSession pepSession = pep.startAccess("", null);
+            PepSession pepSession = ((PEP)pep).startAccess("", null);
             //assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
             fail("Must throw XmlRcpException, got instead " +  pepSession);
         } catch(XmlRpcException e) {
@@ -393,7 +395,7 @@ public class SimpleTests {
     public void test7_StartNoTryWithCustomId() throws Exception {
         log.info("start");
         try {
-            PepSession pepSession = pep.startAccess(null, "unexistentCustomId");
+            PepSession pepSession = ((PEP)pep).startAccess(null, "unexistentCustomId");
             //assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
             fail("Must throw XmlRcpException, got instead " +  pepSession);
         } catch(XmlRpcException e) {
@@ -407,7 +409,7 @@ public class SimpleTests {
     public void test7_StartNoTryWithCustomIdEmpty() throws Exception {
         log.info("start");
         try {
-            PepSession pepSession = pep.startAccess(null, "");
+            PepSession pepSession = ((PEP)pep).startAccess(null, "");
             //assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
             fail("Must throw XmlRcpException, got instead " +  pepSession);
         } catch(XmlRpcException e) {
@@ -426,7 +428,7 @@ public class SimpleTests {
     public void test8_EndNoTry() throws Exception {
         log.info("start");
         try {
-            PepSession pepSession = pep.endAccess("unexistentUuid", null);
+            PepSession pepSession = ((PEP)pep).endAccess("unexistentUuid", null);
             //assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
             fail("Must throw XmlRcpException, got instead " +  pepSession);
         } catch(XmlRpcException e) {
@@ -440,7 +442,7 @@ public class SimpleTests {
     public void test8_EndNoTryEmpty() throws Exception {
         log.info("start");
         try {
-            PepSession pepSession = pep.endAccess("", null);
+            PepSession pepSession = ((PEP)pep).endAccess("", null);
             //assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
             fail("Must throw XmlRcpException, got instead " +  pepSession);
         } catch(XmlRpcException e) {
@@ -454,7 +456,7 @@ public class SimpleTests {
     public void test8_EndNoTryCustomId() throws Exception {
         log.info("start");
         try {
-            PepSession pepSession = pep.endAccess(null, "badCustomId");
+            PepSession pepSession = ((PEP)pep).endAccess(null, "badCustomId");
             //assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
             fail("Must throw XmlRcpException, got instead " +  pepSession);
         } catch(XmlRpcException e) {
@@ -467,7 +469,7 @@ public class SimpleTests {
     public void test8_EndNoTryCustomIdEmpty() throws Exception {
         log.info("start");
         try {
-            PepSession pepSession = pep.endAccess(null, "");
+            PepSession pepSession = ((PEP)pep).endAccess(null, "");
             //assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
             fail("Must throw XmlRcpException, got instead " +  pepSession);
         } catch(XmlRpcException e) {
@@ -481,7 +483,7 @@ public class SimpleTests {
     public void test9_EndTryWithNull() throws Exception {
         log.info("start");
         try {
-            PepSession pepSession = pep.endAccess(null, null);
+            PepSession pepSession = ((PEP)pep).endAccess(null, null);
             //assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
             fail("Must throw XmlRcpException, got instead " +  pepSession);
         } catch(XmlRpcException e) {
@@ -500,7 +502,7 @@ public class SimpleTests {
     public void testA_AssignNoTry() throws Exception {
         log.info("start");
         try {
-            PepSession pepSession = pep.assignCustomId("unexistentUuid", null, null);
+            PepSession pepSession = ((PEP)pep).assignCustomId("unexistentUuid", null, null);
             //assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
             fail("Must throw XmlRcpException, got instead " +  pepSession);
         } catch(XmlRpcException e) {
@@ -522,7 +524,7 @@ public class SimpleTests {
         PepSession pepSession = pep.tryAccess(pepRequest);
         assertEquals(1, pep.getSessions().size());
         try {
-            PepSession assignResponse = pep.assignCustomId(pepSession.getUuid(), null, null);
+            PepSession assignResponse = ((PEP)pep).assignCustomId(pepSession.getUuid(), null, null);
             //assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.decision);
             fail("Must throw XmlRcpException, got instead " +  assignResponse);
         } catch(XmlRpcException e) {
@@ -544,10 +546,10 @@ public class SimpleTests {
     public void testC_EndTwice() throws Exception {
         log.info("start");
         PepSession pepSession = pep.tryAccess(pepRequest, "ziopino2");
-        pep.assignCustomId(null, pepSession.getCustomId(), "ziopino");
+        ((PEP)pep).assignCustomId(null, pepSession.getCustomId(), "ziopino");
         assertEquals("ziopino", pepSession.getCustomId());
         assertTrue(pep.hasSession(pepSession));
-        pep.endAccess(null, pepSession.getCustomId());
+        ((PEP)pep).endAccess(null, pepSession.getCustomId());
         assertFalse(pep.hasSession(pepSession));
         log.info("end");
     }

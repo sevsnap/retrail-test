@@ -5,12 +5,13 @@
 
 package it.cnr.iit.retrail.test;
 
-import it.cnr.iit.retrail.client.PEP;
+import it.cnr.iit.retrail.client.PEPInterface;
 import it.cnr.iit.retrail.commons.PepAccessRequest;
 import it.cnr.iit.retrail.commons.PepAccessResponse;
 import it.cnr.iit.retrail.commons.PepRequestAttribute;
 import it.cnr.iit.retrail.commons.PepSession;
-import it.cnr.iit.retrail.server.UCon;
+import it.cnr.iit.retrail.server.UConInterface;
+import it.cnr.iit.retrail.server.impl.UCon;
 import java.io.IOException;
 import java.net.URL;
 import org.apache.xmlrpc.XmlRpcException;
@@ -35,8 +36,8 @@ public class PIPTests {
     static final String pdpUrlString = "http://localhost:8080";
     static final String pepUrlString = "http://localhost:8081";
     static final Logger log = LoggerFactory.getLogger(PIPTests.class);
-    static UCon ucon = null;
-    static PEP pep = null;
+    static UConInterface ucon = null;
+    static PEPInterface pep = null;
     static TestPIPSessions pipSessions = null;
     static TestPIPTimer pipTimer = null;
     PepAccessRequest pepRequest = null;
@@ -45,7 +46,7 @@ public class PIPTests {
     }
 
     @BeforeClass
-    public static void setUpClass() {
+    public static void setUpClass() throws Exception {
         log.warn("Setting up environment...");
         try {
             // start server

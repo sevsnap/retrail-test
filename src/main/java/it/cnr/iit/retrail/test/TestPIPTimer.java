@@ -8,7 +8,7 @@ package it.cnr.iit.retrail.test;
 import it.cnr.iit.retrail.commons.PepAccessRequest;
 import it.cnr.iit.retrail.commons.PepRequestAttribute;
 import it.cnr.iit.retrail.commons.PepSession;
-import it.cnr.iit.retrail.server.pip.StandAlonePIP;
+import it.cnr.iit.retrail.server.pip.impl.StandAlonePIP;
 import java.util.Collection;
 import org.slf4j.LoggerFactory;
 

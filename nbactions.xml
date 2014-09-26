@@ -43,7 +43,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Xmx512m -classpath %classpath it.cnr.iit.retrail.demo.Main</exec.args>
+            <exec.args>-Xmx256m -classpath %classpath it.cnr.iit.retrail.demo.Main</exec.args>
             <exec.executable>java</exec.executable>
         </properties>
     </action>

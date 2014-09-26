@@ -5,9 +5,10 @@
 
 package it.cnr.iit.retrail.demo;
 
-import it.cnr.iit.retrail.client.PEP;
+import it.cnr.iit.retrail.client.impl.PEP;
 import it.cnr.iit.retrail.commons.PepSession;
-import it.cnr.iit.retrail.server.UCon;
+import it.cnr.iit.retrail.server.UConInterface;
+import it.cnr.iit.retrail.server.impl.UCon;
 import it.cnr.iit.retrail.test.TestPIPReputation;
 import it.cnr.iit.retrail.test.TestPIPSessions;
 import it.cnr.iit.retrail.test.TestPIPTimer;
@@ -21,7 +22,7 @@ public class UsageController extends PEP {
     static public final String pdpUrlString = "http://localhost:8080";
     static private final String pepUrlString = "http://localhost:8081";
     static private UsageController instance = null;
-    static private UCon ucon = null;
+    static private UConInterface ucon = null;
 
     static private TestPIPSessions pipSessions;
     static private TestPIPTimer pipTimer;

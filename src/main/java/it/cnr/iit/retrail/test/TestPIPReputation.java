@@ -8,7 +8,7 @@ package it.cnr.iit.retrail.test;
 import it.cnr.iit.retrail.commons.PepAccessRequest;
 import it.cnr.iit.retrail.commons.PepRequestAttribute;
 import it.cnr.iit.retrail.commons.PepSession;
-import it.cnr.iit.retrail.server.pip.PIP;
+import it.cnr.iit.retrail.server.pip.impl.PIP;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
