@@ -40,6 +40,7 @@ public class Main extends Application {
         stage.setTitle("reTRAIL demonstrator");
         stage.setMinWidth(MINIMUM_WINDOW_WIDTH);
         stage.setMinHeight(MINIMUM_WINDOW_HEIGHT);
+        stage.setResizable(false);
         MainViewController mainViewController = (MainViewController) replaceSceneContent("/META-INF/gui/mainView.fxml");
         UsageController.getInstance().setMain(mainViewController);
         primaryStage.show();
