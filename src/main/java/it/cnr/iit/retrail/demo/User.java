@@ -50,6 +50,11 @@ public class User {
         return pepSession == null ||  pepSession.getCustomId().length() == 0? "?" : pepSession.getCustomId();
     }
 
+    public String getUuid() {
+        return pepSession == null? "?" : pepSession.getUuid();
+    }
+
+    
     public boolean goToDoor() {
         boolean ok = false;
         try {

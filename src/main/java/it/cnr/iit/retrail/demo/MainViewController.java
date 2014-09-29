@@ -165,25 +165,28 @@ public class MainViewController extends AnchorPane implements Initializable {
                 x = 0;
                 leftArrow.setVisible(false);
                 rightArrow.setVisible(true);
+                label.setText(user.getCustomId());
                 break;
             case TRY:
                 name = "/META-INF/gui/userBlue.png";
                 x = 250;
                 leftArrow.setVisible(true);
                 rightArrow.setVisible(true);
+                label.setText(user.getCustomId());
                 break;
             case ONGOING:
                 name = "/META-INF/gui/userGreen.png";
                 x = 520;
                 leftArrow.setVisible(true);
                 rightArrow.setVisible(false);
-
+                label.setText(user.getUuid());
                 break;
             case REVOKED:
                 name = "/META-INF/gui/userRed.png";
                 x = 450;
                 leftArrow.setVisible(true);
                 rightArrow.setVisible(false);
+                label.setText(user.getCustomId());
                 break;
         }
         Image image;
@@ -194,7 +197,6 @@ public class MainViewController extends AnchorPane implements Initializable {
         TranslateTransition tt = new TranslateTransition(Duration.millis(500), userView);
         tt.setToX(x);
         tt.play();
-        label.setText(user.getCustomId());
     }
 
     public void onUserMustLeaveRoom(final String userId) {
