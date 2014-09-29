@@ -48,7 +48,7 @@ public class UsageController extends PEP {
             pipTimer = new TestPIPTimer(10);
             ucon.addPIP(pipTimer);
             ucon.init();
-
+            
             log.info("Setting up PEP component");
             instance = new UsageController(new URL(pdpUrlString), new URL(pepUrlString));
             // clean up previous sessions, if any, by clearing the recoverable
