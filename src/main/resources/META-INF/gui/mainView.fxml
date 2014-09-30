@@ -111,6 +111,12 @@
                   <Image url="@plan.png" />
                </image>
             </ImageView>
+            <MenuButton fx:id="policyButton" layoutX="599.0" layoutY="387.0" mnemonicParsing="false" text="MenuButton">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Action 1" />
+                <MenuItem mnemonicParsing="false" text="Action 2" />
+              </items>
+            </MenuButton>
          </children>
     </AnchorPane>
     <HBox id="hBox1" alignment="CENTER" layoutX="7.0" layoutY="419.0" prefHeight="24.0" prefWidth="732.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="8.0">

@@ -2,7 +2,6 @@
  * CNR - IIT
  * Coded by: 2014 Enrico "KMcC;) Carniani
  */
-
 package it.cnr.iit.retrail.demo;
 
 import it.cnr.iit.retrail.commons.PepSession;
@@ -10,13 +9,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SplitMenuButton;
 import javafx.scene.image.Image;
 
 import javafx.scene.image.ImageView;
@@ -24,6 +30,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import javax.sound.sampled.AudioInputStream;
@@ -48,6 +55,8 @@ public class MainViewController extends AnchorPane implements Initializable {
     BorderPane user3;
     @FXML
     Label errorMessage;
+    @FXML
+    MenuButton policyButton;
 
     static final org.slf4j.Logger log = LoggerFactory.getLogger(MainViewController.class);
 
@@ -113,6 +122,38 @@ public class MainViewController extends AnchorPane implements Initializable {
             addListeners(user1);
             addListeners(user2);
             addListeners(user3);
+            policyButton.setText("One at a time");
+            policyButton.setTextFill(Paint.valueOf("black"));
+            MenuItem policy1;
+            policy1 = new MenuItem("One at a time");
+            policy1.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    try {
+                        showMessage("Policy changed: only one person at a time is now allowed");
+                        policyButton.setText("One at a time");
+                        UsageController.changePoliciesTo("/META-INF/policies1/pre1.xml","/META-INF/policies1/on1.xml");
+                    } catch (Exception ex) {
+                        log.error(ex.getMessage());
+                    }
+                }
+            }); 
+            MenuItem policy2;
+            policy2 = new MenuItem("Two people");
+            policy2.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    try {
+                        showMessage("Policy changed: only 2 people at a time are now allowed");
+                        policyButton.setText("Two people");
+                        UsageController.changePoliciesTo("/META-INF/policies2/pre2.xml","/META-INF/policies2/on2.xml");
+                    } catch (Exception ex) {
+                        log.error(ex.getMessage());
+                    }
+                }
+            }); 
+            policyButton.getItems().setAll(policy1, policy2);
+
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }
@@ -131,10 +172,10 @@ public class MainViewController extends AnchorPane implements Initializable {
                                 if (event.getLine() instanceof Clip) {
                                     log.debug("end of {} playback", name);
                                     event.getLine().close();
-                                 }
+                                }
                             }
                         }
-                    });             
+                    });
                     try (AudioInputStream inputStream = AudioSystem.getAudioInputStream(
                             Main.class.getResourceAsStream(name))) {
                         clip.open(inputStream);
@@ -211,7 +252,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                     } else if (user2.getId().equals(userId)) {
                         updateUserView(user2);
                     } else {
-                        updateUserView(user2);
+                        updateUserView(user3);
                     }
                 } catch (Exception ex) {
                     log.error(ex.getMessage());

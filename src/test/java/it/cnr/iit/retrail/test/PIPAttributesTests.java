@@ -33,12 +33,12 @@ import org.slf4j.LoggerFactory;
  * @author oneadmin
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class PIPTests {
+public class PIPAttributesTests {
 
     static final String pdpUrlString = "http://localhost:8080";
     static final String pepUrlString = "http://localhost:8081";
 
-    static final Logger log = LoggerFactory.getLogger(PIPTests.class);
+    static final Logger log = LoggerFactory.getLogger(PIPAttributesTests.class);
     static UConInterface ucon = null;
     static PEPInterface pep = null;
     
@@ -46,7 +46,7 @@ public class PIPTests {
     static TestPIPTimer pipTimer = null;
     PepAccessRequest pepRequest = null;
 
-    public PIPTests() {
+    public PIPAttributesTests() {
     }
 
     @BeforeClass
@@ -55,8 +55,8 @@ public class PIPTests {
         try {
             // start server
             ucon = UCon.getInstance();
-            ucon.setPreauthPolicy(UsageController.class.getResource("/META-INF/policies1/pre1.xml"));
-            ucon.setOngoingPolicy(UsageController.class.getResource("/META-INF/policies1/on1.xml"));
+            ucon.setPreauthPolicy(UsageController.class.getResource("/META-INF/policies2/pre2.xml"));
+            ucon.setOngoingPolicy(UsageController.class.getResource("/META-INF/policies2/on2.xml"));
             pipSessions = new TestPIPSessions();
             ucon.addPIP(pipSessions);
             TestPIPReputation reputation = new TestPIPReputation();
@@ -165,148 +165,48 @@ public class PIPTests {
         assertEquals(PepSession.Status.DELETED, response.getStatus());
     }
 
-    /**
-     * Test of tryAccess method, of class PEP.
-     *
-     * @throws java.lang.Exception
-     */
     @Test
-    public void test1_TryEndCycle() throws Exception {
-        log.info("testing pre-access policy only");
-        beforeTryAccess();
-        PepSession pepSession = pep.tryAccess(pepRequest);
-        afterTryAccess(pepSession);
-        beforeEndAccess(pepSession);
-        PepSession pepResponse = pep.endAccess(pepSession);
-        afterEndAccess(pepResponse);
-        afterEndAccess(pepSession);
-        log.info("short cycle ok");
-    }
-
-    /**
-     * Test of startAccess method, of class PEP.
-     *
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void test2_TryStartEndCycle() throws Exception {
-        log.info("testing on-access policy");
-        assertEquals(0, pipSessions.sessions);        
-        beforeTryAccess();
-        PepSession pepSession = pep.tryAccess(pepRequest);
-        afterTryAccess(pepSession);
-        assertEquals(0, pipSessions.sessions);        
-        beforeStartAccess(pepSession);
-        PepSession startResponse = pep.startAccess(pepSession);
-        afterStartAccess(startResponse);
-        afterStartAccess(pepSession);
-        assertEquals(1, pipSessions.sessions);        
-        beforeEndAccess(startResponse);
-        beforeEndAccess(pepSession);
-        PepSession endResponse = pep.endAccess(startResponse);
-        afterEndAccess(endResponse);
-        afterEndAccess(startResponse);
-        afterEndAccess(pepSession);
-        assertEquals(0, pipSessions.sessions);        
-        log.info("ok");
-    }
-    
-    @Test
-    public void test3_TryWithBadReputation() throws Exception {
-        log.info("testing access with bad reputation");
-        PepAccessRequest req = PepAccessRequest.newInstance(
-                    "fedoraBadReputation",
-                    "urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination",
-                    " ",
-                    "issuer");
-        PepSession pepSession = pep.tryAccess(req);
-        assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.getDecision());
-        assertEquals(PepSession.Status.REJECTED, pepSession.getStatus());
-        assertEquals(0, pep.getSessions().size());
-        assertEquals(0, pipSessions.sessions);        
-        log.info("ok");
-    }
-    
-    @Test
-    public void test3_TryWithUnknownSubject() throws Exception {
-        log.info("testing access with unknown subject");
-        PepAccessRequest req = PepAccessRequest.newInstance(
-                    "unknownSubject",
-                    "urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination",
-                    " ",
-                    "issuer");
-        PepSession pepSession = pep.tryAccess(req);
-        assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.getDecision());
-        assertEquals(PepSession.Status.REJECTED, pepSession.getStatus());
-        assertEquals(0, pep.getSessions().size());
-        assertEquals(0, pipSessions.sessions);        
-        log.info("ok");
-    }
-
-    @Test
-    public void test4_ConcurrentTryAccess() throws Exception {
-        log.info("testing concurrent try access (should be allowed to both)");
-        assertEquals(0, pipSessions.sessions);
-        beforeTryAccess();
+    public void test1_SharedAttributes() throws Exception {
+        log.info("testing if concurrent sessions correctly share attributes");
+        int oldDuration = pipTimer.getMaxDuration();
         PepSession pepSession1 = pep.tryAccess(pepRequest);
-        afterTryAccess(pepSession1);
-        assertEquals(0, pipSessions.sessions);
+        PepSession response1 = pep.startAccess(pepSession1);
+        afterStartAccess(response1);
         PepSession pepSession2 = pep.tryAccess(pepRequest);
-        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession2.getDecision());
-        assertEquals(2, pep.getSessions().size());
-        assertEquals(0, pipSessions.sessions);
-        pep.endAccess(pepSession2);
-        pep.endAccess(pepSession1);
-        afterEndAccess(pepSession1);
-        assertEquals(0, pipSessions.sessions);
-        log.info("ok, 2 concurrent tries admitted");
+        PepSession response2 = pep.startAccess(pepSession2);
+        afterStartAccess(response2);
+        PepSession pepSession3 = pep.tryAccess(pepRequest);
+        PepSession response3 = pep.startAccess(pepSession3);
+        log.info("session 3 must not be Permitted since the shared number of session would be greater than 2");
+        assertNotEquals(PepAccessResponse.DecisionEnum.Permit, response3.getDecision());
+        log.info("ok");
     }
     
     @Test
-    public void test5_ConcurrentStartAccess() throws Exception {
-        log.info("testing concurrent start access (should be denied to the second one)");
-        beforeTryAccess();
-        assertEquals(0, pipSessions.sessions);
+    public void test2_PrivateAttributes() throws Exception {
+        log.info("testing if concurrent sessions have their own attribute timers");
+        int oldDuration = pipTimer.getMaxDuration();
+        pipTimer.setMaxDuration(1);
         PepSession pepSession1 = pep.tryAccess(pepRequest);
-        afterTryAccess(pepSession1);
+        PepSession response1 = pep.startAccess(pepSession1);
+        afterStartAccess(response1);
+        pipTimer.setMaxDuration(3);
         PepSession pepSession2 = pep.tryAccess(pepRequest);
-        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession2.getDecision());
-        assertEquals(2, pep.getSessions().size());
-        beforeStartAccess(pepSession1);
-        pepSession1 = pep.startAccess(pepSession1);
-        afterStartAccess(pepSession1);
-        assertEquals(1, pipSessions.sessions);
-        pepSession2 = pep.startAccess(pepSession2);
-        assertEquals(1, pipSessions.sessions);
-        assertEquals(PepSession.Status.TRY, pepSession2.getStatus());
-        assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession2.getDecision());
-        assertEquals(2, pep.getSessions().size());
-        pep.endAccess(pepSession2);
-        assertEquals(1, pipSessions.sessions);
-        pep.endAccess(pepSession1);
-        assertEquals(0, pipSessions.sessions);
-        afterEndAccess(pepSession1);
-        afterEndAccess(pepSession2);
-        log.info("ok, 2 concurrent tries admitted");
+        PepSession response2 = pep.startAccess(pepSession2);
+        afterStartAccess(response2);
+        log.warn("ok, waiting for ucon to revoke session 1");
+        Thread.sleep(1100);
+        log.info("by now session 1 must be REVOKED, whilst session 2 should be ONGOING");
+        response1 = pep.getSession(response1.getUuid());
+        assertEquals(PepSession.Status.REVOKED, response1.getStatus());
+        response2 = pep.getSession(response2.getUuid());
+        assertEquals(PepSession.Status.ONGOING, response2.getStatus());
+        Thread.sleep(2000);
+        log.warn("ok. session 2 should have been now REVOKED as well");
+        response2 = pep.getSession(response2.getUuid());
+        assertEquals(PepSession.Status.REVOKED, response2.getStatus());
+        log.debug("ok. restoring global configuration");
+        pipTimer.setMaxDuration(oldDuration);
+        log.info("ok");
     }
-    
-    @Test
-    public void test6_AccessTooLong() throws Exception {
-        log.info("testing prolonged access (should be denied after 2 secs)");
-        beforeTryAccess();
-        assertEquals(0, pipSessions.sessions);
-        PepSession pepSession = pep.tryAccess(pepRequest);
-        afterTryAccess(pepSession);
-        beforeStartAccess(pepSession);
-        PepSession response = pep.startAccess(pepSession);
-        afterStartAccess(response);
-        log.warn("ok, waiting some time for ucon to revoke session");
-        Thread.sleep(1000*pipTimer.maxDuration + 100);
-        response = pep.getSession(response.getUuid());
-        assertEquals(PepSession.Status.REVOKED, response.getStatus());
-        pep.endAccess(pepSession);
-        afterEndAccess(pepSession);
-        log.info("ok, 2 concurrent tries admitted");
-    }
-
 }

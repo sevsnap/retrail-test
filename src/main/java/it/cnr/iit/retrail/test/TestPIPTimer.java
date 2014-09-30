@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory;
  * @author kicco
  */
 public class TestPIPTimer extends StandAlonePIP {
-    final protected int maxDuration;
-    final private int resolution = 1;
+    protected int maxDuration;
+    protected int resolution = 1;
     
     public TestPIPTimer(int maxDuration) {
         super();
@@ -30,6 +30,14 @@ public class TestPIPTimer extends StandAlonePIP {
     public void onBeforeStartAccess(PepAccessRequest request, PepSession session) {
         PepRequestAttribute a = newAttribute("timer", "http://www.w3.org/2001/XMLSchema#integer", Integer.toString(maxDuration), "http://localhost:8080/federation-id-prov/saml", "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject");
         request.add(a);
+    }
+
+    public int getMaxDuration() {
+        return maxDuration;
+    }
+
+    public void setMaxDuration(int maxDuration) {
+        this.maxDuration = maxDuration;
     }
 
     @Override

@@ -32,12 +32,16 @@ public class UsageController extends PEP {
         this.application = application;
     }
     
+    static public void changePoliciesTo(String prePath, String onPath) {
+        ucon.setPreauthPolicy(UsageController.class.getResource(prePath));
+        ucon.setOngoingPolicy(UsageController.class.getResource(onPath));
+    }
+    
     static public UsageController getInstance() throws Exception {
         if (instance == null) {
             log.info("Setting up Ucon embedded server...");
             ucon = UCon.getInstance();
-            ucon.setPreauthPolicy(UsageController.class.getResource("/META-INF/policies/pre"));
-            ucon.setOngoingPolicy(UsageController.class.getResource("/META-INF/policies/on"));
+            changePoliciesTo("/META-INF/policies1/pre1.xml","/META-INF/policies1/on1.xml");
             pipSessions = new TestPIPSessions();
             ucon.addPIP(pipSessions);
             TestPIPReputation reputation = new TestPIPReputation();
