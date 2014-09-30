@@ -34,7 +34,7 @@ public class TestPIPReputation extends PIP {
         String reputation = reputationMap.get(subject.value);
         if(reputation != null) {
             log.warn("subject {} has reputation {}", subject.value, reputation);
-            PepRequestAttribute test = newAttribute("reputation", "http://www.w3.org/2001/XMLSchema#string", reputation, "http://localhost:8080/federation-id-prov/saml", "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject");
+            PepRequestAttribute test = newPrivateAttribute("reputation", "http://www.w3.org/2001/XMLSchema#string", reputation, "http://localhost:8080/federation-id-prov/saml", "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject");
             test.expires = new Date();
             request.add(test);
         } else 

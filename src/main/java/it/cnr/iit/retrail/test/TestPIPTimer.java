@@ -28,7 +28,7 @@ public class TestPIPTimer extends StandAlonePIP {
     
     @Override
     public void onBeforeStartAccess(PepAccessRequest request, PepSession session) {
-        PepRequestAttribute a = newAttribute("timer", "http://www.w3.org/2001/XMLSchema#integer", Integer.toString(maxDuration), "http://localhost:8080/federation-id-prov/saml", "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject");
+        PepRequestAttribute a = newPrivateAttribute("timer", "http://www.w3.org/2001/XMLSchema#integer", Integer.toString(maxDuration), "http://localhost:8080/federation-id-prov/saml", "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject");
         request.add(a);
     }
 
