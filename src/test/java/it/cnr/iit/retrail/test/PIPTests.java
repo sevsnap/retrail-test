@@ -10,6 +10,7 @@ import it.cnr.iit.retrail.commons.PepAccessRequest;
 import it.cnr.iit.retrail.commons.PepAccessResponse;
 import it.cnr.iit.retrail.commons.PepRequestAttribute;
 import it.cnr.iit.retrail.commons.PepSession;
+import it.cnr.iit.retrail.demo.UsageController;
 import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.impl.UCon;
 import java.io.IOException;
@@ -50,10 +51,9 @@ public class PIPTests {
         log.warn("Setting up environment...");
         try {
             // start server
-            ucon = UCon.getInstance(
-                    PIPTests.class.getResource("/META-INF/policies/pre"),
-                    PIPTests.class.getResource("/META-INF/policies/on"),
-                    PIPTests.class.getResource("/META-INF/policies/post"));
+            ucon = UCon.getInstance();
+            ucon.setPreauthPolicy(UsageController.class.getResource("/META-INF/policies/pre"));
+            ucon.setOngoingPolicy(UsageController.class.getResource("/META-INF/policies/on"));
             pipSessions = new TestPIPSessions();
             ucon.addPIP(pipSessions);
             TestPIPReputation reputation = new TestPIPReputation();
@@ -82,10 +82,14 @@ public class PIPTests {
     public static void tearDownClass() throws Exception {
         while (pep.getSessions().size() > 0) {
             PepSession s = pep.getSessions().iterator().next();
+            log.warn("Terminating {}", s);
             pep.endAccess(s);
         }
+        log.info("terminating pep");
         pep.term();
+        log.info("terminating ucon");
         ucon.term();
+        log.info("done");
     }
 
     @Before

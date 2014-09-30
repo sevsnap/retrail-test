@@ -35,10 +35,9 @@ public class UsageController extends PEP {
     static public UsageController getInstance() throws Exception {
         if (instance == null) {
             log.info("Setting up Ucon embedded server...");
-            ucon = UCon.getInstance(
-                    UsageController.class.getResource("/META-INF/policies/pre"),
-                    UsageController.class.getResource("/META-INF/policies/on"),
-                    UsageController.class.getResource("/META-INF/policies/post"));
+            ucon = UCon.getInstance();
+            ucon.setPreauthPolicy(UsageController.class.getResource("/META-INF/policies/pre"));
+            ucon.setOngoingPolicy(UsageController.class.getResource("/META-INF/policies/on"));
             pipSessions = new TestPIPSessions();
             ucon.addPIP(pipSessions);
             TestPIPReputation reputation = new TestPIPReputation();

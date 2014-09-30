@@ -48,7 +48,8 @@ public class TestPIPTimer extends StandAlonePIP {
                     }
                 }
             } catch (InterruptedException ex) {
-                log.error("interrupted");
+                log.warn("interrupted -- exiting");
+                return;
             } catch (Exception ex) {
                 log.error(ex.getMessage());
             }
