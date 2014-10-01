@@ -15,6 +15,7 @@ import it.cnr.iit.retrail.demo.UsageController;
 import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.dal.DAL;
 import it.cnr.iit.retrail.server.impl.UCon;
+import static it.cnr.iit.retrail.test.PIPAttributesTests.pep;
 import java.io.IOException;
 import java.net.URL;
 import org.apache.xmlrpc.XmlRpcException;
@@ -125,7 +126,7 @@ public class PIPTests {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() throws Exception {  
     }
 
     private void beforeTryAccess() {
@@ -302,8 +303,9 @@ public class PIPTests {
         beforeStartAccess(pepSession);
         PepSession response = pep.startAccess(pepSession);
         afterStartAccess(response);
-        log.warn("ok, waiting some time for ucon to revoke session");
-        Thread.sleep(1000*pipTimer.maxDuration + 100);
+        int ms = 1000*pipTimer.getMaxDuration() + 100;
+        log.warn("ok, waiting {} ms for ucon to revoke session", ms);
+        Thread.sleep(ms);
         response = pep.getSession(response.getUuid());
         assertEquals(PepSession.Status.REVOKED, response.getStatus());
         pep.endAccess(pepSession);

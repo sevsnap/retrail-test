@@ -44,7 +44,6 @@ public class PIPAttributesTests {
     
     static TestPIPSessions pipSessions = null;
     static TestPIPTimer pipTimer = null;
-    PepAccessRequest pepRequest = null;
 
     public PIPAttributesTests() {
     }
@@ -60,10 +59,11 @@ public class PIPAttributesTests {
             pipSessions = new TestPIPSessions();
             ucon.addPIP(pipSessions);
             TestPIPReputation reputation = new TestPIPReputation();
-            reputation.reputationMap.put("fedoraRole", "bronze");
-            reputation.reputationMap.put("fedoraBadReputation", "bad");
+            reputation.reputationMap.put("user1", "bronze");
+            reputation.reputationMap.put("user2", "bronze");
+            reputation.reputationMap.put("user3", "bronze");
             ucon.addPIP(reputation);
-            pipTimer = new TestPIPTimer(2);
+            pipTimer = new TestPIPTimer(3);
             ucon.addPIP(pipTimer);
             ucon.init();
 
@@ -95,6 +95,7 @@ public class PIPAttributesTests {
             log.warn("Terminating {}", s);
             pep.endAccess(s);
         }
+
         log.info("terminating pep");
         pep.term();
         log.info("terminating ucon");
@@ -104,28 +105,21 @@ public class PIPAttributesTests {
 
     @Before
     public void setUp() {
-        try {
-            pepRequest = PepAccessRequest.newInstance(
-                    "fedoraRole",
-                    "urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination",
-                    " ",
-                    "issuer");
-            PepRequestAttribute attribute = new PepRequestAttribute(
-                    "urn:fedora:names:fedora:2.1:resource:datastream:id",
-                    PepRequestAttribute.DATATYPES.STRING,
-                    "FOPDISSEM",
-                    "issuer",
-                    PepRequestAttribute.CATEGORIES.RESOURCE);
-            pepRequest.add(attribute);
-        } catch (Exception e) {
-            fail("unexpected exception: " + e.getMessage());
-        }
     }
 
     @After
     public void tearDown() throws Exception {
     }
 
+    private PepAccessRequest newRequest(String subjectValue) {
+        PepAccessRequest pepRequest = PepAccessRequest.newInstance(
+                    subjectValue,
+                    "urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination",
+                    " ",
+                    "issuer");
+        return pepRequest;
+    }
+    
     private void beforeTryAccess() {
         assertEquals(0, pep.getSessions().size());
     }
@@ -164,49 +158,68 @@ public class PIPAttributesTests {
         assertEquals(pdpUrlString, response.getUconUrl().toString());
         assertEquals(PepSession.Status.DELETED, response.getStatus());
     }
-
-    @Test
-    public void test1_SharedAttributes() throws Exception {
-        log.info("testing if concurrent sessions correctly share attributes");
-        int oldDuration = pipTimer.getMaxDuration();
-        PepSession pepSession1 = pep.tryAccess(pepRequest);
+    
+  
+    public void test1_SingleSession() throws Exception {
+        log.info("testing try start end session");
+        PepAccessRequest pepRequest1 = newRequest("user1");
+        PepSession pepSession1 = pep.tryAccess(pepRequest1);
+        afterTryAccess(pepSession1);
         PepSession response1 = pep.startAccess(pepSession1);
         afterStartAccess(response1);
-        PepSession pepSession2 = pep.tryAccess(pepRequest);
+        pep.endAccess(pepSession1);
+        afterEndAccess(response1);
+        log.info("ok");
+    }
+    
+
+    public void test2_FlatAttributes() throws Exception {
+        log.info("testing if concurrent sessions correctly share attributes");
+        PepAccessRequest pepRequest1 = newRequest("user1");
+        PepSession pepSession1 = pep.tryAccess(pepRequest1);
+        PepSession response1 = pep.startAccess(pepSession1);
+        afterStartAccess(response1);
+        PepAccessRequest pepRequest2 = newRequest("user2");
+        PepSession pepSession2 = pep.tryAccess(pepRequest2);
         PepSession response2 = pep.startAccess(pepSession2);
         afterStartAccess(response2);
-        PepSession pepSession3 = pep.tryAccess(pepRequest);
+        PepAccessRequest pepRequest3 = newRequest("user3");
+        PepSession pepSession3 = pep.tryAccess(pepRequest3);
         PepSession response3 = pep.startAccess(pepSession3);
         log.info("session 3 must not be Permitted since the shared number of session would be greater than 2");
         assertNotEquals(PepAccessResponse.DecisionEnum.Permit, response3.getDecision());
+        pep.endAccess(response1);
+        pep.endAccess(response2);
+        pep.endAccess(response3);
         log.info("ok");
     }
     
     @Test
-    public void test2_PrivateAttributes() throws Exception {
+    public void test3_HierarchicalAttributes() throws Exception {
         log.info("testing if concurrent sessions have their own attribute timers");
-        int oldDuration = pipTimer.getMaxDuration();
-        pipTimer.setMaxDuration(1);
-        PepSession pepSession1 = pep.tryAccess(pepRequest);
+        PepAccessRequest pepRequest1 = newRequest("user1");
+        PepAccessRequest pepRequest2 = newRequest("user2");
+        PepSession pepSession1 = pep.tryAccess(pepRequest1);
         PepSession response1 = pep.startAccess(pepSession1);
         afterStartAccess(response1);
-        pipTimer.setMaxDuration(3);
-        PepSession pepSession2 = pep.tryAccess(pepRequest);
+        Thread.sleep(2000);
+        PepSession pepSession2 = pep.tryAccess(pepRequest2);
         PepSession response2 = pep.startAccess(pepSession2);
         afterStartAccess(response2);
         log.warn("ok, waiting for ucon to revoke session 1");
-        Thread.sleep(1100);
+        Thread.sleep(2500);
         log.info("by now session 1 must be REVOKED, whilst session 2 should be ONGOING");
         response1 = pep.getSession(response1.getUuid());
         assertEquals(PepSession.Status.REVOKED, response1.getStatus());
         response2 = pep.getSession(response2.getUuid());
         assertEquals(PepSession.Status.ONGOING, response2.getStatus());
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         log.warn("ok. session 2 should have been now REVOKED as well");
         response2 = pep.getSession(response2.getUuid());
         assertEquals(PepSession.Status.REVOKED, response2.getStatus());
         log.debug("ok. restoring global configuration");
-        pipTimer.setMaxDuration(oldDuration);
+        pep.endAccess(response1);
+        pep.endAccess(response2);
         log.info("ok");
     }
 }

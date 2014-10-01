@@ -13,6 +13,7 @@ import it.cnr.iit.retrail.commons.PepAccessResponse;
 import it.cnr.iit.retrail.commons.PepSession;
 import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.impl.UCon;
+import static it.cnr.iit.retrail.test.PIPAttributesTests.pep;
 import java.io.IOException;
 import java.net.URL;
 import org.apache.xmlrpc.XmlRpcException;
@@ -66,10 +67,6 @@ public class SimpleTests {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        while (pep.getSessions().size() > 0) {
-            PepSession s = pep.getSessions().iterator().next();
-            pep.endAccess(s);
-        }
         pep.term();
         ucon.term();
     }
@@ -89,6 +86,12 @@ public class SimpleTests {
 
     @After
     public void tearDown() throws Exception {
+        while (pep.getSessions().size() > 0) {
+            PepSession s = pep.getSessions().iterator().next();
+            log.warn("Terminating {}", s);
+            s = pep.endAccess(s);
+            afterEndAccess(s);
+        }
     }
 
     private void beforeTryAccess() {
@@ -126,7 +129,6 @@ public class SimpleTests {
     
     private void afterEndAccess(PepSession response) throws Exception {
         assertFalse(pep.hasSession(response));
-        assertEquals(0, pep.getSessions().size());
         assertEquals(pdpUrlString, response.getUconUrl().toString());
         assertEquals(PepSession.Status.DELETED, response.getStatus());
     }
