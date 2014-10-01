@@ -13,6 +13,7 @@ import it.cnr.iit.retrail.commons.PepRequestAttribute;
 import it.cnr.iit.retrail.commons.PepSession;
 import it.cnr.iit.retrail.demo.UsageController;
 import it.cnr.iit.retrail.server.UConInterface;
+import it.cnr.iit.retrail.server.dal.DAL;
 import it.cnr.iit.retrail.server.impl.UCon;
 import java.io.IOException;
 import java.net.URL;
@@ -105,6 +106,7 @@ public class PIPTests {
     @Before
     public void setUp() {
         try {
+            assertEquals(0, DAL.getInstance().listSessions().size());
             pepRequest = PepAccessRequest.newInstance(
                     "fedoraRole",
                     "urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination",

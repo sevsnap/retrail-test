@@ -30,7 +30,7 @@ public class TestPIPReputation extends PIP {
     
     @Override
     public void onBeforeTryAccess(PepAccessRequest request) {
-        PepRequestAttribute subject = request.getCategories().get("urn:oasis:names:tc:xacml:1.0:subject-category:access-subject").iterator().next();
+        PepRequestAttribute subject = request.getCategory("urn:oasis:names:tc:xacml:1.0:subject-category:access-subject").iterator().next();
         String reputation = reputationMap.get(subject.value);
         if(reputation != null) {
             log.warn("subject {} has reputation {}", subject.value, reputation);
