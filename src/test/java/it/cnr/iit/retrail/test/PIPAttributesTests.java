@@ -183,7 +183,7 @@ public class PIPAttributesTests {
         assertEquals(Status.DELETED, response.getStatus());
     }
     
-    //@Test
+    @Test
     public void test1_SingleSession() throws Exception {
         log.info("testing try start end session");
         PepRequest pepRequest1 = newRequest("user1");
@@ -198,7 +198,7 @@ public class PIPAttributesTests {
         log.info("ok");
     }
     
-    //@Test
+    @Test
     public void test2_FlatAttributes() throws Exception {
         log.info("testing if concurrent sessions correctly share attributes");
         PepRequest pepRequest1 = newRequest("user1");
