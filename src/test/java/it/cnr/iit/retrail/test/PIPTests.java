@@ -7,10 +7,11 @@ package it.cnr.iit.retrail.test;
 
 import it.cnr.iit.retrail.client.PEPInterface;
 import it.cnr.iit.retrail.client.impl.PEP;
-import it.cnr.iit.retrail.commons.PepAccessRequest;
-import it.cnr.iit.retrail.commons.PepAccessResponse;
-import it.cnr.iit.retrail.commons.PepRequestAttribute;
-import it.cnr.iit.retrail.commons.PepSession;
+import it.cnr.iit.retrail.commons.impl.PepRequest;
+import it.cnr.iit.retrail.commons.impl.PepResponse;
+import it.cnr.iit.retrail.commons.impl.PepAttribute;
+import it.cnr.iit.retrail.commons.impl.PepSession;
+import it.cnr.iit.retrail.commons.Status;
 import it.cnr.iit.retrail.demo.UsageController;
 import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.dal.DAL;
@@ -46,7 +47,7 @@ public class PIPTests {
     
     static TestPIPSessions pipSessions = null;
     static TestPIPTimer pipTimer = null;
-    PepAccessRequest pepRequest = null;
+    PepRequest pepRequest = null;
 
     public PIPTests() {
     }
@@ -108,17 +109,17 @@ public class PIPTests {
     public void setUp() {
         try {
             assertEquals(0, DAL.getInstance().listSessions().size());
-            pepRequest = PepAccessRequest.newInstance(
+            pepRequest = PepRequest.newInstance(
                     "fedoraRole",
                     "urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination",
                     " ",
                     "issuer");
-            PepRequestAttribute attribute = new PepRequestAttribute(
+            PepAttribute attribute = new PepAttribute(
                     "urn:fedora:names:fedora:2.1:resource:datastream:id",
-                    PepRequestAttribute.DATATYPES.STRING,
+                    PepAttribute.DATATYPES.STRING,
                     "FOPDISSEM",
                     "issuer",
-                    PepRequestAttribute.CATEGORIES.RESOURCE);
+                    PepAttribute.CATEGORIES.RESOURCE);
             pepRequest.add(attribute);
         } catch (Exception e) {
             fail("unexpected exception: " + e.getMessage());
@@ -136,28 +137,28 @@ public class PIPTests {
     private PepSession afterTryAccess(PepSession pepSession) throws Exception {
         assertTrue(pep.hasSession(pepSession));
         assertEquals(1, pep.getSessions().size());
-        assertEquals(PepSession.Status.TRY, pepSession.getStatus());
-        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.getDecision());
+        assertEquals(Status.TRY, pepSession.getStatus());
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
         assertEquals(pdpUrlString, pepSession.getUconUrl().toString());
         return pepSession;
     }
 
     private void beforeStartAccess(PepSession pepSession) throws Exception {
-        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.getDecision());
-        assertEquals(PepSession.Status.TRY, pepSession.getStatus());
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
+        assertEquals(Status.TRY, pepSession.getStatus());
     }
 
     private void afterStartAccess(PepSession pepSession) throws Exception {
-        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.getDecision());
-        assertEquals(PepSession.Status.ONGOING, pepSession.getStatus());
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
+        assertEquals(Status.ONGOING, pepSession.getStatus());
     }
 
     private void beforeEndAccess(PepSession pepSession) throws Exception {
         assertEquals(1, pep.getSessions().size());
-        assertNotEquals(PepSession.Status.DELETED, pepSession.getStatus());
-        assertNotEquals(PepSession.Status.UNKNOWN, pepSession.getStatus());
-        assertNotEquals(PepSession.Status.REVOKED, pepSession.getStatus());
-        assertNotEquals(PepSession.Status.REJECTED, pepSession.getStatus());
+        assertNotEquals(Status.DELETED, pepSession.getStatus());
+        assertNotEquals(Status.UNKNOWN, pepSession.getStatus());
+        assertNotEquals(Status.REVOKED, pepSession.getStatus());
+        assertNotEquals(Status.REJECTED, pepSession.getStatus());
         assertTrue(pep.hasSession(pepSession));
     }
 
@@ -165,7 +166,7 @@ public class PIPTests {
         assertFalse(pep.hasSession(response));
         assertEquals(0, pep.getSessions().size());
         assertEquals(pdpUrlString, response.getUconUrl().toString());
-        assertEquals(PepSession.Status.DELETED, response.getStatus());
+        assertEquals(Status.DELETED, response.getStatus());
     }
 
     /**
@@ -217,14 +218,14 @@ public class PIPTests {
     @Test
     public void test3_TryWithBadReputation() throws Exception {
         log.info("testing access with bad reputation");
-        PepAccessRequest req = PepAccessRequest.newInstance(
+        PepRequest req = PepRequest.newInstance(
                     "fedoraBadReputation",
                     "urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination",
                     " ",
                     "issuer");
         PepSession pepSession = pep.tryAccess(req);
-        assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.getDecision());
-        assertEquals(PepSession.Status.REJECTED, pepSession.getStatus());
+        assertNotEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
+        assertEquals(Status.REJECTED, pepSession.getStatus());
         assertEquals(0, pep.getSessions().size());
         assertEquals(0, pipSessions.sessions);        
         log.info("ok");
@@ -233,14 +234,14 @@ public class PIPTests {
     @Test
     public void test3_TryWithUnknownSubject() throws Exception {
         log.info("testing access with unknown subject");
-        PepAccessRequest req = PepAccessRequest.newInstance(
+        PepRequest req = PepRequest.newInstance(
                     "unknownSubject",
                     "urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination",
                     " ",
                     "issuer");
         PepSession pepSession = pep.tryAccess(req);
-        assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession.getDecision());
-        assertEquals(PepSession.Status.REJECTED, pepSession.getStatus());
+        assertNotEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
+        assertEquals(Status.REJECTED, pepSession.getStatus());
         assertEquals(0, pep.getSessions().size());
         assertEquals(0, pipSessions.sessions);        
         log.info("ok");
@@ -255,7 +256,7 @@ public class PIPTests {
         afterTryAccess(pepSession1);
         assertEquals(0, pipSessions.sessions);
         PepSession pepSession2 = pep.tryAccess(pepRequest);
-        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession2.getDecision());
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession2.getDecision());
         assertEquals(2, pep.getSessions().size());
         assertEquals(0, pipSessions.sessions);
         pep.endAccess(pepSession2);
@@ -273,7 +274,7 @@ public class PIPTests {
         PepSession pepSession1 = pep.tryAccess(pepRequest);
         afterTryAccess(pepSession1);
         PepSession pepSession2 = pep.tryAccess(pepRequest);
-        assertEquals(PepAccessResponse.DecisionEnum.Permit, pepSession2.getDecision());
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession2.getDecision());
         assertEquals(2, pep.getSessions().size());
         beforeStartAccess(pepSession1);
         pepSession1 = pep.startAccess(pepSession1);
@@ -281,8 +282,8 @@ public class PIPTests {
         assertEquals(1, pipSessions.sessions);
         pepSession2 = pep.startAccess(pepSession2);
         assertEquals(1, pipSessions.sessions);
-        assertEquals(PepSession.Status.TRY, pepSession2.getStatus());
-        assertNotEquals(PepAccessResponse.DecisionEnum.Permit, pepSession2.getDecision());
+        assertEquals(Status.TRY, pepSession2.getStatus());
+        assertNotEquals(PepResponse.DecisionEnum.Permit, pepSession2.getDecision());
         assertEquals(2, pep.getSessions().size());
         pep.endAccess(pepSession2);
         assertEquals(1, pipSessions.sessions);
@@ -307,7 +308,7 @@ public class PIPTests {
         log.warn("ok, waiting {} ms for ucon to revoke session", ms);
         Thread.sleep(ms);
         response = pep.getSession(response.getUuid());
-        assertEquals(PepSession.Status.REVOKED, response.getStatus());
+        assertEquals(Status.REVOKED, response.getStatus());
         pep.endAccess(pepSession);
         afterEndAccess(pepSession);
         log.info("ok, 2 concurrent tries admitted");

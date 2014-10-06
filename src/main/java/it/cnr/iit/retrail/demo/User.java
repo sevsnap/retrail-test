@@ -5,9 +5,10 @@
 
 package it.cnr.iit.retrail.demo;
 
-import it.cnr.iit.retrail.commons.PepAccessRequest;
-import it.cnr.iit.retrail.commons.PepAccessResponse;
-import it.cnr.iit.retrail.commons.PepSession;
+import it.cnr.iit.retrail.commons.impl.PepRequest;
+import it.cnr.iit.retrail.commons.impl.PepResponse;
+import it.cnr.iit.retrail.commons.impl.PepSession;
+import it.cnr.iit.retrail.commons.Status;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,8 +43,8 @@ public class User {
         return id;
     }
 
-    public synchronized PepSession.Status getStatus() {
-        return pepSession == null ? PepSession.Status.UNKNOWN : pepSession.getStatus();
+    public synchronized Status getStatus() {
+        return pepSession == null ? Status.UNKNOWN : pepSession.getStatus();
     }
 
     public String getCustomId() {
@@ -58,7 +59,7 @@ public class User {
     public boolean goToDoor() {
         boolean ok = false;
         try {
-            PepAccessRequest req = PepAccessRequest.newInstance(
+            PepRequest req = PepRequest.newInstance(
                     id,
                     "urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination",
                     " ",
@@ -66,7 +67,7 @@ public class User {
             log.info("sending request: {}", req);
             pepSession = UsageController.getInstance().tryAccess(req, id);
             log.info("got decision: {}", pepSession);
-            ok = pepSession.getDecision() == PepAccessResponse.DecisionEnum.Permit;
+            ok = pepSession.getDecision() == PepResponse.DecisionEnum.Permit;
         } catch (Exception e) {
             log.error("Unexpected exception: {}", e.getMessage());
         }
@@ -77,7 +78,7 @@ public class User {
         boolean ok = false;
         try {
             pepSession = UsageController.getInstance().startAccess(pepSession);
-            ok = pepSession.getDecision() == PepAccessResponse.DecisionEnum.Permit;
+            ok = pepSession.getDecision() == PepResponse.DecisionEnum.Permit;
         } catch (Exception e) {
             log.error("Unexpected exception: {}", e.getMessage());
         }
@@ -88,7 +89,7 @@ public class User {
         boolean ok = false;
         try {
             pepSession = UsageController.getInstance().endAccess(pepSession);
-            ok = pepSession.getStatus() == PepSession.Status.DELETED;
+            ok = pepSession.getStatus() == Status.DELETED;
             pepSession.setCustomId("");
         } catch (Exception e) {
             log.error("Unexpected exception: {}", e.getMessage());

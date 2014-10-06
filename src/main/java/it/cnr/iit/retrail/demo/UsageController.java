@@ -6,7 +6,7 @@
 package it.cnr.iit.retrail.demo;
 
 import it.cnr.iit.retrail.client.impl.PEP;
-import it.cnr.iit.retrail.commons.PepSession;
+import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.impl.UCon;
 import it.cnr.iit.retrail.test.TestPIPReputation;

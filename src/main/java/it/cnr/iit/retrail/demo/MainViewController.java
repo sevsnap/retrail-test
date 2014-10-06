@@ -4,7 +4,8 @@
  */
 package it.cnr.iit.retrail.demo;
 
-import it.cnr.iit.retrail.commons.PepSession;
+import it.cnr.iit.retrail.commons.impl.PepSession;
+import it.cnr.iit.retrail.commons.Status;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -68,11 +69,11 @@ public class MainViewController extends AnchorPane implements Initializable {
             @Override
             public void handle(MouseEvent t) {
                 try {
-                    PepSession.Status prevStatus = user.getStatus();
+                    Status prevStatus = user.getStatus();
                     log.info("User: {}", user);
                     if (!user.leave()) {
                         showError("User " + userId + " is not allowed to leave");
-                    } else if (prevStatus == PepSession.Status.REVOKED || prevStatus == PepSession.Status.ONGOING) {
+                    } else if (prevStatus == Status.REVOKED || prevStatus == Status.ONGOING) {
                         showMessage("User " + userId + " jas left the room");
                         playSound("/META-INF/gui/doorShut.wav");
                         playSound("/META-INF/gui/footsteps.wav");
@@ -90,7 +91,7 @@ public class MainViewController extends AnchorPane implements Initializable {
             @Override
             public void handle(MouseEvent t) {
                 try {
-                    if (user.getStatus() == PepSession.Status.TRY) {
+                    if (user.getStatus() == Status.TRY) {
                         if (!user.enterRoom()) {
                             showError("User " + userId + " is not allowed to enter the room");
                             playSound("/META-INF/gui/denied.wav");
