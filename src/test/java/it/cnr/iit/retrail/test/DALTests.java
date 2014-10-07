@@ -182,7 +182,7 @@ public class DALTests {
         uconSession1.setUconUrl(new URL(pepUrlString));
         uconSession1.setCustomId("custom1");
         uconSession1 = dal.startSession(uconSession1, uconRequest1);        
-        UconAttribute sessions = dal.listManagedAttributes(pipSessions.getUUID()).iterator().next();
+        PepAttributeInterface sessions = dal.listManagedAttributes(pipSessions.getUUID()).iterator().next();
         assertEquals(pipSessions.id, sessions.getId());
         assertEquals(pipSessions.category, sessions.getCategory());
         assertEquals("0", sessions.getValue());
@@ -205,7 +205,7 @@ public class DALTests {
         uconSession1.setCustomId("custom1");
         uconSession1 = dal.startSession(uconSession1, uconRequest1);
         String sessionUuid = uconSession1.getUuid();
-        UconAttribute reputation = dal.listUnmanagedAttributes(pipReputation.getUUID()).iterator().next();
+        PepAttributeInterface reputation = dal.listUnmanagedAttributes(pipReputation.getUUID()).iterator().next();
         assertEquals(pipReputation.id, reputation.getId());
         assertEquals(pipReputation.category, reputation.getCategory());
         assertEquals("bronze", reputation.getValue());

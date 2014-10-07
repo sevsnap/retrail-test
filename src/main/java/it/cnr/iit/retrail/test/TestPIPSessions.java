@@ -5,6 +5,7 @@
 
 package it.cnr.iit.retrail.test;
 
+import it.cnr.iit.retrail.commons.PepAttributeInterface;
 import it.cnr.iit.retrail.commons.PepRequestInterface;
 import it.cnr.iit.retrail.commons.PepSessionInterface;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
@@ -33,7 +34,7 @@ public class TestPIPSessions extends PIP {
     @Override
     public void onBeforeTryAccess(PepRequestInterface request) {
         log.info("Number of open sessions: " + sessions);
-        PepAttribute test = newSharedAttribute(id, "http://www.w3.org/2001/XMLSchema#integer", Integer.toString(sessions), "http://localhost:8080/federation-id-prov/saml", category);
+        PepAttributeInterface test = newSharedAttribute(id, "http://www.w3.org/2001/XMLSchema#integer", Integer.toString(sessions), "http://localhost:8080/federation-id-prov/saml", category);
         request.add(test);
     }
 
@@ -41,7 +42,7 @@ public class TestPIPSessions extends PIP {
     public void onBeforeStartAccess(PepRequestInterface request, PepSessionInterface session) {
         sessions++;
         log.info("Number of open sessions: " + sessions);
-        PepAttribute test = newSharedAttribute(id, "http://www.w3.org/2001/XMLSchema#integer", Integer.toString(sessions), "http://localhost:8080/federation-id-prov/saml", category);
+        PepAttributeInterface test = newSharedAttribute(id, "http://www.w3.org/2001/XMLSchema#integer", Integer.toString(sessions), "http://localhost:8080/federation-id-prov/saml", category);
         request.add(test);
     }
     
