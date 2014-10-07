@@ -11,13 +11,11 @@ import it.cnr.iit.retrail.commons.impl.PepAttribute;
 import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.server.dal.Attribute;
 import it.cnr.iit.retrail.server.dal.DAL;
+import it.cnr.iit.retrail.server.dal.UconRequest;
 import it.cnr.iit.retrail.server.dal.UconSession;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
-import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -29,7 +27,6 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -39,6 +36,7 @@ import org.xml.sax.SAXException;
 public class DALTests {
 
     static final String pepUrlString = "http://localhost:8081";
+    static URL uconUrl;
 
     static final Logger log = LoggerFactory.getLogger(DALTests.class);
     static DAL dal = DAL.getInstance();
@@ -52,6 +50,7 @@ public class DALTests {
     @BeforeClass
     public static void setUpClass() throws Exception {
         log.warn("Setting up environment...");
+        uconUrl = new URL("http://localhost:8080");
         pipSessions = new TestPIPSessions();
         pipReputation = new TestPIPReputation();
         pipReputation.reputationMap.put("user1", "bronze");
@@ -129,29 +128,31 @@ public class DALTests {
         log.info("after teardown everything looks ok!");
     }
 
-    private PepRequest newRequest(String subjectValue) {
+    private UconRequest newRequest(String subjectValue) throws Exception {
         PepRequest pepRequest = PepRequest.newInstance(
                 subjectValue,
                 "urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination",
                 " ",
                 "issuer");
-        return pepRequest;
+        UconRequest uconRequest = new UconRequest();
+        uconRequest.copy(pepRequest);
+        return uconRequest;
     }
 
     private PepSession toPepSession(UconSession uconSession) throws Exception {
         PepSession pepSession = new PepSession(PepResponse.DecisionEnum.Permit, null);
         BeanUtils.copyProperties(pepSession, uconSession);
-        pepSession.setUconUrl(new URL(pepUrlString));
+        pepSession.setUconUrl(uconUrl);
         return pepSession;        
     }
     
     private PepSession getPepSession(String uuid) throws Exception {
-        return toPepSession(dal.getSession(uuid));
+        return toPepSession(dal.getSession(uuid, uconUrl));
     }
     
     private PepRequest getPepRequest(String uuid) throws Exception {
         // XXX Supports max 1 level parent->children
-        UconSession uconSession = dal.getSession(uuid);
+        UconSession uconSession = dal.getSession(uuid, uconUrl);
         PepRequest pepRequest = new PepRequest();
         for(Attribute a: uconSession.getAttributes()) {
             PepAttribute pepA = new PepAttribute(a.getId(), a.getType(), a.getValue(), a.getIssuer(), a.getCategory(), a.getFactory());
@@ -174,10 +175,13 @@ public class DALTests {
     
     @Test
     public void test1_SharedManagedAttribute() throws Exception {
-        PepRequest pepRequest1 = newRequest("user1");
-        pipSessions.onBeforeTryAccess(pepRequest1);
-        log.info("starting session for {}", pepRequest1);
-        UconSession uconSession1 = dal.startSession(pepRequest1, new URL(pepUrlString), "custom1");        
+        UconRequest uconRequest1 = newRequest("user1");
+        pipSessions.onBeforeTryAccess(uconRequest1);
+        log.info("starting session for {}", uconRequest1);
+        UconSession uconSession1 = new UconSession();
+        uconSession1.setUconUrl(new URL(pepUrlString));
+        uconSession1.setCustomId("custom1");
+        uconSession1 = dal.startSession(uconSession1, uconRequest1);        
         Attribute sessions = dal.listManagedAttributes(pipSessions.getUUID()).iterator().next();
         assertEquals(pipSessions.id, sessions.getId());
         assertEquals(pipSessions.category, sessions.getCategory());
@@ -186,18 +190,21 @@ public class DALTests {
         PepSession pepSession1 = new PepSession(PepResponse.DecisionEnum.Permit, null);
         BeanUtils.copyProperties(pepSession1, uconSession1);
         pepSession1.setUconUrl(new URL(pepUrlString));
-        pipSessions.onAfterTryAccess(pepRequest1, pepSession1);
+        pipSessions.onAfterTryAccess(uconRequest1, pepSession1);
         dal.endSession(uconSession1);
         assertEquals(0, dal.listManagedAttributes(pipSessions.getUUID()).size());
     }
     
     @Test
     public void test2_PrivateUnmanagedAttributeWithOneSession() throws Exception {
-        PepRequest pepRequest = newRequest("user1");
-        log.info("emulating tryAccess for {}", pepRequest);
-        pipReputation.onBeforeTryAccess(pepRequest);
-        UconSession uconSession = dal.startSession(pepRequest, new URL(pepUrlString), "custom1");
-        String sessionUuid = uconSession.getUuid();
+        UconRequest uconRequest1 = newRequest("user1");
+        log.info("emulating tryAccess for {}", uconRequest1);
+        pipReputation.onBeforeTryAccess(uconRequest1);
+        UconSession uconSession1 = new UconSession();
+        uconSession1.setUconUrl(new URL(pepUrlString));
+        uconSession1.setCustomId("custom1");
+        uconSession1 = dal.startSession(uconSession1, uconRequest1);
+        String sessionUuid = uconSession1.getUuid();
         Attribute reputation = dal.listUnmanagedAttributes(pipReputation.getUUID()).iterator().next();
         assertEquals(pipReputation.id, reputation.getId());
         assertEquals(pipReputation.category, reputation.getCategory());
@@ -206,9 +213,9 @@ public class DALTests {
         assertEquals(pipReputation.subjectId, reputation.getParent().getId());
         assertEquals(pipReputation.category, reputation.getParent().getCategory());
         assertEquals("user1", reputation.getParent().getValue());
-        pipReputation.onAfterTryAccess(pepRequest, toPepSession(uconSession));
+        pipReputation.onAfterTryAccess(uconRequest1, toPepSession(uconSession1));
         log.info("tryAccess emulated correcly");
-        dal.endSession(dal.getSession(sessionUuid));
+        dal.endSession(dal.getSession(sessionUuid, uconUrl));
         assertEquals(0, dal.listUnmanagedAttributes(pipReputation.getUUID()).size());
     }
 
@@ -224,30 +231,36 @@ public class DALTests {
     
     @Test
     public void test2_PrivateUnmanagedAttributeWithTwoSessionsShouldNotMessUp() throws Exception {
-        PepRequest pepRequest1 = newRequest("user1");
-        log.info("emulating tryAccess for {}", pepRequest1);
-        pipReputation.onBeforeTryAccess(pepRequest1);
-        UconSession uconSession1 = dal.startSession(pepRequest1, new URL(pepUrlString), "custom1");
+        UconRequest uconRequest1 = newRequest("user1");
+        log.info("emulating tryAccess for {}", uconRequest1);
+        pipReputation.onBeforeTryAccess(uconRequest1);
+        UconSession uconSession1 = new UconSession();
+        uconSession1.setUconUrl(new URL(pepUrlString));
+        uconSession1.setCustomId("custom1");
+        uconSession1 = dal.startSession(uconSession1, uconRequest1);
         String sessionUuid1 = uconSession1.getUuid();
         assertReputation(sessionUuid1, "bronze", "user1");
-        pipReputation.onAfterTryAccess(pepRequest1, toPepSession(uconSession1));
+        pipReputation.onAfterTryAccess(uconRequest1, toPepSession(uconSession1));
         log.info("tryAccess emulated correcly");
-        PepRequest pepRequest2 = newRequest("user2");
-        log.info("emulating tryAccess for {}", pepRequest2);
-        pipReputation.onBeforeTryAccess(pepRequest2);
-        UconSession uconSession2 = dal.startSession(pepRequest2, new URL(pepUrlString), "custom2");
+        UconRequest uconRequest2 = newRequest("user2");
+        log.info("emulating tryAccess for {}", uconRequest2);
+        pipReputation.onBeforeTryAccess(uconRequest2);
+        UconSession uconSession2 = new UconSession();
+        uconSession2.setUconUrl(new URL(pepUrlString));
+        uconSession2.setCustomId("custom2");
+        uconSession2 = dal.startSession(uconSession2, uconRequest2);
         String sessionUuid2 = uconSession2.getUuid();
         assertNotEquals(sessionUuid1, sessionUuid2);
         // check if added attribute is correct
         assertReputation(sessionUuid2, "gold", "user2");
         assertReputation(sessionUuid1, "bronze", "user1");
-        pipReputation.onAfterTryAccess(pepRequest2, toPepSession(uconSession2));
+        pipReputation.onAfterTryAccess(uconRequest2, toPepSession(uconSession2));
         assertReputation(sessionUuid2, "gold", "user2");
         assertReputation(sessionUuid1, "bronze", "user1");
         log.info("tryAccess emulated correcly");
-        dal.endSession(dal.getSession(sessionUuid1));
+        dal.endSession(dal.getSession(sessionUuid1, uconUrl));
         assertEquals(1, dal.listUnmanagedAttributes(pipReputation.getUUID()).size());
-        dal.endSession(dal.getSession(sessionUuid2));
+        dal.endSession(dal.getSession(sessionUuid2, uconUrl));
         assertEquals(0, dal.listUnmanagedAttributes(pipReputation.getUUID()).size());
     }
 

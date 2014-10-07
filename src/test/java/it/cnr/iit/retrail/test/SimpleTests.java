@@ -100,8 +100,8 @@ public class SimpleTests {
     }
     
     private PepSession afterTryAccess(PepSession pepSession) throws Exception {
-        assertTrue(pep.hasSession(pepSession));
         assertEquals(1, pep.getSessions().size());
+        assertTrue(pep.hasSession(pepSession));
         assertEquals(Status.TRY, pepSession.getStatus());
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
         assertEquals(pdpUrlString, pepSession.getUconUrl().toString());
