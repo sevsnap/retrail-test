@@ -9,7 +9,7 @@ import it.cnr.iit.retrail.commons.impl.PepRequest;
 import it.cnr.iit.retrail.commons.impl.PepResponse;
 import it.cnr.iit.retrail.commons.impl.PepAttribute;
 import it.cnr.iit.retrail.commons.impl.PepSession;
-import it.cnr.iit.retrail.server.dal.Attribute;
+import it.cnr.iit.retrail.server.dal.UconAttribute;
 import it.cnr.iit.retrail.server.dal.DAL;
 import it.cnr.iit.retrail.server.dal.UconRequest;
 import it.cnr.iit.retrail.server.dal.UconSession;
@@ -69,11 +69,11 @@ public class DALTests {
         pipSessions.init();
         pipReputation.init();
         //pipTimer.init();
-        Collection<Attribute> l = dal.listAttributes(new URL(pepUrlString));
+        Collection<UconAttribute> l = dal.listAttributes(new URL(pepUrlString));
         if (l.size() > 0) {
             log.error("no attribute attributed to {} should be in the dal, found {}!", pepUrlString, l.size());
         }
-        for (Attribute a : l) {
+        for (UconAttribute a : l) {
             log.error("**** listAttributes({}): {}", pepUrlString, a);
         }
         assertEquals(0, l.size());
@@ -81,7 +81,7 @@ public class DALTests {
         if (l.size() > 0) {
             log.error("no attribute should be in the dal, found {}!", l.size());
         }
-        for (Attribute a : l) {
+        for (UconAttribute a : l) {
             log.error("**** listAttributes(): {}", a);
         }
         assertEquals(0, l.size());
@@ -101,11 +101,11 @@ public class DALTests {
         //pipTimer.term();
         pipSessions.term();
         pipReputation.term();
-        Collection<Attribute> l = dal.listAttributes(new URL(pepUrlString));
+        Collection<UconAttribute> l = dal.listAttributes(new URL(pepUrlString));
         if (l.size() > 0) {
             log.error("all attributes for {} in the dal should be cleared, but found {}!", pepUrlString, l.size());
         }
-        for (Attribute a : l) {
+        for (UconAttribute a : l) {
             log.error("**** listAttributes({}): {}", pepUrlString, a);
         }
         assertEquals(0, l.size());
@@ -113,7 +113,7 @@ public class DALTests {
         if (l.size() > 0) {
             log.error(", all attributes in the dal should be cleared, but found {}!", l.size());
         }
-        for (Attribute a : l) {
+        for (UconAttribute a : l) {
             log.error("**** listAttributes(): {}", a);
         }
         assertEquals(0, l.size());
@@ -154,9 +154,9 @@ public class DALTests {
         // XXX Supports max 1 level parent->children
         UconSession uconSession = dal.getSession(uuid, uconUrl);
         PepRequest pepRequest = new PepRequest();
-        for(Attribute a: uconSession.getAttributes()) {
+        for(UconAttribute a: uconSession.getAttributes()) {
             PepAttribute pepA = new PepAttribute(a.getId(), a.getType(), a.getValue(), a.getIssuer(), a.getCategory(), a.getFactory());
-            Attribute p = (Attribute) a.getParent();
+            UconAttribute p = (UconAttribute) a.getParent();
             if(p != null) {
                 pepA.setParent(new PepAttribute(p.getId(), p.getType(), p.getValue(), p.getIssuer(), p.getCategory(), p.getFactory()));
                 log.info("HAS FOUND PARENT: {}", pepA.getParent());
@@ -182,7 +182,7 @@ public class DALTests {
         uconSession1.setUconUrl(new URL(pepUrlString));
         uconSession1.setCustomId("custom1");
         uconSession1 = dal.startSession(uconSession1, uconRequest1);        
-        Attribute sessions = dal.listManagedAttributes(pipSessions.getUUID()).iterator().next();
+        UconAttribute sessions = dal.listManagedAttributes(pipSessions.getUUID()).iterator().next();
         assertEquals(pipSessions.id, sessions.getId());
         assertEquals(pipSessions.category, sessions.getCategory());
         assertEquals("0", sessions.getValue());
@@ -205,7 +205,7 @@ public class DALTests {
         uconSession1.setCustomId("custom1");
         uconSession1 = dal.startSession(uconSession1, uconRequest1);
         String sessionUuid = uconSession1.getUuid();
-        Attribute reputation = dal.listUnmanagedAttributes(pipReputation.getUUID()).iterator().next();
+        UconAttribute reputation = dal.listUnmanagedAttributes(pipReputation.getUUID()).iterator().next();
         assertEquals(pipReputation.id, reputation.getId());
         assertEquals(pipReputation.category, reputation.getCategory());
         assertEquals("bronze", reputation.getValue());

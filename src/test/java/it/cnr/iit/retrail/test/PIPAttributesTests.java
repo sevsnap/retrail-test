@@ -14,7 +14,7 @@ import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.commons.Status;
 import it.cnr.iit.retrail.demo.UsageController;
 import it.cnr.iit.retrail.server.UConInterface;
-import it.cnr.iit.retrail.server.dal.Attribute;
+import it.cnr.iit.retrail.server.dal.UconAttribute;
 import it.cnr.iit.retrail.server.dal.DAL;
 import it.cnr.iit.retrail.server.dal.UconSession;
 import it.cnr.iit.retrail.server.impl.UCon;
@@ -120,12 +120,12 @@ public class PIPAttributesTests {
             afterEndAccess(s);
         }
         log.info("after teardown, all attributes in the dal should be cleared!");
-        Collection<Attribute> l = dal.listAttributes(new URL(pepUrlString));
-        for(Attribute a: l)
+        Collection<UconAttribute> l = dal.listAttributes(new URL(pepUrlString));
+        for(UconAttribute a: l)
             log.error("**** listAttributes({}): {}", pepUrlString, a);
         assertEquals(0, l.size());
         l = dal.listAttributes();
-        for(Attribute a: l)
+        for(UconAttribute a: l)
             log.error("**** listAttributes(): {}", a);
         assertEquals(0, l.size());
         log.info("after teardown, all sessions in the dal should be cleared!");
@@ -191,7 +191,7 @@ public class PIPAttributesTests {
         afterTryAccess(pepSession1);
         PepSession response1 = pep.startAccess(pepSession1);
         afterStartAccess(response1);
-        for(Attribute a: dal.listAttributes())
+        for(UconAttribute a: dal.listAttributes())
             log.info("************** {}", a);
         pep.endAccess(pepSession1);
         afterEndAccess(response1);
