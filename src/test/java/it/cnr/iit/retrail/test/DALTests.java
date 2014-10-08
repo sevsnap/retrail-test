@@ -125,6 +125,10 @@ public class DALTests {
             log.error("**** listSessions(): {}", s);
         }
         assertEquals(0, u.size());
+        assertEquals(0, dal.listUnmanagedAttributes(pipReputation.getUUID()).size());
+        assertEquals(0, dal.listManagedAttributes(pipReputation.getUUID()).size());
+        assertEquals(0, dal.listUnmanagedAttributes(pipSessions.getUUID()).size());
+        assertEquals(0, dal.listManagedAttributes(pipSessions.getUUID()).size());
         log.info("after teardown everything looks ok!");
     }
 
@@ -193,6 +197,7 @@ public class DALTests {
         pipSessions.onAfterTryAccess(uconRequest1, pepSession1);
         dal.endSession(uconSession1);
         assertEquals(0, dal.listManagedAttributes(pipSessions.getUUID()).size());
+        assertEquals(0, dal.listUnmanagedAttributes(pipSessions.getUUID()).size());
     }
     
     @Test

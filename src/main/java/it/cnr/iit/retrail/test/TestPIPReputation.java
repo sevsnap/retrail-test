@@ -41,7 +41,7 @@ public class TestPIPReputation extends PIP {
         PepAttributeInterface subject = request.getAttribute(category, subjectId);
         String reputation = reputationMap.get(subject.getValue());
         if(reputation != null) {
-            log.warn("subject {} has reputation {}", subject.getValue(), reputation);
+            log.warn("{} - subject {} has reputation {}", request, subject.getValue(), reputation);
             PepAttributeInterface test = newPrivateAttribute(id, "http://www.w3.org/2001/XMLSchema#string", reputation, "http://localhost:8080/federation-id-prov/saml", subject);
             // Make attribute unmanaged (automatically managed by the UCon)
             // because we set an expiry date

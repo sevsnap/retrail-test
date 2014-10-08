@@ -281,8 +281,8 @@ public class PIPTests {
         afterStartAccess(pepSession1);
         assertEquals(1, pipSessions.sessions);
         pepSession2 = pep.startAccess(pepSession2);
-        assertEquals(1, pipSessions.sessions);
         assertEquals(Status.TRY, pepSession2.getStatus());
+        assertEquals(1, pipSessions.sessions);
         assertNotEquals(PepResponse.DecisionEnum.Permit, pepSession2.getDecision());
         assertEquals(2, pep.getSessions().size());
         pep.endAccess(pepSession2);
