@@ -41,22 +41,30 @@ public class TestPIPSessions extends PIP {
     @Override
     public void onBeforeStartAccess(PepRequestInterface request, PepSessionInterface session) {
         sessions++;
-        log.info("Number of open sessions: " + sessions);
+        log.info("Number of open sessions incremented to: " + sessions);
         PepAttributeInterface test = newSharedAttribute(id, "http://www.w3.org/2001/XMLSchema#integer", Integer.toString(sessions), "http://localhost:8080/federation-id-prov/saml", category);
         request.add(test);
     }
     
     @Override
     public void onAfterStartAccess(PepRequestInterface request, PepSessionInterface session) {
-        if(session.getStatus() != Status.ONGOING)
+        if(session.getStatus() != Status.ONGOING) {
             sessions--;
+            log.info("Number of open sessions decremented to {} because status = {}", sessions, session.getStatus());
+            PepAttributeInterface test = newSharedAttribute(id, "http://www.w3.org/2001/XMLSchema#integer", Integer.toString(sessions), "http://localhost:8080/federation-id-prov/saml", category);
+            request.add(test);
+        }
         log.info("Number of open sessions: {}, status = {}", sessions, session.getStatus());
     }
     
     @Override
     public void onBeforeEndAccess(PepRequestInterface request, PepSessionInterface session) {
-        if(session.getStatus() != Status.TRY)
-           sessions--;
+        if(session.getStatus() != Status.TRY) {
+            sessions--;
+            log.info("Number of open sessions decremented to {} because status = {}", sessions, session.getStatus());
+            PepAttributeInterface test = newSharedAttribute(id, "http://www.w3.org/2001/XMLSchema#integer", Integer.toString(sessions), "http://localhost:8080/federation-id-prov/saml", category);
+            request.add(test);
+        }
         log.info("Number of open sessions: {}, status = {}", sessions, session.getStatus());
     }
     

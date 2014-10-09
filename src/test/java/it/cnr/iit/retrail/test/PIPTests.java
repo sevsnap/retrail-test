@@ -15,10 +15,13 @@ import it.cnr.iit.retrail.commons.Status;
 import it.cnr.iit.retrail.demo.UsageController;
 import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.dal.DAL;
+import it.cnr.iit.retrail.server.dal.UconSession;
 import it.cnr.iit.retrail.server.impl.UCon;
+import static it.cnr.iit.retrail.test.DALTests.dal;
 import static it.cnr.iit.retrail.test.PIPAttributesTests.pep;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
 import org.apache.xmlrpc.XmlRpcException;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -108,7 +111,15 @@ public class PIPTests {
     @Before
     public void setUp() {
         try {
-            assertEquals(0, DAL.getInstance().listSessions().size());
+            Collection<UconSession> u = dal.listSessions();
+            if (u.size() > 0) {
+                log.error("no session should be in the dal, found {}!", u.size());
+            }
+            for (UconSession s : u) {
+                log.error("**** listSessions(): {}", s);
+            }
+            assertEquals(0, u.size());
+            
             pepRequest = PepRequest.newInstance(
                     "fedoraRole",
                     "urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination",
@@ -135,9 +146,9 @@ public class PIPTests {
     }
 
     private PepSession afterTryAccess(PepSession pepSession) throws Exception {
+        assertEquals(Status.TRY, pepSession.getStatus());
         assertTrue(pep.hasSession(pepSession));
         assertEquals(1, pep.getSessions().size());
-        assertEquals(Status.TRY, pepSession.getStatus());
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
         assertEquals(pdpUrlString, pepSession.getUconUrl().toString());
         return pepSession;
@@ -174,7 +185,7 @@ public class PIPTests {
      *
      * @throws java.lang.Exception
      */
-    @Test
+    //@Test
     public void test1_TryEndCycle() throws Exception {
         log.info("testing pre-access policy only");
         beforeTryAccess();
