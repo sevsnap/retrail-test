@@ -14,11 +14,9 @@ import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.commons.Status;
 import it.cnr.iit.retrail.demo.UsageController;
 import it.cnr.iit.retrail.server.UConInterface;
-import it.cnr.iit.retrail.server.dal.DAL;
 import it.cnr.iit.retrail.server.dal.UconSession;
 import it.cnr.iit.retrail.server.impl.UCon;
 import static it.cnr.iit.retrail.test.DALTests.dal;
-import static it.cnr.iit.retrail.test.PIPAttributesTests.pep;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
@@ -259,7 +257,7 @@ public class PIPTests {
     }
 
     @Test
-    public void test4_ConcurrentTryAccess() throws Exception {
+    public void test4_ConcurrentTryAccessShouldAllowBoth() throws Exception {
         log.info("testing concurrent try access (should be allowed to both)");
         assertEquals(0, pipSessions.sessions);
         beforeTryAccess();
@@ -278,7 +276,7 @@ public class PIPTests {
     }
     
     @Test
-    public void test5_ConcurrentStartAccess() throws Exception {
+    public void test5_ConcurrentStartAccessShouldDenyTheSecondOne() throws Exception {
         log.info("testing concurrent start access (should be denied to the second one)");
         beforeTryAccess();
         assertEquals(0, pipSessions.sessions);
@@ -302,7 +300,7 @@ public class PIPTests {
         assertEquals(0, pipSessions.sessions);
         afterEndAccess(pepSession1);
         afterEndAccess(pepSession2);
-        log.info("ok, 2 concurrent tries admitted");
+        log.info("ok, 2 concurrent starts not admitted");
     }
     
     @Test
