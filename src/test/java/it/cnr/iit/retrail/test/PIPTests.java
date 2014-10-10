@@ -14,6 +14,7 @@ import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.commons.Status;
 import it.cnr.iit.retrail.demo.UsageController;
 import it.cnr.iit.retrail.server.UConInterface;
+import it.cnr.iit.retrail.server.dal.UconAttribute;
 import it.cnr.iit.retrail.server.dal.UconSession;
 import it.cnr.iit.retrail.server.impl.UCon;
 import static it.cnr.iit.retrail.test.DALTests.dal;
@@ -183,7 +184,8 @@ public class PIPTests {
      *
      * @throws java.lang.Exception
      */
-    //@Test
+    
+    @Test
     public void test1_TryEndCycle() throws Exception {
         log.info("testing pre-access policy only");
         beforeTryAccess();
@@ -196,11 +198,6 @@ public class PIPTests {
         log.info("short cycle ok");
     }
 
-    /**
-     * Test of startAccess method, of class PEP.
-     *
-     * @throws java.lang.Exception
-     */
     @Test
     public void test2_TryStartEndCycle() throws Exception {
         log.info("testing on-access policy");
@@ -264,14 +261,22 @@ public class PIPTests {
         PepSession pepSession1 = pep.tryAccess(pepRequest);
         afterTryAccess(pepSession1);
         assertEquals(0, pipSessions.sessions);
+        UconAttribute a = dal.getSharedAttribute(pipSessions.category, pipSessions.id);
+        assertEquals(1, a.getSessions().size());
         PepSession pepSession2 = pep.tryAccess(pepRequest);
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession2.getDecision());
-        assertEquals(2, pep.getSessions().size());
+        assertEquals(1, a.getSessions().size());
         assertEquals(0, pipSessions.sessions);
+        a = dal.getSharedAttribute(pipSessions.category, pipSessions.id);
+        assertEquals(2, a.getSessions().size());
         pep.endAccess(pepSession2);
+        a = dal.getSharedAttribute(pipSessions.category, pipSessions.id);
+        assertEquals(1, a.getSessions().size());
         pep.endAccess(pepSession1);
         afterEndAccess(pepSession1);
         assertEquals(0, pipSessions.sessions);
+        a = dal.getSharedAttribute(pipSessions.category, pipSessions.id);
+        assertEquals(null, a);
         log.info("ok, 2 concurrent tries admitted");
     }
     
@@ -313,7 +318,7 @@ public class PIPTests {
         beforeStartAccess(pepSession);
         PepSession response = pep.startAccess(pepSession);
         afterStartAccess(response);
-        int ms = 1000*pipTimer.getMaxDuration() + 100;
+        int ms = (int)(1000*pipTimer.getResolution()) + 1000*pipTimer.getMaxDuration() + 100;
         log.warn("ok, waiting {} ms for ucon to revoke session", ms);
         Thread.sleep(ms);
         response = pep.getSession(response.getUuid());

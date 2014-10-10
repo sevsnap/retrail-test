@@ -8,6 +8,7 @@ package it.cnr.iit.retrail.test;
 import it.cnr.iit.retrail.commons.PepAttributeInterface;
 import it.cnr.iit.retrail.commons.PepRequestInterface;
 import it.cnr.iit.retrail.commons.PepSessionInterface;
+import it.cnr.iit.retrail.server.dal.UconAttribute;
 import it.cnr.iit.retrail.server.pip.impl.StandAlonePIP;
 import org.slf4j.LoggerFactory;
 
