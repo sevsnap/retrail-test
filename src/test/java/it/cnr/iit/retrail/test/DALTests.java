@@ -47,7 +47,7 @@ public class DALTests {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        log.warn("Setting up environment...");
+        log.info("Setting up environment...");
         uconUrl = new URL("http://localhost:8080");
         pipSessions = new TestPIPSessions();
         pipReputation = new TestPIPReputation();
@@ -234,7 +234,7 @@ public class DALTests {
             r.add(a);
         }
         UconAttribute a = (UconAttribute) r.getAttribute(pipReputation.category, pipReputation.id);
-        log.error("***** reputation: {}, parent: {}", a, a.getParent());
+        //log.error("***** reputation: {}, parent: {}", a, a.getParent());
         assertNotEquals(null, a);
         assertEquals(reputation, a.getValue());
         assertEquals(forUserValue, a.getParent().getValue());

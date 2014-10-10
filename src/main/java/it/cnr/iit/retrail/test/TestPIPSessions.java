@@ -50,7 +50,7 @@ public class TestPIPSessions extends PIP {
     public void onAfterStartAccess(PepRequestInterface request, PepSessionInterface session) {
         if(session.getStatus() != Status.ONGOING) {
             sessions--;
-            log.info("Number of open sessions decremented to {} because status = {}", sessions, session.getStatus());
+            log.warn("Number of open sessions decremented to {} because session status = {}", sessions, session.getStatus());
             PepAttributeInterface test = newSharedAttribute(id, "http://www.w3.org/2001/XMLSchema#integer", Integer.toString(sessions), "http://localhost:8080/federation-id-prov/saml", category);
             request.add(test);
         }

@@ -38,6 +38,7 @@ public class TestPIPTimer extends StandAlonePIP {
     @Override
     public void onAfterStartAccess(PepRequestInterface request, PepSessionInterface session) {
         if(session.getStatus() != Status.ONGOING) {
+            log.warn("clearing timer attribute because session status = {}", session.getStatus());
             PepAttributeInterface subject = request.getAttribute("urn:oasis:names:tc:xacml:1.0:subject-category:access-subject", "urn:oasis:names:tc:xacml:1.0:subject:subject-id");
             PepAttributeInterface a = newPrivateAttribute("timer", "http://www.w3.org/2001/XMLSchema#double", "0", "http://localhost:8080/federation-id-prov/saml", subject);
             a.setExpires(new Date());
@@ -72,7 +73,7 @@ public class TestPIPTimer extends StandAlonePIP {
                     if(ttg > 0) {
                         ttg = Double.max(0, ttg - resolution); 
                         a.setValue(ttg.toString()); 
-                        log.info("awaken {}", a);
+                        log.debug("awaken {}", a);
                         notifyChanges(a);
                     }
                 }

@@ -220,6 +220,7 @@ public class PIPAttributesTests {
         log.info("ok");
     }
     
+    @Test
     public void test3_UnmanagedPrivateAttributes() throws Exception {
         log.info("testing if concurrent sessions have their own unmanaged reputation attribute");
         PepRequest pepRequest1 = newRequest("user1");
@@ -240,7 +241,7 @@ public class PIPAttributesTests {
         assertNotEquals(PepResponse.DecisionEnum.Permit, response4.getDecision());
         assertEquals(2, pipReputation.listUnmanagedAttributes().size());
         pep.endAccess(response4);
-        assertEquals(2, pipReputation.listUnmanagedAttributes().size());
+        assertEquals(1, pipReputation.listUnmanagedAttributes().size());
         log.info("ensure there has been at least 1 timer tick");
         Thread.sleep(1000);
         //assertEquals(1, pipReputation.listManagedAttributes().size());
@@ -256,7 +257,7 @@ public class PIPAttributesTests {
         log.info("ok");
     }
     
-    //@Test
+    @Test
     public void test4_HierarchicalTimeVariantAttributes() throws Exception {
         log.info("testing if concurrent sessions have their own attribute timers");
         PepRequest pepRequest1 = newRequest("user1");
@@ -272,13 +273,13 @@ public class PIPAttributesTests {
         afterStartAccess(response2);
         assertEquals(2, pipTimer.listManagedAttributes().size());
         log.warn("ok, waiting for ucon to revoke session 1");
-        Thread.sleep(2000);
+        Thread.sleep(2100+(int)(1000*pipTimer.getResolution()));
         log.info("by now session 1 must be REVOKED, whilst session 2 should be ONGOING");
         response1 = pep.getSession(response1.getUuid());
         assertEquals(Status.REVOKED, response1.getStatus());
         response2 = pep.getSession(response2.getUuid());
         assertEquals(Status.ONGOING, response2.getStatus());
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         log.warn("ok. session 2 should have been now REVOKED as well");
         response2 = pep.getSession(response2.getUuid());
         assertEquals(Status.REVOKED, response2.getStatus());
