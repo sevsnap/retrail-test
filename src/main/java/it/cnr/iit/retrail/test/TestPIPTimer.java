@@ -8,8 +8,10 @@ package it.cnr.iit.retrail.test;
 import it.cnr.iit.retrail.commons.PepAttributeInterface;
 import it.cnr.iit.retrail.commons.PepRequestInterface;
 import it.cnr.iit.retrail.commons.PepSessionInterface;
+import it.cnr.iit.retrail.commons.Status;
 import it.cnr.iit.retrail.server.dal.UconAttribute;
 import it.cnr.iit.retrail.server.pip.impl.StandAlonePIP;
+import java.util.Date;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -33,6 +35,16 @@ public class TestPIPTimer extends StandAlonePIP {
         request.add(a);
     }
 
+    @Override
+    public void onAfterStartAccess(PepRequestInterface request, PepSessionInterface session) {
+        if(session.getStatus() != Status.ONGOING) {
+            PepAttributeInterface subject = request.getAttribute("urn:oasis:names:tc:xacml:1.0:subject-category:access-subject", "urn:oasis:names:tc:xacml:1.0:subject:subject-id");
+            PepAttributeInterface a = newPrivateAttribute("timer", "http://www.w3.org/2001/XMLSchema#double", "0", "http://localhost:8080/federation-id-prov/saml", subject);
+            a.setExpires(new Date());
+            request.add(a);
+        }
+    }
+     
     public int getMaxDuration() {
         return maxDuration;
     }
