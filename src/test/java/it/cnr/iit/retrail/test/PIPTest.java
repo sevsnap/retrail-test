@@ -17,7 +17,7 @@ import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.dal.UconAttribute;
 import it.cnr.iit.retrail.server.dal.UconSession;
 import it.cnr.iit.retrail.server.impl.UCon;
-import static it.cnr.iit.retrail.test.DALTests.dal;
+import static it.cnr.iit.retrail.test.DALTest.dal;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
@@ -38,12 +38,12 @@ import org.slf4j.LoggerFactory;
  * @author oneadmin
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class PIPTests {
+public class PIPTest {
 
     static final String pdpUrlString = "http://localhost:8080";
     static final String pepUrlString = "http://localhost:8081";
 
-    static final Logger log = LoggerFactory.getLogger(PIPTests.class);
+    static final Logger log = LoggerFactory.getLogger(PIPTest.class);
     static UConInterface ucon = null;
     static PEPInterface pep = null;
     
@@ -51,7 +51,7 @@ public class PIPTests {
     static TestPIPTimer pipTimer = null;
     PepRequest pepRequest = null;
 
-    public PIPTests() {
+    public PIPTest() {
     }
 
     @BeforeClass

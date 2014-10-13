@@ -17,7 +17,7 @@ import org.junit.runners.Suite;
  * @author oneadmin
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({it.cnr.iit.retrail.test.DALTests.class,it.cnr.iit.retrail.test.SimpleTests.class,it.cnr.iit.retrail.test.PIPTests.class,it.cnr.iit.retrail.test.PIPAttributesTests.class})
+@Suite.SuiteClasses({it.cnr.iit.retrail.test.DALTest.class,it.cnr.iit.retrail.test.SimpleTest.class,it.cnr.iit.retrail.test.PIPTest.class,it.cnr.iit.retrail.test.PIPAttributesTest.class})
 public class ClientSuite {
 
     @BeforeClass

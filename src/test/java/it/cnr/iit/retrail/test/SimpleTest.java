@@ -14,7 +14,6 @@ import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.commons.Status;
 import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.impl.UCon;
-import static it.cnr.iit.retrail.test.PIPAttributesTests.pep;
 import java.io.IOException;
 import java.net.URL;
 import org.apache.xmlrpc.XmlRpcException;
@@ -35,14 +34,14 @@ import org.w3c.dom.Node;
  * @author oneadmin
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class SimpleTests {
+public class SimpleTest {
     static final String pdpUrlString = "http://localhost:8080";
-    static final Logger log = LoggerFactory.getLogger(SimpleTests.class);
+    static final Logger log = LoggerFactory.getLogger(SimpleTest.class);
     static UConInterface ucon = null;
     static PEPInterface pep = null;
     PepRequest pepRequest = null;
 
-    public SimpleTests() {
+    public SimpleTest() {
     }
 
     @BeforeClass

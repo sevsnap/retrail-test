@@ -31,18 +31,18 @@ import org.slf4j.LoggerFactory;
  * @author oneadmin
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class DALTests {
+public class DALTest {
 
     static final String pepUrlString = "http://localhost:8081";
     static URL uconUrl;
 
-    static final Logger log = LoggerFactory.getLogger(DALTests.class);
+    static final Logger log = LoggerFactory.getLogger(DALTest.class);
     static DAL dal = DAL.getInstance();
     static TestPIPReputation pipReputation;
     static TestPIPSessions pipSessions;
     static TestPIPTimer pipTimer;
 
-    public DALTests() {
+    public DALTest() {
     }
 
     @BeforeClass

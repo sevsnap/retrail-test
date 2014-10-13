@@ -65,17 +65,6 @@
         </properties>
     </action>
     <action>
-        <actionName>test</actionName>
-        <packagings>
-            <packaging>*</packaging>
-        </packagings>
-        <goals>
-            <goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>
-            <goal>test-compile</goal>
-            <goal>test</goal>
-        </goals>
-    </action>
-    <action>
         <actionName>test.single</actionName>
         <packagings>
             <packaging>*</packaging>
@@ -86,19 +75,20 @@
             <goal>surefire:test</goal>
         </goals>
         <properties>
-            <test>${packageClassName}</test>
-        </properties>
+                <test>${packageClassName}</test>
+            </properties>
     </action>
     <action>
-            <actionName>build</actionName>
-            <packagings>
-                <packaging>*</packaging>
-            </packagings>
-            <goals>
-                <goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>
-                <goal>install</goal>
-            </goals>
-        </action>
+        <actionName>build</actionName>
+        <packagings>
+            <packaging>*</packaging>
+        </packagings>
+        <goals>
+            <goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>
+            <goal>install</goal>
+            
+        </goals>
+    </action>
     <action>
             <actionName>clean</actionName>
             <packagings>
@@ -147,11 +137,15 @@
             <goals>
                 <goal>test-compile</goal>
                 <goal>surefire:test</goal>
+                
             </goals>
             <properties>
                 <test>${packageClassName}</test>
                 <forkMode>once</forkMode>
                 <maven.surefire.debug>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address}</maven.surefire.debug>
+                
+                
+                
                 <jpda.listen>true</jpda.listen>
             </properties>
         </action>
@@ -169,7 +163,7 @@
             <properties>
                 <exec.args>-classpath %classpath ${packageClassName}</exec.args>
                 <exec.executable>java</exec.executable>
-                <exec.classpathScope>${classPathScope}</exec.classpathScope>
+                <exec.classpathScope>${classPathScope}</exec.classpathScope>          
             </properties>
         </action>
     <action>
@@ -181,7 +175,9 @@
             <goals>
                 <goal>generate-sources</goal>
                 <goal>javadoc:javadoc</goal>
+                
             </goals>
         </action>
+    
    
 </actions>

@@ -38,12 +38,12 @@ import org.slf4j.LoggerFactory;
  * @author oneadmin
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class PIPAttributesTests {
+public class PIPAttributesTest {
 
     static final String pdpUrlString = "http://localhost:8080";
     static final String pepUrlString = "http://localhost:8081";
 
-    static final Logger log = LoggerFactory.getLogger(PIPAttributesTests.class);
+    static final Logger log = LoggerFactory.getLogger(PIPAttributesTest.class);
     static UConInterface ucon = null;
     static PEPInterface pep = null;
     
@@ -53,7 +53,7 @@ public class PIPAttributesTests {
     
     static DAL dal = DAL.getInstance();
 
-    public PIPAttributesTests() {
+    public PIPAttributesTest() {
     }
 
     @BeforeClass
