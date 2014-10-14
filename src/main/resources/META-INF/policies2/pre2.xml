@@ -18,4 +18,9 @@
             </AnyOf>
         </Target>
     </Rule>
+    <Rule Effect="Deny" RuleId="test:rule2"/>
+    <ObligationExpressions> 
+        <ObligationExpression ObligationId="sayWelcome" FulfillOn="Permit"/> 
+        <ObligationExpression ObligationId="sayStandOff" FulfillOn="Deny"/> 
+    </ObligationExpressions> 
 </Policy>

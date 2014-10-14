@@ -47,6 +47,7 @@ public class UsageController extends PEP {
             TestPIPReputation reputation = new TestPIPReputation();
             reputation.reputationMap.put("Carniani", "bronze");
             reputation.reputationMap.put("Mori", "bronze");
+            reputation.reputationMap.put("visitor", "none");
             ucon.addPIP(reputation);
             pipTimer = new TestPIPTimer(10);
             ucon.addPIP(pipTimer);
@@ -75,6 +76,11 @@ public class UsageController extends PEP {
     @Override
     public synchronized void onRevokeAccess(PepSession session) throws Exception {
         log.warn("Firing RevokeEvent for user {}!", session.getCustomId());
-        application.onUserMustLeaveRoom(session.getCustomId());
+        application.onRevoke(session);
+    }
+    
+    @Override
+    public synchronized void onObligation(PepSession session, String obligation) throws Exception {
+        application.onObligation(session, obligation);  
     }
 }

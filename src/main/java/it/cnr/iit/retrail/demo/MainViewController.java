@@ -5,6 +5,7 @@
 package it.cnr.iit.retrail.demo;
 
 import it.cnr.iit.retrail.commons.Status;
+import it.cnr.iit.retrail.commons.impl.PepSession;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -67,7 +68,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                     Status prevStatus = user.getStatus();
                     log.info("User: {}", user);
                     if (!user.leave()) {
-                        showError("User " + userId + " is not allowed to leave");
+                        showError("User " + userId + " is not allowed to enter the room");
                     } else if (prevStatus == Status.REVOKED || prevStatus == Status.ONGOING) {
                         showMessage("User " + userId + " jas left the room");
                         playSound("/META-INF/gui/doorShut.wav");
@@ -88,20 +89,16 @@ public class MainViewController extends AnchorPane implements Initializable {
                 try {
                     if (user.getStatus() == Status.TRY) {
                         if (!user.enterRoom()) {
-                            showError("User " + userId + " is not allowed to enter the room");
-                            playSound("/META-INF/gui/denied.wav");
+                            showError("User " + userId + " is not allowed to enter the room!");
                         } else {
                             showMessage("User " + userId + " entered the room");
                             playSound("/META-INF/gui/doorShut.wav");
-                            playSound("/META-INF/gui/entrance.wav");
                         }
                     } else if (!user.goToDoor()) {
                         showError("User " + userId + " is not allowed to stand at the door");
-                        playSound("/META-INF/gui/tryFail.wav");
                     } else {
                         showMessage("User " + userId + " standing in front of the door");
                         playSound("/META-INF/gui/footsteps.wav");
-                        playSound("/META-INF/gui/tryOk.wav");
                     }
                     updateUserView(userView);
                 } catch (Exception ex) {
@@ -128,12 +125,12 @@ public class MainViewController extends AnchorPane implements Initializable {
                     try {
                         showMessage("Policy changed: only one person at a time is now allowed");
                         policyButton.setText("One at a time");
-                        UsageController.changePoliciesTo("/META-INF/policies1/pre1.xml","/META-INF/policies1/on1.xml");
+                        UsageController.changePoliciesTo("/META-INF/policies1/pre1.xml", "/META-INF/policies1/on1.xml");
                     } catch (Exception ex) {
                         log.error(ex.getMessage());
                     }
                 }
-            }); 
+            });
             MenuItem policy2;
             policy2 = new MenuItem("Two people");
             policy2.setOnAction(new EventHandler<ActionEvent>() {
@@ -142,12 +139,12 @@ public class MainViewController extends AnchorPane implements Initializable {
                     try {
                         showMessage("Policy changed: only 2 people at a time are now allowed");
                         policyButton.setText("Two people");
-                        UsageController.changePoliciesTo("/META-INF/policies2/pre2.xml","/META-INF/policies2/on2.xml");
+                        UsageController.changePoliciesTo("/META-INF/policies2/pre2.xml", "/META-INF/policies2/on2.xml");
                     } catch (Exception ex) {
                         log.error(ex.getMessage());
                     }
                 }
-            }); 
+            });
             policyButton.getItems().setAll(policy1, policy2);
 
         } catch (Exception ex) {
@@ -236,13 +233,14 @@ public class MainViewController extends AnchorPane implements Initializable {
         tt.play();
     }
 
-    public void onUserMustLeaveRoom(final String userId) {
+    public void onRevoke(final PepSession session) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                String userId = session.getCustomId();
+                showError("Access for user " + userId + " revoked!");
                 try {
-                    showError("User " + userId + " must leave room immediately!");
-                    playSound("/META-INF/gui/revoked.wav");
+
                     if (user1.getId().equals(userId)) {
                         updateUserView(user1);
                     } else if (user2.getId().equals(userId)) {
@@ -265,5 +263,29 @@ public class MainViewController extends AnchorPane implements Initializable {
     private void showMessage(String message) {
         errorMessage.setTextFill(Color.WHITE);
         errorMessage.setText(message);
+    }
+
+    public void onObligation(PepSession session, String obligation) {
+        log.info("*** Obligation {} received!", obligation);
+        switch (obligation) {
+            case "sayWelcome":
+                playSound("/META-INF/gui/tryOk.wav");
+                break;
+            case "sayStandOff":
+                playSound("/META-INF/gui/tryFail.wav");
+                break;
+            case "sayDetected":
+                playSound("/META-INF/gui/entrance.wav");
+                break;
+            case "sayDenied":
+                playSound("/META-INF/gui/denied.wav");
+                break;
+            case "sayRevoked":
+                playSound("/META-INF/gui/revoked.wav");
+                break;
+            default:
+                log.error("Unknown obligation: {} -- ignoring", obligation);
+                break;
+        }
     }
 }

@@ -9,6 +9,8 @@ import it.cnr.iit.retrail.commons.impl.PepRequest;
 import it.cnr.iit.retrail.commons.impl.PepResponse;
 import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.commons.Status;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +58,10 @@ public class User {
     }
 
     
+    public PepSession getSession() {
+        return pepSession;
+    }
+
     public boolean goToDoor() {
         boolean ok = false;
         try {
