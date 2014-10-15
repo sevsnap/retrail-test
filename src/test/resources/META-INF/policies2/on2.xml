@@ -33,4 +33,5 @@
             </AnyOf>
         </Target>
     </Rule>
+    <Rule Effect="Deny" RuleId="test:rule2"/>
 </Policy>

@@ -26,4 +26,9 @@
             </AnyOf>
         </Target>
     </Rule>
+    <Rule Effect="Deny" RuleId="test:rule2"/>
+    <ObligationExpressions> 
+        <ObligationExpression ObligationId="sayDenied" FulfillOn="Deny"/> 
+        <ObligationExpression ObligationId="sayDetected" FulfillOn="Permit"/> 
+    </ObligationExpressions> 
 </Policy>
