@@ -35,8 +35,15 @@ public class UsageController extends PEP {
     static public void changePoliciesTo(String prePath, String onPath) {
         ucon.setPreauthPolicy(UsageController.class.getResource(prePath));
         ucon.setOngoingPolicy(UsageController.class.getResource(onPath));
+        ucon.setPostPolicy((URL)null);
     }
     
+    static public void changePoliciesTo(String prePath, String onPath, String postPath) {
+        ucon.setPreauthPolicy(UsageController.class.getResource(prePath));
+        ucon.setOngoingPolicy(UsageController.class.getResource(onPath));
+        ucon.setPostPolicy(UsageController.class.getResource(postPath));
+    }
+
     static public UsageController getInstance() throws Exception {
         if (instance == null) {
             log.info("Setting up Ucon embedded server...");

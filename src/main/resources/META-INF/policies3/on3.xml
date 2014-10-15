@@ -9,15 +9,15 @@
                 <AllOf>
                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:double-less-than">
                         <AttributeDesignator AttributeId="timer" 
-                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
-                                             DataType="http://www.w3.org/2001/XMLSchema#double" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
+                     Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
+                     DataType="http://www.w3.org/2001/XMLSchema#double" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
                         </AttributeDesignator>
                         <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#double">0</AttributeValue>
                     </Match>
                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:integer-greater-than">
                         <AttributeDesignator AttributeId="openSessions" 
-                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
-                                             DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
+                     Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
+                     DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
                         </AttributeDesignator>
                         <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">2</AttributeValue>
                     </Match>
@@ -28,7 +28,7 @@
     </Rule>
     <Rule Effect="Deny" RuleId="test:rule2"/>
     <ObligationExpressions> 
-        <ObligationExpression ObligationId="sayDenied" FulfillOn="Deny"/> 
+        <ObligationExpression ObligationId="sayRevoked" FulfillOn="Deny"/> 
         <ObligationExpression ObligationId="showUser" FulfillOn="Deny"/> 
         <ObligationExpression ObligationId="sayDetected" FulfillOn="Permit"/> 
         <ObligationExpression ObligationId="hideUser" FulfillOn="Permit"/> 

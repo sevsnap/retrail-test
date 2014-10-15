@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -145,7 +147,21 @@ public class MainViewController extends AnchorPane implements Initializable {
                     }
                 }
             });
-            policyButton.getItems().setAll(policy1, policy2);
+            MenuItem policy3;
+            policy3 = new MenuItem("One cam inside");
+            policy3.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    try {
+                        showMessage("Policy changed: only one cam inside room");
+                        policyButton.setText("One cam inside");
+                        UsageController.changePoliciesTo("/META-INF/policies3/pre3.xml", "/META-INF/policies3/on3.xml", "/META-INF/policies3/post3.xml");
+                    } catch (Exception ex) {
+                        log.error(ex.getMessage());
+                    }
+                }
+            });
+            policyButton.getItems().setAll(policy1, policy2, policy3);
 
         } catch (Exception ex) {
             log.error(ex.getMessage());
@@ -182,6 +198,13 @@ public class MainViewController extends AnchorPane implements Initializable {
         }).start();
     }
 
+    private void setUserViewText(BorderPane userView, String text) {
+        Label label = (Label) userView.getBottom();
+        label.setTextAlignment(TextAlignment.CENTER);
+        label.setAlignment(Pos.CENTER);
+        label.setText(text);
+    }
+
     private void updateUserView(BorderPane userView) throws Exception {
         String name;
         int x;
@@ -190,37 +213,30 @@ public class MainViewController extends AnchorPane implements Initializable {
         ImageView icon = (ImageView) userView.getCenter();
         ImageView leftArrow = (ImageView) userView.getLeft();
         ImageView rightArrow = (ImageView) userView.getRight();
-        Label label = (Label) userView.getBottom();
-        label.setTextAlignment(TextAlignment.CENTER);
-        label.setAlignment(Pos.CENTER);
         switch (user.getStatus()) {
             default:
                 name = "/META-INF/gui/userGray.png";
                 x = 0;
                 leftArrow.setVisible(false);
                 rightArrow.setVisible(true);
-                label.setText(user.getCustomId());
                 break;
             case TRY:
                 name = "/META-INF/gui/userBlue.png";
                 x = 250;
                 leftArrow.setVisible(true);
                 rightArrow.setVisible(true);
-                label.setText(user.getCustomId());
                 break;
             case ONGOING:
                 name = "/META-INF/gui/userGreen.png";
                 x = 520;
                 leftArrow.setVisible(true);
                 rightArrow.setVisible(false);
-                label.setText(user.getUuid());
                 break;
             case REVOKED:
                 name = "/META-INF/gui/userRed.png";
                 x = 450;
                 leftArrow.setVisible(true);
                 rightArrow.setVisible(false);
-                label.setText(user.getCustomId());
                 break;
         }
         Image image;
@@ -233,6 +249,15 @@ public class MainViewController extends AnchorPane implements Initializable {
         tt.play();
     }
 
+    private BorderPane findUserView(String userId) {
+        if (user1.getId().equals(userId)) {
+            return user1;
+        } else if (user2.getId().equals(userId)) {
+            return user2;
+        }
+        return user3;
+    }
+
     public void onRevoke(final PepSession session) {
         Platform.runLater(new Runnable() {
             @Override
@@ -240,14 +265,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                 String userId = session.getCustomId();
                 showError("Access for user " + userId + " revoked!");
                 try {
-
-                    if (user1.getId().equals(userId)) {
-                        updateUserView(user1);
-                    } else if (user2.getId().equals(userId)) {
-                        updateUserView(user2);
-                    } else {
-                        updateUserView(user3);
-                    }
+                    updateUserView(findUserView(userId));
                 } catch (Exception ex) {
                     log.error(ex.getMessage());
                 }
@@ -265,27 +283,53 @@ public class MainViewController extends AnchorPane implements Initializable {
         errorMessage.setText(message);
     }
 
-    public void onObligation(PepSession session, String obligation) {
+    public void onObligation(PepSession session, final String obligation) throws Exception {
         log.info("*** Obligation {} received!", obligation);
-        switch (obligation) {
-            case "sayWelcome":
-                playSound("/META-INF/gui/tryOk.wav");
-                break;
-            case "sayStandOff":
-                playSound("/META-INF/gui/tryFail.wav");
-                break;
-            case "sayDetected":
-                playSound("/META-INF/gui/entrance.wav");
-                break;
-            case "sayDenied":
-                playSound("/META-INF/gui/denied.wav");
-                break;
-            case "sayRevoked":
-                playSound("/META-INF/gui/revoked.wav");
-                break;
-            default:
-                log.error("Unknown obligation: {} -- ignoring", obligation);
-                break;
-        }
+        final String userId = session.getCustomId();
+        final String obscuredId = session.getUuid();
+        final BorderPane userView = findUserView(userId);
+        final User user = User.getInstance(userId);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                switch (obligation) {
+                    case "sayWelcome":
+                        playSound("/META-INF/gui/tryOk.wav");
+                        break;
+                    case "sayStandOff":
+                        playSound("/META-INF/gui/tryFail.wav");
+                        break;
+                    case "sayDetected":
+                        playSound("/META-INF/gui/entrance.wav");
+                        break;
+                    case "sayDenied":
+                        playSound("/META-INF/gui/denied.wav");
+                        break;
+                    case "sayRevoked":
+                        playSound("/META-INF/gui/revoked.wav");
+                        break;
+                    case "showUser":
+                        setUserViewText(userView, userId);
+                        break;
+                    case "hideUser":
+                        setUserViewText(userView, obscuredId);
+                        break;
+                    case "startAccess":
+                        user.enterRoom();
+                         {
+                            try {
+                                updateUserView(findUserView(userId));
+                            } catch (Exception ex) {
+                                Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                        showMessage("user entered room");
+                        break;
+                    default:
+                        log.error("Unknown obligation: {} -- ignoring", obligation);
+                        break;
+                }
+            }
+        });
     }
 }
