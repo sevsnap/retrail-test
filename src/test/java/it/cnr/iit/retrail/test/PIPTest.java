@@ -335,14 +335,19 @@ public class PIPTest {
         PepSession pepSession = pep.tryAccess(pepRequest);
         afterTryAccess(pepSession);
         beforeStartAccess(pepSession);
+        pepSession.getLocalInfo().put("tryThis", "itsOk");
         PepSession response = pep.startAccess(pepSession);
         afterStartAccess(response);
+        assertNotNull(response.getLocalInfo());
+        assertEquals("itsOk", response.getLocalInfo().get("tryThis"));
         int ms = (int) (1000 * pipTimer.getResolution()) + 1000 * pipTimer.getMaxDuration() + 100;
         log.warn("ok, waiting {} ms for ucon to revoke session", ms);
         Thread.sleep(ms);
         response = pep.getSession(response.getUuid());
         assertEquals(Status.REVOKED, response.getStatus());
         assertEquals("sayDenied", lastObligation);
+        assertNotNull(response.getLocalInfo());
+        assertEquals("itsOk", response.getLocalInfo().get("tryThis"));
         pep.endAccess(pepSession);
         afterEndAccess(pepSession);
 
