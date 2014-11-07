@@ -2,7 +2,6 @@
  * CNR - IIT
  * Coded by: 2014 Enrico "KMcC;) Carniani
  */
-
 package it.cnr.iit.retrail.test;
 
 import it.cnr.iit.retrail.commons.PepAttributeInterface;
@@ -10,7 +9,9 @@ import it.cnr.iit.retrail.commons.PepRequestInterface;
 import it.cnr.iit.retrail.commons.PepSessionInterface;
 import it.cnr.iit.retrail.commons.Status;
 import it.cnr.iit.retrail.server.dal.UconAttribute;
+import it.cnr.iit.retrail.server.dal.UconSession;
 import it.cnr.iit.retrail.server.pip.impl.StandAlonePIP;
+import java.util.Collection;
 import java.util.Date;
 import org.slf4j.LoggerFactory;
 
@@ -19,15 +20,17 @@ import org.slf4j.LoggerFactory;
  * @author kicco
  */
 public class TestPIPTimer extends StandAlonePIP {
+
     protected int maxDuration;
-        protected double resolution = 1.0;
+    protected double resolution = 1.0;
+    protected Status forStatus = Status.ONGOING;
 
     public TestPIPTimer(int maxDuration) {
         super();
         this.log = LoggerFactory.getLogger(TestPIPTimer.class);
         this.maxDuration = maxDuration;
     }
-    
+
     @Override
     public void onBeforeStartAccess(PepRequestInterface request, PepSessionInterface session) {
         PepAttributeInterface subject = request.getAttribute("urn:oasis:names:tc:xacml:1.0:subject-category:access-subject", "urn:oasis:names:tc:xacml:1.0:subject:subject-id");
@@ -37,7 +40,7 @@ public class TestPIPTimer extends StandAlonePIP {
 
     @Override
     public void onAfterStartAccess(PepRequestInterface request, PepSessionInterface session) {
-        if(session.getStatus() != Status.ONGOING) {
+        if (session.getStatus() != Status.ONGOING) {
             log.warn("clearing timer attribute because session status = {}", session.getStatus());
             PepAttributeInterface subject = request.getAttribute("urn:oasis:names:tc:xacml:1.0:subject-category:access-subject", "urn:oasis:names:tc:xacml:1.0:subject:subject-id");
             PepAttributeInterface a = newPrivateAttribute("timer", "http://www.w3.org/2001/XMLSchema#double", "0", "http://localhost:8080/federation-id-prov/saml", subject);
@@ -45,7 +48,7 @@ public class TestPIPTimer extends StandAlonePIP {
             request.add(a);
         }
     }
-     
+
     public int getMaxDuration() {
         return maxDuration;
     }
@@ -61,20 +64,33 @@ public class TestPIPTimer extends StandAlonePIP {
     public void setResolution(double resolution) {
         this.resolution = resolution;
     }
-    
+
+    public Status getForStatus() {
+        return forStatus;
+    }
+
+    public void setForStatus(Status forStatus) {
+        this.forStatus = forStatus;
+    }
+
     @Override
     public void run() {
         boolean interrupted = false;
-        while(!interrupted) {
+        while (!interrupted) {
             try {
-                Thread.sleep((int)(1000*resolution));
-                for(PepAttributeInterface a: listManagedAttributes()) {
-                    Double ttg = Double.parseDouble(a.getValue());
-                    if(ttg > 0) {
-                        ttg = Double.max(0, ttg - resolution); 
-                        a.setValue(ttg.toString()); 
-                        log.debug("awaken {}", a);
-                        notifyChanges(a);
+                Thread.sleep((int) (1000 * resolution));
+                for (PepAttributeInterface a : listManagedAttributes()) {
+                    UconAttribute u = (UconAttribute) a;
+                    Collection<UconSession> sl = u.getSessions();
+                    UconSession s = sl.iterator().next();
+                    if (s.getStatus() == forStatus) {
+                        Double ttg = Double.parseDouble(a.getValue());
+                        if (ttg > 0) {
+                            ttg = Double.max(0, ttg - resolution);
+                            a.setValue(ttg.toString());
+                            log.debug("awaken {}", a);
+                            notifyChanges(a);
+                        }
                     }
                 }
             } catch (InterruptedException ex) {
@@ -86,5 +102,5 @@ public class TestPIPTimer extends StandAlonePIP {
         }
         log.info("exiting");
     }
-    
+
 }

@@ -74,6 +74,7 @@ public class PIPAttributesTest {
             ucon.addPIP(pipReputation);
             pipTimer = new TestPIPTimer(3);
             pipTimer.setResolution(0.25);
+            pipTimer.setForStatus(Status.ONGOING);
             ucon.addPIP(pipTimer);
             ucon.init();
 
