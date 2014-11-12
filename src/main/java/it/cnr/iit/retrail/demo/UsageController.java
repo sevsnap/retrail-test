@@ -32,23 +32,24 @@ public class UsageController extends PEP {
         this.application = application;
     }
     
-    static public void changePoliciesTo(String prePath, String onPath) {
-        ucon.setPreauthPolicy(UsageController.class.getResource(prePath));
-        ucon.setOngoingPolicy(UsageController.class.getResource(onPath));
-        ucon.setPostPolicy((URL)null);
+    static public void changePoliciesTo(String prePath, String onPath, String postPath, String tryStartPath, String tryEndPath) {
+        ucon.setPolicy(UConInterface.PolicyEnum.PRE, UsageController.class.getResource(prePath));
+        ucon.setPolicy(UConInterface.PolicyEnum.ON, UsageController.class.getResource(onPath));
+        ucon.setPolicy(UConInterface.PolicyEnum.POST, UsageController.class.getResource(postPath));
+        ucon.setPolicy(UConInterface.PolicyEnum.TRYSTART, UsageController.class.getResource(tryStartPath));
+        ucon.setPolicy(UConInterface.PolicyEnum.TRYEND, UsageController.class.getResource(tryEndPath));
     }
     
-    static public void changePoliciesTo(String prePath, String onPath, String postPath) {
-        ucon.setPreauthPolicy(UsageController.class.getResource(prePath));
-        ucon.setOngoingPolicy(UsageController.class.getResource(onPath));
-        ucon.setPostPolicy(UsageController.class.getResource(postPath));
-    }
-
     static public UsageController getInstance() throws Exception {
         if (instance == null) {
             log.info("Setting up Ucon embedded server...");
             ucon = UCon.getInstance();
-            changePoliciesTo("/META-INF/policies1/pre1.xml","/META-INF/policies1/on1.xml");
+            changePoliciesTo("/META-INF/policies1/pre1.xml",
+                             "/META-INF/policies1/on1.xml",
+                             "/META-INF/policies1/post1.xml",
+                             "/META-INF/policies1/trystart1.xml",
+                             "/META-INF/policies1/tryend1.xml"
+            );
             pipSessions = new TestPIPSessions();
             ucon.addPIP(pipSessions);
             TestPIPReputation reputation = new TestPIPReputation();

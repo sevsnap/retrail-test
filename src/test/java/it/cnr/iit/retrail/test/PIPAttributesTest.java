@@ -9,7 +9,6 @@ import it.cnr.iit.retrail.client.PEPInterface;
 import it.cnr.iit.retrail.client.impl.PEP;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
 import it.cnr.iit.retrail.commons.impl.PepResponse;
-import it.cnr.iit.retrail.commons.impl.PepAttribute;
 import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.commons.Status;
 import it.cnr.iit.retrail.demo.UsageController;
@@ -62,8 +61,8 @@ public class PIPAttributesTest {
         try {
             // start server
             ucon = UCon.getInstance();
-            ucon.setPreauthPolicy(UsageController.class.getResource("/META-INF/policies2/pre2.xml"));
-            ucon.setOngoingPolicy(UsageController.class.getResource("/META-INF/policies2/on2.xml"));
+            ucon.setPolicy(UConInterface.PolicyEnum.PRE, UsageController.class.getResource("/META-INF/policies2/pre2.xml"));
+            ucon.setPolicy(UConInterface.PolicyEnum.ON, UsageController.class.getResource("/META-INF/policies2/on2.xml"));
             pipSessions = new TestPIPSessions();
             ucon.addPIP(pipSessions);
             pipReputation = new TestPIPReputation();

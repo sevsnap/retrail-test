@@ -60,8 +60,8 @@ public class PIPTest {
         try {
             // start server
             ucon = UCon.getInstance();
-            ucon.setPreauthPolicy(UsageController.class.getResource("/META-INF/policies1/pre1.xml"));
-            ucon.setOngoingPolicy(UsageController.class.getResource("/META-INF/policies1/on1.xml"));
+            ucon.setPolicy(UConInterface.PolicyEnum.PRE, UsageController.class.getResource("/META-INF/policies1/pre1.xml"));
+            ucon.setPolicy(UConInterface.PolicyEnum.ON, UsageController.class.getResource("/META-INF/policies1/on1.xml"));
             pipSessions = new TestPIPSessions();
             ucon.addPIP(pipSessions);
             TestPIPReputation reputation = new TestPIPReputation();
