@@ -22,7 +22,5 @@
     <ObligationExpressions> 
         <ObligationExpression ObligationId="sayRevoked" FulfillOn="Deny"/> 
         <ObligationExpression ObligationId="showUser" FulfillOn="Deny"/> 
-        <ObligationExpression ObligationId="sayDetected" FulfillOn="Permit"/> 
-        <ObligationExpression ObligationId="hideUser" FulfillOn="Permit"/> 
     </ObligationExpressions> 
 </Policy>
