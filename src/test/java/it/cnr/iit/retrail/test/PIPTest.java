@@ -61,6 +61,7 @@ public class PIPTest {
             // start server
             ucon = UCon.getInstance();
             ucon.setPolicy(UConInterface.PolicyEnum.PRE, UsageController.class.getResource("/META-INF/policies1/pre1.xml"));
+            ucon.setPolicy(UConInterface.PolicyEnum.TRYSTART, UsageController.class.getResource("/META-INF/policies1/trystart1.xml"));
             ucon.setPolicy(UConInterface.PolicyEnum.ON, UsageController.class.getResource("/META-INF/policies1/on1.xml"));
             pipSessions = new TestPIPSessions();
             ucon.addPIP(pipSessions);

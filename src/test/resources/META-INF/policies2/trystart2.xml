@@ -7,6 +7,13 @@
         <Target>
             <AnyOf>
                 <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">bronze</AttributeValue>
+                        <AttributeDesignator AttributeId="reputation" 
+                     Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
+                     DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
+                        </AttributeDesignator>
+                    </Match>
                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:double-less-than">
                         <AttributeDesignator AttributeId="timer" 
                      Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
@@ -19,7 +26,7 @@
                      Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
                      DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
                         </AttributeDesignator>
-                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">2</AttributeValue>
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">3</AttributeValue>
                     </Match>
 
                 </AllOf>
@@ -27,7 +34,4 @@
         </Target>
     </Rule>
     <Rule Effect="Deny" RuleId="test:rule2"/>
-    <ObligationExpressions> 
-        <ObligationExpression ObligationId="sayDenied" FulfillOn="Deny"/> 
-    </ObligationExpressions> 
 </Policy>
