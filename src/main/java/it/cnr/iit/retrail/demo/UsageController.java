@@ -12,6 +12,7 @@ import it.cnr.iit.retrail.server.impl.UCon;
 import it.cnr.iit.retrail.test.TestPIPReputation;
 import it.cnr.iit.retrail.test.TestPIPSessions;
 import it.cnr.iit.retrail.test.TestPIPTimer;
+import java.io.File;
 import java.net.URL;
 import java.net.UnknownHostException;
 
@@ -19,7 +20,7 @@ import org.apache.xmlrpc.XmlRpcException;
 
 public class UsageController extends PEP {
 
-    static public final String pdpUrlString = "http://localhost:8080";
+    static public final String pdpUrlString = "http://146.48.99.121:8080";
     static private final String pepUrlString = "http://localhost:8081";
     static private UsageController instance = null;
     static private UConInterface ucon = null;
@@ -43,7 +44,7 @@ public class UsageController extends PEP {
     static public UsageController getInstance() throws Exception {
         if (instance == null) {
             log.info("Setting up Ucon embedded server...");
-            ucon = UCon.getInstance();
+            ucon = UCon.getInstance(new URL(pdpUrlString));
             changePoliciesTo("/META-INF/policies1/pre1.xml",
                              "/META-INF/policies1/on1.xml",
                              "/META-INF/policies1/post1.xml",
@@ -68,6 +69,7 @@ public class UsageController extends PEP {
             // ucon status (the first heartbeat is waited by init()).
             instance.setAccessRecoverableByDefault(false);
             instance.init();        // We should have no sessions now
+            instance.client.startRecording(new File("retrailRecord.xml"));
         }
         return instance;
     }

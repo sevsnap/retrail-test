@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<retrailRecorder>
+<record ms="15005">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>UCon.heartbeat</methodName><params><param><value>http://localhost:8081</value></param><param><value><array><data/></array></value></param></params></methodCall>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:dom><Heartbeat><Responses/><Config watchdogPeriod="15" maxMissedHeartbeats="1"/></Heartbeat></ex:dom></value></param></params></methodResponse>
+</record>
+<record ms="29466">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>UCon.tryAccess</methodName><params><param><value><ex:dom><Request xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ReturnPolicyIdList="false" CombinedDecision="false"><Attributes Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"><Attribute Issuer="issuer" IncludeInResult="false" AttributeId="urn:oasis:names:tc:xacml:1.0:resource:resource-id"><AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string"/></Attribute></Attributes><Attributes Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"><Attribute Issuer="issuer" IncludeInResult="false" AttributeId="urn:oasis:names:tc:xacml:1.0:subject:subject-id"><AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Carniani</AttributeValue></Attribute></Attributes><Attributes Category="urn:oasis:names:tc:xacml:3.0:attribute-category:action"><Attribute Issuer="issuer" IncludeInResult="false" AttributeId="urn:oasis:names:tc:xacml:1.0:action:action-id"><AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination</AttributeValue></Attribute></Attributes></Request></ex:dom></value></param><param><value>http://localhost:8081</value></param><param><value>Carniani</value></param></params></methodCall>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:dom><Response><Result><Decision>Permit</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status><Obligations><Obligation ObligationId="sayWelcome"/><Obligation ObligationId="showUser"/></Obligations></Result><Session uuid="035E4852-5EA5-4C37-B83C-793D1441EC50" uconUrl="http://146.48.99.121:8080" status="TRY" customId="Carniani"/></Response></ex:dom></value></param></params></methodResponse>
+</record>
+<record ms="30019">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>UCon.heartbeat</methodName><params><param><value>http://localhost:8081</value></param><param><value><array><data><value>035E4852-5EA5-4C37-B83C-793D1441EC50</value></data></array></value></param></params></methodCall>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:dom><Heartbeat><Responses/><Config watchdogPeriod="15" maxMissedHeartbeats="1"/></Heartbeat></ex:dom></value></param></params></methodResponse>
+</record>
+<record ms="45038">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>UCon.heartbeat</methodName><params><param><value>http://localhost:8081</value></param><param><value><array><data><value>035E4852-5EA5-4C37-B83C-793D1441EC50</value></data></array></value></param></params></methodCall>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:dom><Heartbeat><Responses/><Config watchdogPeriod="15" maxMissedHeartbeats="1"/></Heartbeat></ex:dom></value></param></params></methodResponse>
+</record>
+<record ms="60049">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>UCon.heartbeat</methodName><params><param><value>http://localhost:8081</value></param><param><value><array><data><value>035E4852-5EA5-4C37-B83C-793D1441EC50</value></data></array></value></param></params></methodCall>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:dom><Heartbeat><Responses/><Config watchdogPeriod="15" maxMissedHeartbeats="1"/></Heartbeat></ex:dom></value></param></params></methodResponse>
+</record>
+<record ms="75060">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>UCon.heartbeat</methodName><params><param><value>http://localhost:8081</value></param><param><value><array><data><value>035E4852-5EA5-4C37-B83C-793D1441EC50</value></data></array></value></param></params></methodCall>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:dom><Heartbeat><Responses/><Config watchdogPeriod="15" maxMissedHeartbeats="1"/></Heartbeat></ex:dom></value></param></params></methodResponse>
+</record>
+<record ms="90073">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>UCon.heartbeat</methodName><params><param><value>http://localhost:8081</value></param><param><value><array><data><value>035E4852-5EA5-4C37-B83C-793D1441EC50</value></data></array></value></param></params></methodCall>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:dom><Heartbeat><Responses/><Config watchdogPeriod="15" maxMissedHeartbeats="1"/></Heartbeat></ex:dom></value></param></params></methodResponse>
+</record>
+<record ms="105089">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>UCon.heartbeat</methodName><params><param><value>http://localhost:8081</value></param><param><value><array><data><value>035E4852-5EA5-4C37-B83C-793D1441EC50</value></data></array></value></param></params></methodCall>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:dom><Heartbeat><Responses/><Config watchdogPeriod="15" maxMissedHeartbeats="1"/></Heartbeat></ex:dom></value></param></params></methodResponse>
+</record>
+<record ms="120210">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>UCon.heartbeat</methodName><params><param><value>http://localhost:8081</value></param><param><value><array><data><value>035E4852-5EA5-4C37-B83C-793D1441EC50</value></data></array></value></param></params></methodCall>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:dom><Heartbeat><Responses/><Config watchdogPeriod="15" maxMissedHeartbeats="1"/></Heartbeat></ex:dom></value></param></params></methodResponse>
+</record>
+<record ms="135221">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>UCon.heartbeat</methodName><params><param><value>http://localhost:8081</value></param><param><value><array><data><value>035E4852-5EA5-4C37-B83C-793D1441EC50</value></data></array></value></param></params></methodCall>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:dom><Heartbeat><Responses/><Config watchdogPeriod="15" maxMissedHeartbeats="1"/></Heartbeat></ex:dom></value></param></params></methodResponse>
+</record>
+<record ms="150230">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>UCon.heartbeat</methodName><params><param><value>http://localhost:8081</value></param><param><value><array><data><value>035E4852-5EA5-4C37-B83C-793D1441EC50</value></data></array></value></param></params></methodCall>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:dom><Heartbeat><Responses/><Config watchdogPeriod="15" maxMissedHeartbeats="1"/></Heartbeat></ex:dom></value></param></params></methodResponse>
+</record>
+<record ms="165240">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>UCon.heartbeat</methodName><params><param><value>http://localhost:8081</value></param><param><value><array><data><value>035E4852-5EA5-4C37-B83C-793D1441EC50</value></data></array></value></param></params></methodCall>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:dom><Heartbeat><Responses/><Config watchdogPeriod="15" maxMissedHeartbeats="1"/></Heartbeat></ex:dom></value></param></params></methodResponse>
+</record>
+<record ms="180253">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>UCon.heartbeat</methodName><params><param><value>http://localhost:8081</value></param><param><value><array><data><value>035E4852-5EA5-4C37-B83C-793D1441EC50</value></data></array></value></param></params></methodCall>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:dom><Heartbeat><Responses/><Config watchdogPeriod="15" maxMissedHeartbeats="1"/></Heartbeat></ex:dom></value></param></params></methodResponse>
+</record>
+<record ms="195263">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>UCon.heartbeat</methodName><params><param><value>http://localhost:8081</value></param><param><value><array><data><value>035E4852-5EA5-4C37-B83C-793D1441EC50</value></data></array></value></param></params></methodCall>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:dom><Heartbeat><Responses/><Config watchdogPeriod="15" maxMissedHeartbeats="1"/></Heartbeat></ex:dom></value></param></params></methodResponse>
+</record>
+<record ms="210273">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>UCon.heartbeat</methodName><params><param><value>http://localhost:8081</value></param><param><value><array><data><value>035E4852-5EA5-4C37-B83C-793D1441EC50</value></data></array></value></param></params></methodCall>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:dom><Heartbeat><Responses/><Config watchdogPeriod="15" maxMissedHeartbeats="1"/></Heartbeat></ex:dom></value></param></params></methodResponse>
+</record>
+<record ms="225285">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>UCon.heartbeat</methodName><params><param><value>http://localhost:8081</value></param><param><value><array><data><value>035E4852-5EA5-4C37-B83C-793D1441EC50</value></data></array></value></param></params></methodCall>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:dom><Heartbeat><Responses/><Config watchdogPeriod="15" maxMissedHeartbeats="1"/></Heartbeat></ex:dom></value></param></params></methodResponse>
+</record>
