@@ -20,17 +20,24 @@ import org.slf4j.LoggerFactory;
  */
 
 public class TestPIPReputation extends PIP {
-    public final Map<String, String> reputationMap;
+    protected final Map<String, String> reputationMap;
         
     public final String id = "reputation";
     public final String category = "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject";
     public final String subjectId = "urn:oasis:names:tc:xacml:1.0:subject:subject-id";
     
-    
     public TestPIPReputation() {
         super();
         this.reputationMap = new HashMap<>();
         this.log = LoggerFactory.getLogger(TestPIPReputation.class);
+    }
+    
+    public void put(String subject, String reputation) {
+        reputationMap.put(subject, reputation);
+    }
+    
+    public String get(String subject) {
+        return reputationMap.get(subject);
     }
     
     @Override
