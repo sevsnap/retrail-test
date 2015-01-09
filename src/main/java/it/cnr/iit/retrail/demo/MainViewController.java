@@ -4,8 +4,10 @@
  */
 package it.cnr.iit.retrail.demo;
 
+import it.cnr.iit.retrail.client.impl.Replay;
 import it.cnr.iit.retrail.commons.Status;
 import it.cnr.iit.retrail.commons.impl.PepSession;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -16,12 +18,14 @@ import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 
 import javafx.scene.image.ImageView;
@@ -31,6 +35,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -56,9 +62,15 @@ public class MainViewController extends AnchorPane implements Initializable {
     Label errorMessage;
     @FXML
     MenuButton policyButton;
+    @FXML
+    ToggleButton recButton;
+    @FXML
+    ToggleButton playButton;
 
     static final org.slf4j.Logger log = LoggerFactory.getLogger(MainViewController.class);
-
+   
+    private Replay replay = new Replay();
+    
     private void addListeners(final BorderPane userView) throws Exception {
         final String userId = userView.getId();
         final User user = User.getInstance(userId);
@@ -117,69 +129,130 @@ public class MainViewController extends AnchorPane implements Initializable {
             addListeners(user1);
             addListeners(user2);
             addListeners(user3);
-            policyButton.setText("One at a time");
+            recButton.setOnAction(new EventHandler<ActionEvent>() {
+
+                @Override
+                public void handle(ActionEvent event) {
+                    try {
+                        if (recButton.isSelected()) {
+                            UsageController.getInstance().client.startRecording(new File("retrailRecord.xml"));
+                            recButton.setText("OFF");
+                        } else {
+                            UsageController.getInstance().client.stopRecording();
+                            recButton.setText("REC");
+                        }
+                    } catch (Exception ex) {
+                        log.error("while handling recButton event: {}", ex);
+                    }
+                }
+            });
+            playButton.setOnAction(new EventHandler<ActionEvent>() {
+
+                @Override
+                public void handle(ActionEvent event) {
+                    if (playButton.isSelected()) {
+                        try {
+                            FileChooser fileChooser = new FileChooser();
+                            fileChooser.setTitle("Open Resource File");
+                            fileChooser.getExtensionFilters().addAll(
+                                    new FileChooser.ExtensionFilter("XML Files", "*.xml"),
+                                    new FileChooser.ExtensionFilter("All Files", "*.*"));
+                            Stage mainStage = (Stage) playButton.getScene().getWindow();
+                            File selectedFile = fileChooser.showOpenDialog(mainStage);
+                            if(selectedFile != null) {
+                                playButton.setText("STOP");
+                                replay.play(selectedFile, UsageController.getInstance());
+                            } else playButton.setSelected(false);
+                        } catch (Exception ex) {
+                            log.error("while replaying: {}", ex);
+                        }
+                    } else {
+                        playButton.setText("PLAY");
+                        try {
+                            replay.stop();
+                        } catch (Exception ex) {
+                            log.error("while stopping: {}", ex);
+                        }
+                    }
+                }
+            });
+            policyButton.setText(
+                    "One at a time");
             policyButton.setTextFill(Paint.valueOf("black"));
             MenuItem policy1;
             policy1 = new MenuItem("One at a time");
-            policy1.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    try {
-                        showMessage("Policy changed: only one person at a time is now allowed");
-                        policyButton.setText("One at a time");
-                        UsageController.changePoliciesTo(
-                                "/META-INF/policies1/pre1.xml", 
-                                "/META-INF/policies1/on1.xml",
-                                "/META-INF/policies1/post1.xml", 
-                                "/META-INF/policies1/trystart1.xml", 
-                                "/META-INF/policies1/tryend1.xml"
-                        );
-                    } catch (Exception ex) {
-                        log.error(ex.getMessage());
+
+            policy1.setOnAction(
+                    new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event
+                        ) {
+                            try {
+                                showMessage("Policy changed: only one person at a time is now allowed");
+                                policyButton.setText("One at a time");
+                                UsageController.changePoliciesTo(
+                                        "/META-INF/policies1/pre1.xml",
+                                        "/META-INF/policies1/on1.xml",
+                                        "/META-INF/policies1/post1.xml",
+                                        "/META-INF/policies1/trystart1.xml",
+                                        "/META-INF/policies1/tryend1.xml"
+                                );
+                            } catch (Exception ex) {
+                                log.error(ex.getMessage());
+                            }
+                        }
                     }
-                }
-            });
+            );
             MenuItem policy2;
             policy2 = new MenuItem("Two people");
-            policy2.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    try {
-                        showMessage("Policy changed: only 2 people at a time are now allowed");
-                        policyButton.setText("Two people");
-                        UsageController.changePoliciesTo(
-                                "/META-INF/policies2/pre2.xml", 
-                                "/META-INF/policies2/on2.xml",
-                                "/META-INF/policies2/post2.xml", 
-                                "/META-INF/policies2/trystart2.xml", 
-                                "/META-INF/policies2/tryend2.xml"
-                        );
-                    } catch (Exception ex) {
-                        log.error(ex.getMessage());
+
+            policy2.setOnAction(
+                    new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event
+                        ) {
+                            try {
+                                showMessage("Policy changed: only 2 people at a time are now allowed");
+                                policyButton.setText("Two people");
+                                UsageController.changePoliciesTo(
+                                        "/META-INF/policies2/pre2.xml",
+                                        "/META-INF/policies2/on2.xml",
+                                        "/META-INF/policies2/post2.xml",
+                                        "/META-INF/policies2/trystart2.xml",
+                                        "/META-INF/policies2/tryend2.xml"
+                                );
+                            } catch (Exception ex) {
+                                log.error(ex.getMessage());
+                            }
+                        }
                     }
-                }
-            });
+            );
             MenuItem policy3;
             policy3 = new MenuItem("One cam inside");
-            policy3.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    try {
-                        showMessage("Policy changed: only one cam inside room");
-                        policyButton.setText("One cam inside");
-                        UsageController.changePoliciesTo(
-                                "/META-INF/policies3/pre3.xml", 
-                                "/META-INF/policies3/on3.xml", 
-                                "/META-INF/policies3/post3.xml",
-                                "/META-INF/policies3/trystart3.xml",
-                                "/META-INF/policies3/tryend3.xml"
-                        );
-                    } catch (Exception ex) {
-                        log.error(ex.getMessage());
+
+            policy3.setOnAction(
+                    new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event
+                        ) {
+                            try {
+                                showMessage("Policy changed: only one cam inside room");
+                                policyButton.setText("One cam inside");
+                                UsageController.changePoliciesTo(
+                                        "/META-INF/policies3/pre3.xml",
+                                        "/META-INF/policies3/on3.xml",
+                                        "/META-INF/policies3/post3.xml",
+                                        "/META-INF/policies3/trystart3.xml",
+                                        "/META-INF/policies3/tryend3.xml"
+                                );
+                            } catch (Exception ex) {
+                                log.error(ex.getMessage());
+                            }
+                        }
                     }
-                }
-            });
-            policyButton.getItems().setAll(policy1, policy2, policy3);
+            );
+            policyButton.getItems()
+                    .setAll(policy1, policy2, policy3);
 
         } catch (Exception ex) {
             log.error(ex.getMessage());

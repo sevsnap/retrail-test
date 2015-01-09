@@ -70,7 +70,6 @@ public class UsageController extends PEP {
             // ucon status (the first heartbeat is waited by init()).
             instance.setAccessRecoverableByDefault(false);
             instance.init();        // We should have no sessions now
-            instance.client.startRecording(new File("retrailRecord.xml"));
         }
         return instance;
     }
