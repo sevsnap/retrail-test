@@ -135,11 +135,22 @@ public class MainViewController extends AnchorPane implements Initializable {
                 public void handle(ActionEvent event) {
                     try {
                         if (recButton.isSelected()) {
-                            UsageController.getInstance().client.startRecording(new File("retrailRecord.xml"));
-                            recButton.setText("OFF");
+                            FileChooser fileChooser = new FileChooser();
+                            fileChooser.setTitle("Save Retrail File");
+                            fileChooser.getExtensionFilters().addAll(
+                                    new FileChooser.ExtensionFilter("XML Files", "*.xml"),
+                                    new FileChooser.ExtensionFilter("All Files", "*.*"));
+                            Stage mainStage = (Stage) playButton.getScene().getWindow();
+                            File selectedFile = fileChooser.showSaveDialog(mainStage);
+                            if(selectedFile != null) {
+                                UsageController.getInstance().client.startRecording(selectedFile);
+                                recButton.setText("OFF");
+                                playButton.setDisable(true);
+                            } else recButton.setSelected(false);
                         } else {
                             UsageController.getInstance().client.stopRecording();
                             recButton.setText("REC");
+                            playButton.setDisable(false);
                         }
                     } catch (Exception ex) {
                         log.error("while handling recButton event: {}", ex);
@@ -153,7 +164,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                     if (playButton.isSelected()) {
                         try {
                             FileChooser fileChooser = new FileChooser();
-                            fileChooser.setTitle("Open Resource File");
+                            fileChooser.setTitle("Open etrail File");
                             fileChooser.getExtensionFilters().addAll(
                                     new FileChooser.ExtensionFilter("XML Files", "*.xml"),
                                     new FileChooser.ExtensionFilter("All Files", "*.*"));
@@ -161,6 +172,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                             File selectedFile = fileChooser.showOpenDialog(mainStage);
                             if(selectedFile != null) {
                                 playButton.setText("STOP");
+                                recButton.setDisable(true);
                                 replay.play(selectedFile, UsageController.getInstance());
                             } else playButton.setSelected(false);
                         } catch (Exception ex) {
@@ -168,6 +180,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                         }
                     } else {
                         playButton.setText("PLAY");
+                        recButton.setDisable(false);
                         try {
                             replay.stop();
                         } catch (Exception ex) {
@@ -384,8 +397,9 @@ public class MainViewController extends AnchorPane implements Initializable {
             @Override
             public void run() {
                 switch (obligation) {
-                    case "sayWelcome":
+                    case "sayWelcome": 
                         playSound("/META-INF/gui/tryOk.wav");
+
                         break;
                     case "sayStandOff":
                         playSound("/META-INF/gui/tryFail.wav");
@@ -411,7 +425,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                             try {
                                 updateUserView(findUserView(userId));
                             } catch (Exception ex) {
-                                Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
+                                log.error("while executing obligation: {}", ex);
                             }
                         }
                         showMessage("user entered room");

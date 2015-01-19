@@ -12,7 +12,6 @@ import it.cnr.iit.retrail.server.impl.UCon;
 import it.cnr.iit.retrail.test.TestPIPReputation;
 import it.cnr.iit.retrail.test.TestPIPSessions;
 import it.cnr.iit.retrail.test.TestPIPTimer;
-import java.io.File;
 import java.net.URL;
 import java.net.UnknownHostException;
 
@@ -20,7 +19,7 @@ import org.apache.xmlrpc.XmlRpcException;
 
 public class UsageController extends PEP {
 
-    static public final String pdpUrlString = "http://146.48.99.121:8080";
+    static public final String pdpUrlString = "http://0.0.0.0:8080";
     static private final String pepUrlString = "http://localhost:8081";
     static private UsageController instance = null;
     static private UConInterface ucon = null;
