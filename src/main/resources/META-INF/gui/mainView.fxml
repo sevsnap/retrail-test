@@ -14,7 +14,7 @@
 
 <AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="800.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.cnr.iit.retrail.demo.MainViewController">
   <children>
-    <AnchorPane id="anchorPane2" prefHeight="416.0" prefWidth="747.0" styleClass="top-segment" AnchorPane.bottomAnchor="31.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <AnchorPane id="anchorPane2" prefHeight="412.0" prefWidth="800.0" styleClass="top-segment" AnchorPane.bottomAnchor="38.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <BorderPane id="Mori" fx:id="user2" layoutX="13.0" layoutY="158.0" prefHeight="90.0" prefWidth="130.0">
                <left>
@@ -106,26 +106,26 @@
                   </ImageView>
                </right>
             </BorderPane>
-            <ImageView disable="true" fitHeight="453.0" fitWidth="369.0" layoutX="364.0" layoutY="14.0" opacity="0.76" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="10.0">
+            <ImageView disable="true" fitHeight="453.0" fitWidth="369.0" layoutX="424.0" layoutY="5.0" opacity="0.76" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="5.0">
                <image>
                   <Image url="@plan.png" />
                </image>
             </ImageView>
-            <MenuButton fx:id="policyButton" layoutX="599.0" layoutY="387.0" mnemonicParsing="false" text="MenuButton">
+            <MenuButton fx:id="policyButton" layoutX="605.0" layoutY="374.0" mnemonicParsing="false" text="MenuButton">
               <items>
                 <MenuItem mnemonicParsing="false" text="Action 1" />
                 <MenuItem mnemonicParsing="false" text="Action 2" />
               </items>
             </MenuButton>
-            <ToggleButton fx:id="recButton" layoutX="12.0" layoutY="383.0" mnemonicParsing="false" text="REC" />
-            <ToggleButton fx:id="playButton" layoutX="63.0" layoutY="383.0" mnemonicParsing="false" text="PLAY" />
          </children>
     </AnchorPane>
-    <HBox id="hBox1" alignment="CENTER" layoutX="7.0" layoutY="419.0" prefHeight="24.0" prefWidth="732.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="8.0">
+    <HBox id="hBox1" alignment="CENTER" layoutX="125.0" layoutY="419.0" prefHeight="34.0" prefWidth="667.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="125.0" AnchorPane.rightAnchor="8.0">
       <children>
         <Label id="label2" fx:id="errorMessage" />
       </children>
     </HBox>
+      <ToggleButton fx:id="recButton" layoutX="4.0" layoutY="418.0" mnemonicParsing="false" text="REC" />
+      <ToggleButton fx:id="playButton" layoutX="53.0" layoutY="418.0" mnemonicParsing="false" text="PLAY" />
   </children>
   <stylesheets>
     <URL value="@mainView.css" />
