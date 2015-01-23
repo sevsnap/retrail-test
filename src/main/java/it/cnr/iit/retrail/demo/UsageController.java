@@ -12,6 +12,7 @@ import it.cnr.iit.retrail.server.impl.UCon;
 import it.cnr.iit.retrail.test.TestPIPReputation;
 import it.cnr.iit.retrail.test.TestPIPSessions;
 import it.cnr.iit.retrail.test.TestPIPTimer;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 
@@ -32,7 +33,7 @@ public class UsageController extends PEP {
         this.application = application;
     }
     
-    static public void changePoliciesTo(String prePath, String onPath, String postPath, String tryStartPath, String tryEndPath) {
+    static public void changePoliciesTo(String prePath, String onPath, String postPath, String tryStartPath, String tryEndPath) throws MalformedURLException {
         ucon.setPolicy(UConInterface.PolicyEnum.PRE, UsageController.class.getResource(prePath));
         ucon.setPolicy(UConInterface.PolicyEnum.ON, UsageController.class.getResource(onPath));
         ucon.setPolicy(UConInterface.PolicyEnum.POST, UsageController.class.getResource(postPath));
