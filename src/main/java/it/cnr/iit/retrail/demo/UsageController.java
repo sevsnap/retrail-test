@@ -33,7 +33,7 @@ public class UsageController extends PEP {
         this.application = application;
     }
     
-    static public void changePoliciesTo(String prePath, String onPath, String postPath, String tryStartPath, String tryEndPath) throws MalformedURLException {
+    static public void changePoliciesTo(String prePath, String onPath, String postPath, String tryStartPath, String tryEndPath) throws Exception {
         ucon.setPolicy(UConInterface.PolicyEnum.PRE, UsageController.class.getResource(prePath));
         ucon.setPolicy(UConInterface.PolicyEnum.ON, UsageController.class.getResource(onPath));
         ucon.setPolicy(UConInterface.PolicyEnum.POST, UsageController.class.getResource(postPath));
