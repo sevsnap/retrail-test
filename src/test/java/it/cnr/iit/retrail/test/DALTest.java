@@ -4,6 +4,7 @@
  */
 package it.cnr.iit.retrail.test;
 
+import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
 import it.cnr.iit.retrail.commons.PepAttributeInterface;
 import it.cnr.iit.retrail.commons.Status;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
@@ -39,7 +40,7 @@ public class DALTest {
     static final Logger log = LoggerFactory.getLogger(DALTest.class);
     static DAL dal = DAL.getInstance();
     static TestPIPReputation pipReputation;
-    static TestPIPSessions pipSessions;
+    static PIPSessions pipSessions;
     static TestPIPTimer pipTimer;
 
     public DALTest() {
@@ -49,7 +50,7 @@ public class DALTest {
     public static void setUpClass() throws Exception {
         log.info("Setting up environment...");
         uconUrl = new URL("http://localhost:8080");
-        pipSessions = new TestPIPSessions();
+        pipSessions = new PIPSessions();
         pipReputation = new TestPIPReputation();
         pipReputation.reputationMap.put("user1", "bronze");
         pipReputation.reputationMap.put("user2", "gold");

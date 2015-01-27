@@ -5,6 +5,7 @@
 
 package it.cnr.iit.retrail.test;
 
+import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
 import it.cnr.iit.retrail.client.PEPInterface;
 import it.cnr.iit.retrail.client.impl.PEP;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
@@ -46,7 +47,7 @@ public class PIPAttributesTest {
     static UConInterface ucon = null;
     static PEPInterface pep = null;
     
-    static TestPIPSessions pipSessions = null;
+    static PIPSessions pipSessions = null;
     static TestPIPTimer pipTimer = null;
     static TestPIPReputation pipReputation = null;
     
@@ -64,7 +65,7 @@ public class PIPAttributesTest {
             ucon.setPolicy(UConInterface.PolicyEnum.PRE, UsageController.class.getResource("/META-INF/policies2/pre2.xml"));
             ucon.setPolicy(UConInterface.PolicyEnum.TRYSTART, UsageController.class.getResource("/META-INF/policies2/trystart2.xml"));
             ucon.setPolicy(UConInterface.PolicyEnum.ON, UsageController.class.getResource("/META-INF/policies2/on2.xml"));
-            pipSessions = new TestPIPSessions();
+            pipSessions = new PIPSessions();
             ucon.addPIP(pipSessions);
             pipReputation = new TestPIPReputation();
             pipReputation.reputationMap.put("user1", "bronze");

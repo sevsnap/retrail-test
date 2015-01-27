@@ -4,6 +4,7 @@
  */
 package it.cnr.iit.retrail.test;
 
+import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
 import it.cnr.iit.retrail.client.PEPInterface;
 import it.cnr.iit.retrail.client.impl.PEP;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
@@ -46,7 +47,7 @@ public class PIPTest {
     static UConInterface ucon = null;
     static PEPInterface pep = null;
 
-    static TestPIPSessions pipSessions = null;
+    static PIPSessions pipSessions = null;
     static TestPIPTimer pipTimer = null;
     PepRequest pepRequest = null;
     static String lastObligation = null;
@@ -63,7 +64,7 @@ public class PIPTest {
             ucon.setPolicy(UConInterface.PolicyEnum.PRE, UsageController.class.getResource("/META-INF/policies1/pre1.xml"));
             ucon.setPolicy(UConInterface.PolicyEnum.TRYSTART, UsageController.class.getResource("/META-INF/policies1/trystart1.xml"));
             ucon.setPolicy(UConInterface.PolicyEnum.ON, UsageController.class.getResource("/META-INF/policies1/on1.xml"));
-            pipSessions = new TestPIPSessions();
+            pipSessions = new PIPSessions();
             ucon.addPIP(pipSessions);
             TestPIPReputation reputation = new TestPIPReputation();
             reputation.reputationMap.put("fedoraRole", "bronze");
@@ -220,23 +221,23 @@ public class PIPTest {
     @Test
     public void test2_TryStartEndCycle() throws Exception {
         log.info("testing on-access policy");
-        assertEquals(0, pipSessions.sessions);
+        assertEquals(0, pipSessions.getSessions());
         beforeTryAccess();
         PepSession pepSession = pep.tryAccess(pepRequest);
         afterTryAccess(pepSession);
-        assertEquals(0, pipSessions.sessions);
+        assertEquals(0, pipSessions.getSessions());
         beforeStartAccess(pepSession);
         PepSession startResponse = pep.startAccess(pepSession);
         afterStartAccess(startResponse);
         afterStartAccess(pepSession);
-        assertEquals(1, pipSessions.sessions);
+        assertEquals(1, pipSessions.getSessions());
         beforeEndAccess(startResponse);
         beforeEndAccess(pepSession);
         PepSession endResponse = pep.endAccess(startResponse);
         afterEndAccess(endResponse);
         afterEndAccess(startResponse);
         afterEndAccess(pepSession);
-        assertEquals(0, pipSessions.sessions);
+        assertEquals(0, pipSessions.getSessions());
         log.info("ok");
     }
 
@@ -252,7 +253,7 @@ public class PIPTest {
         assertEquals(PepResponse.DecisionEnum.Deny, pepSession.getDecision());
         assertEquals(Status.REJECTED, pepSession.getStatus());
         assertEquals(0, pep.getSessions().size());
-        assertEquals(0, pipSessions.sessions);
+        assertEquals(0, pipSessions.getSessions());
         assertEquals("sayStandOff", lastObligation);
         log.info("ok");
     }
@@ -269,24 +270,24 @@ public class PIPTest {
         assertNotEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
         assertEquals(Status.REJECTED, pepSession.getStatus());
         assertEquals(0, pep.getSessions().size());
-        assertEquals(0, pipSessions.sessions);
+        assertEquals(0, pipSessions.getSessions());
         log.info("ok");
     }
 
     @Test
     public void test4_ConcurrentTryAccessShouldAllowBoth() throws Exception {
         log.info("testing concurrent try access (should be allowed to both)");
-        assertEquals(0, pipSessions.sessions);
+        assertEquals(0, pipSessions.getSessions());
         beforeTryAccess();
         PepSession pepSession1 = pep.tryAccess(pepRequest);
         afterTryAccess(pepSession1);
-        assertEquals(0, pipSessions.sessions);
+        assertEquals(0, pipSessions.getSessions());
         UconAttribute a = dal.getSharedAttribute(pipSessions.category, pipSessions.id);
         assertEquals(1, a.getSessions().size());
         PepSession pepSession2 = pep.tryAccess(pepRequest);
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession2.getDecision());
         assertEquals(1, a.getSessions().size());
-        assertEquals(0, pipSessions.sessions);
+        assertEquals(0, pipSessions.getSessions());
         a = dal.getSharedAttribute(pipSessions.category, pipSessions.id);
         assertEquals(2, a.getSessions().size());
         pep.endAccess(pepSession2);
@@ -294,7 +295,7 @@ public class PIPTest {
         assertEquals(1, a.getSessions().size());
         pep.endAccess(pepSession1);
         afterEndAccess(pepSession1);
-        assertEquals(0, pipSessions.sessions);
+        assertEquals(0, pipSessions.getSessions());
         a = dal.getSharedAttribute(pipSessions.category, pipSessions.id);
         assertEquals(null, a);
         log.info("ok, 2 concurrent tries admitted");
@@ -304,7 +305,7 @@ public class PIPTest {
     public void test5_ConcurrentStartAccessShouldDenyTheSecondOne() throws Exception {
         log.info("testing concurrent start access (should be denied to the second one)");
         beforeTryAccess();
-        assertEquals(0, pipSessions.sessions);
+        assertEquals(0, pipSessions.getSessions());
         PepSession pepSession1 = pep.tryAccess(pepRequest);
         afterTryAccess(pepSession1);
         PepSession pepSession2 = pep.tryAccess(pepRequest);
@@ -313,16 +314,16 @@ public class PIPTest {
         beforeStartAccess(pepSession1);
         pepSession1 = pep.startAccess(pepSession1);
         afterStartAccess(pepSession1);
-        assertEquals(1, pipSessions.sessions);
+        assertEquals(1, pipSessions.getSessions());
         pepSession2 = pep.startAccess(pepSession2);
         assertEquals(Status.TRY, pepSession2.getStatus());
-        assertEquals(1, pipSessions.sessions);
+        assertEquals(1, pipSessions.getSessions());
         assertNotEquals(PepResponse.DecisionEnum.Permit, pepSession2.getDecision());
         assertEquals(2, pep.getSessions().size());
         pep.endAccess(pepSession2);
-        assertEquals(1, pipSessions.sessions);
+        assertEquals(1, pipSessions.getSessions());
         pep.endAccess(pepSession1);
-        assertEquals(0, pipSessions.sessions);
+        assertEquals(0, pipSessions.getSessions());
         afterEndAccess(pepSession1);
         afterEndAccess(pepSession2);
         log.info("ok, 2 concurrent starts not admitted");
@@ -332,7 +333,7 @@ public class PIPTest {
     public void test6_AccessTooLong() throws Exception {
         log.info("testing prolonged access (should be denied after 2 secs)");
         beforeTryAccess();
-        assertEquals(0, pipSessions.sessions);
+        assertEquals(0, pipSessions.getSessions());
         PepSession pepSession = pep.tryAccess(pepRequest);
         afterTryAccess(pepSession);
         beforeStartAccess(pepSession);

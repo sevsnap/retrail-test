@@ -10,7 +10,7 @@ import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.impl.UCon;
 import it.cnr.iit.retrail.test.TestPIPReputation;
-import it.cnr.iit.retrail.test.TestPIPSessions;
+import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
 import it.cnr.iit.retrail.test.TestPIPTimer;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,7 +25,7 @@ public class UsageController extends PEP {
     static private UsageController instance = null;
     static private UConInterface ucon = null;
 
-    static private TestPIPSessions pipSessions;
+    static private PIPSessions pipSessions;
     static private TestPIPTimer pipTimer;
     private MainViewController application = null;
     
@@ -51,7 +51,7 @@ public class UsageController extends PEP {
                              "/META-INF/policies1/trystart1.xml",
                              "/META-INF/policies1/tryend1.xml"
             );
-            pipSessions = new TestPIPSessions();
+            pipSessions = new PIPSessions();
             ucon.addPIP(pipSessions);
             TestPIPReputation reputation = new TestPIPReputation();
             reputation.put("Carniani", "bronze");
