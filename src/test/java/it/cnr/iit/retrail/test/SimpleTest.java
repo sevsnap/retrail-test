@@ -49,10 +49,10 @@ public class SimpleTest {
         log.warn("Setting up environment...");
         try {
             // start server
-            ucon = UCon.getInstance();
+            URL pdpUrl = new URL(pdpUrlString);
+            ucon = UCon.getInstance(pdpUrl);
             ucon.init();
             // start client
-            URL pdpUrl = new URL(pdpUrlString);
             URL myUrl = new URL("http://localhost:8081");
             pep = new PEP(pdpUrl, myUrl);
             // clean up previous sessions, if any, by clearing the recoverable
@@ -485,7 +485,7 @@ public class SimpleTest {
     public void test9_EndTryWithNull() throws Exception {
         log.info("start");
         try {
-            PepSession pepSession = ((PEP)pep).endAccess(null, null);
+            PepSession pepSession = ((PEP)pep).endAccess((String)null, null);
             //assertNotEquals(PepResponse.DecisionEnum.Permit, pepSession.decision);
             fail("Must throw XmlRcpException, got instead " +  pepSession);
         } catch(XmlRpcException e) {

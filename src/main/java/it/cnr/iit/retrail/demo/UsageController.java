@@ -74,7 +74,7 @@ public class UsageController extends PEP {
         return instance;
     }
 
-    private UsageController(URL pdpUrl, URL myUrl) throws XmlRpcException, UnknownHostException {
+    private UsageController(URL pdpUrl, URL myUrl) throws Exception {
         super(pdpUrl, myUrl);
     }
     
