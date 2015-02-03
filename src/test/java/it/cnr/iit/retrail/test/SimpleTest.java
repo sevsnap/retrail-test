@@ -7,20 +7,16 @@ package it.cnr.iit.retrail.test;
 
 import it.cnr.iit.retrail.client.impl.PEP;
 import it.cnr.iit.retrail.commons.DomUtils;
-import it.cnr.iit.retrail.commons.HttpsTrustManager;
-import it.cnr.iit.retrail.commons.HttpsWebServer;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
 import it.cnr.iit.retrail.commons.impl.PepResponse;
 import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.commons.Status;
-import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.impl.UCon;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
-import javax.net.ssl.SSLContext;
 import org.apache.xmlrpc.XmlRpcException;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -41,7 +37,7 @@ import org.w3c.dom.Node;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SimpleTest {
     static final String pdpUrlString = "https://localhost:8080";
-    static final String pepUrlString = "http://localhost:8081";
+    static final String pepUrlString = "https://localhost:8081";
     static final String defaultKeystoreName = "/META-INF/keystore.jks";
     static final String defaultKeystorePassword = "uconas4wc";
     static final Logger log = LoggerFactory.getLogger(SimpleTest.class);
@@ -73,8 +69,11 @@ public class SimpleTest {
             // ucon status (the first heartbeat is waited by init()).
             pep.setAccessRecoverableByDefault(false);
             pep.client.startRecording(new File("retrailRecord.xml"));
-            // Allowing client to accept a self-signed certificate
+            // Allowing client to accept a self-signed certificate;
+            // allow callbacks to the pep for untrusted ucons.
             pep.client.trustAllServers();
+            ks = SimpleTest.class.getResourceAsStream(defaultKeystoreName);
+            pep.trustAllClients(ks, defaultKeystorePassword);
             // start client
             pep.init();        // We should have no sessions now
         } catch (XmlRpcException | IOException e) {
