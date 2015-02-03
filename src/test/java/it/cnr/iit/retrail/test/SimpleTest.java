@@ -6,16 +6,21 @@
 package it.cnr.iit.retrail.test;
 
 import it.cnr.iit.retrail.client.impl.PEP;
-import it.cnr.iit.retrail.client.PEPInterface;
 import it.cnr.iit.retrail.commons.DomUtils;
+import it.cnr.iit.retrail.commons.HttpsTrustManager;
+import it.cnr.iit.retrail.commons.HttpsWebServer;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
 import it.cnr.iit.retrail.commons.impl.PepResponse;
 import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.commons.Status;
 import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.impl.UCon;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
+import javax.net.ssl.SSLContext;
 import org.apache.xmlrpc.XmlRpcException;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -35,10 +40,13 @@ import org.w3c.dom.Node;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SimpleTest {
-    static final String pdpUrlString = "http://localhost:8080";
+    static final String pdpUrlString = "https://localhost:8080";
+    static final String pepUrlString = "http://localhost:8081";
+    static final String defaultKeystoreName = "/META-INF/keystore.jks";
+    static final String defaultKeystorePassword = "uconas4wc";
     static final Logger log = LoggerFactory.getLogger(SimpleTest.class);
-    static UConInterface ucon = null;
-    static PEPInterface pep = null;
+    static UCon ucon = null;
+    static PEP pep = null;
     PepRequest pepRequest = null;
 
     public SimpleTest() {
@@ -47,18 +55,27 @@ public class SimpleTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         log.warn("Setting up environment...");
-        try {
-            // start server
+        try {      
+            // prepare server 
             URL pdpUrl = new URL(pdpUrlString);
-            ucon = UCon.getInstance(pdpUrl);
+            ucon = (UCon) UCon.getInstance(pdpUrl);
+            // Telling server to use a self-signed certificate and
+            // trust any client.
+            InputStream ks = SimpleTest.class.getResourceAsStream(defaultKeystoreName);
+            ucon.trustAllClients(ks, defaultKeystorePassword);
+            // start server
             ucon.init();
-            // start client
-            URL myUrl = new URL("http://localhost:8081");
+            // prepare client
+            URL myUrl = new URL(pepUrlString);
             pep = new PEP(pdpUrl, myUrl);
             // clean up previous sessions, if any, by clearing the recoverable
             // access flag. This ensures the next heartbeat we'll have a clean
             // ucon status (the first heartbeat is waited by init()).
             pep.setAccessRecoverableByDefault(false);
+            pep.client.startRecording(new File("retrailRecord.xml"));
+            // Allowing client to accept a self-signed certificate
+            pep.client.trustAllServers();
+            // start client
             pep.init();        // We should have no sessions now
         } catch (XmlRpcException | IOException e) {
             fail("unexpected exception: " + e.getMessage());
@@ -68,6 +85,7 @@ public class SimpleTest {
     @AfterClass
     public static void tearDownClass() throws Exception {
         pep.term();
+        pep.client.stopRecording();
         ucon.term();
     }
 
@@ -495,6 +513,20 @@ public class SimpleTest {
         log.info("end");
     }
 
+    @Test
+    public void test9_EndTryWithNullList() throws Exception {
+        log.info("start");
+        try {
+            List<PepSession> pepSessions = ((PEP)pep).endAccess((List<String>)null, null);
+            //assertNotEquals(PepResponse.DecisionEnum.Permit, pepSession.decision);
+            fail("Must throw XmlRcpException, got instead " +  pepSessions);
+        } catch(XmlRpcException e) {
+            log.info("correctly threw exception: {}", e.getMessage());
+        }
+        assertEquals(0, pep.getSessions().size());
+        log.info("end");
+    }
+    
     /**
      * Test of assignCustomId method, of class PEP.
      *
