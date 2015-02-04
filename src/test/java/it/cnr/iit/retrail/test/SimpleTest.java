@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.xmlrpc.XmlRpcException;
 import org.junit.After;
@@ -288,6 +289,26 @@ public class SimpleTest {
         log.info("ok");
     }
     
+   /**
+     * Test of startAccess method, of class PEP.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void test5_TryStartEndCycleWithBulkList() throws Exception {
+        log.info("testing try - start - try - start - double end cycle");
+        beforeTryAccess();
+        PepSession pepSession1 = pep.tryAccess(pepRequest);
+        PepSession startResponse1 = pep.startAccess(pepSession1);
+        PepSession pepSession2 = pep.tryAccess(pepRequest);
+        PepSession startResponse2 = pep.startAccess(pepSession2);
+        List<PepSession> endList = new ArrayList<>(2);
+        endList.add(startResponse1);
+        endList.add(startResponse2);
+        List<PepSession> endResponses = pep.endAccess(endList);
+        log.info("ok");
+    }
+    
 
     /**
      * Test of startAccess method, of class PEP.
@@ -499,27 +520,55 @@ public class SimpleTest {
     }
     
     @Test
-    public void test9_EndTryWithNull() throws Exception {
+    public void test9_EndTryWithNull1String() throws Exception {
         log.info("start");
         try {
             PepSession pepSession = ((PEP)pep).endAccess((String)null, null);
             //assertNotEquals(PepResponse.DecisionEnum.Permit, pepSession.decision);
-            fail("Must throw XmlRcpException, got instead " +  pepSession);
+            fail("Must throw XmlRpcException, got instead " +  pepSession);
         } catch(XmlRpcException e) {
             log.info("correctly threw exception: {}", e.getMessage());
         }
         assertEquals(0, pep.getSessions().size());
         log.info("end");
     }
-
+    
     @Test
-    public void test9_EndTryWithNullList() throws Exception {
+    public void test9_EndTryWithNull2Session() throws Exception {
+        log.info("start");
+        try {
+            PepSession pepSession = ((PEP)pep).endAccess((PepSession)null);
+            //assertNotEquals(PepResponse.DecisionEnum.Permit, pepSession.decision);
+            fail("Must throw NullPointerException, got instead " +  pepSession);
+        } catch(NullPointerException e) {
+            log.info("correctly threw exception: {}", e.getMessage());
+        }
+        assertEquals(0, pep.getSessions().size());
+        log.info("end");
+    }
+    
+    @Test
+    public void test9_EndTryWithNull3StringList() throws Exception {
         log.info("start");
         try {
             List<PepSession> pepSessions = ((PEP)pep).endAccess((List<String>)null, null);
             //assertNotEquals(PepResponse.DecisionEnum.Permit, pepSession.decision);
-            fail("Must throw XmlRcpException, got instead " +  pepSessions);
+            fail("Must throw XmlRpcException, got instead " +  pepSessions);
         } catch(XmlRpcException e) {
+            log.info("correctly threw exception: {}", e.getMessage());
+        }
+        assertEquals(0, pep.getSessions().size());
+        log.info("end");
+    }
+    
+    @Test
+    public void test9_EndTryWithNull4SessionList() throws Exception {
+        log.info("start");
+        try {
+            List<PepSession> pepSessions = ((PEP)pep).endAccess((List<PepSession>)null);
+            //assertNotEquals(PepResponse.DecisionEnum.Permit, pepSession.decision);
+            fail("Must throw NullPointerException, got instead " +  pepSessions);
+        } catch(NullPointerException e) {
             log.info("correctly threw exception: {}", e.getMessage());
         }
         assertEquals(0, pep.getSessions().size());
@@ -537,7 +586,7 @@ public class SimpleTest {
         try {
             PepSession pepSession = ((PEP)pep).assignCustomId("unexistentUuid", null, null);
             //assertNotEquals(PepResponse.DecisionEnum.Permit, pepSession.decision);
-            fail("Must throw XmlRcpException, got instead " +  pepSession);
+            fail("Must throw XmlRpcException, got instead " +  pepSession);
         } catch(XmlRpcException e) {
             log.info("correctly threw exception: {}", e.getMessage());
         }
