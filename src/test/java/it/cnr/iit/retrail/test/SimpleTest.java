@@ -5,6 +5,7 @@
 
 package it.cnr.iit.retrail.test;
 
+import it.cnr.iit.retrail.client.PEPInterface;
 import it.cnr.iit.retrail.client.impl.PEP;
 import it.cnr.iit.retrail.commons.DomUtils;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
@@ -59,7 +60,7 @@ public class SimpleTest {
             // Telling server to use a self-signed certificate and
             // trust any client.
             InputStream ks = SimpleTest.class.getResourceAsStream(defaultKeystoreName);
-            ucon.trustAllClients(ks, defaultKeystorePassword);
+            ucon.trustAllPeers(ks, defaultKeystorePassword);
             // start server
             ucon.init();
             // prepare client
@@ -69,12 +70,11 @@ public class SimpleTest {
             // access flag. This ensures the next heartbeat we'll have a clean
             // ucon status (the first heartbeat is waited by init()).
             pep.setAccessRecoverableByDefault(false);
-            pep.client.startRecording(new File("retrailRecord.xml"));
+            pep.startRecording(new File("retrailRecord.xml"));
             // Allowing client to accept a self-signed certificate;
             // allow callbacks to the pep for untrusted ucons.
-            pep.client.trustAllServers();
             ks = SimpleTest.class.getResourceAsStream(defaultKeystoreName);
-            pep.trustAllClients(ks, defaultKeystorePassword);
+            pep.trustAllPeers(ks, defaultKeystorePassword);
             // start client
             pep.init();        // We should have no sessions now
         } catch (XmlRpcException | IOException e) {
@@ -84,8 +84,8 @@ public class SimpleTest {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
+        pep.stopRecording();
         pep.term();
-        pep.client.stopRecording();
         ucon.term();
     }
 

@@ -143,12 +143,12 @@ public class MainViewController extends AnchorPane implements Initializable {
                             Stage mainStage = (Stage) playButton.getScene().getWindow();
                             File selectedFile = fileChooser.showSaveDialog(mainStage);
                             if(selectedFile != null) {
-                                UsageController.getInstance().client.startRecording(selectedFile);
+                                UsageController.getInstance().startRecording(selectedFile);
                                 recButton.setText("OFF");
                                 playButton.setDisable(true);
                             } else recButton.setSelected(false);
                         } else {
-                            UsageController.getInstance().client.stopRecording();
+                            UsageController.getInstance().stopRecording();
                             recButton.setText("REC");
                             playButton.setDisable(false);
                         }
