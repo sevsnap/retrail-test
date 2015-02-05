@@ -50,7 +50,7 @@ public class TestPIPReputation extends PIP {
             // Make attribute unmanaged (automatically managed by the UCon)
             // because we set an expiry date
             test.setExpires(new Date());
-            request.add(test);
+            request.replace(test);
         } else 
             log.warn("subject {} has no reputation attribute -- ignoring", subject.getValue());
     }

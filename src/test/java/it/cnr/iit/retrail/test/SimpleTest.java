@@ -5,7 +5,6 @@
 
 package it.cnr.iit.retrail.test;
 
-import it.cnr.iit.retrail.client.PEPInterface;
 import it.cnr.iit.retrail.client.impl.PEP;
 import it.cnr.iit.retrail.commons.DomUtils;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
@@ -70,7 +69,8 @@ public class SimpleTest {
             // access flag. This ensures the next heartbeat we'll have a clean
             // ucon status (the first heartbeat is waited by init()).
             pep.setAccessRecoverableByDefault(false);
-            pep.startRecording(new File("retrailRecord.xml"));
+            pep.startRecording(new File("clientRecord.xml"));
+            ucon.startRecording(new File("serverRecord.xml"));
             // Allowing client to accept a self-signed certificate;
             // allow callbacks to the pep for untrusted ucons.
             ks = SimpleTest.class.getResourceAsStream(defaultKeystoreName);

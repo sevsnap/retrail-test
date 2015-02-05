@@ -18,6 +18,7 @@ import it.cnr.iit.retrail.server.dal.UconAttribute;
 import it.cnr.iit.retrail.server.dal.DAL;
 import it.cnr.iit.retrail.server.dal.UconSession;
 import it.cnr.iit.retrail.server.impl.UCon;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
@@ -78,7 +79,7 @@ public class PIPAttributesTest {
             pipTimer.setForStatus(Status.ONGOING);
             ucon.addPIP(pipTimer);
             ucon.init();
-
+            ucon.startRecording(new File("serverRecord.xml"));
             // start client
             URL pdpUrl = new URL(pdpUrlString);
             URL myUrl = new URL(pepUrlString);
@@ -95,6 +96,7 @@ public class PIPAttributesTest {
             // ucon status (the first heartbeat is waited by init()).
             pep.setAccessRecoverableByDefault(false);
             pep.init();        // We should have no sessions now
+            pep.startRecording(new File("clientRecord.xml"));
         } catch (XmlRpcException | IOException e) {
             fail("unexpected exception: " + e.getMessage());
         }

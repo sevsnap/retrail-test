@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<retrailRecorder>
+<record ms="1">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response ms="1,486"><Result><Decision>Deny</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status></Result><Session uuid="6500CB37-575C-4E47-A0DE-F47A2A3ABFDC" status="REVOKED" ms="15" customId="6500CB37-575C-4E47-A0DE-F47A2A3ABFDC"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:nil/></value></param></params></methodResponse>
+</record>
+</retrailRecorder>

@@ -35,7 +35,7 @@ public class TestPIPTimer extends StandAlonePIP {
     public void onBeforeStartAccess(PepRequestInterface request, PepSessionInterface session) {
         PepAttributeInterface subject = request.getAttribute("urn:oasis:names:tc:xacml:1.0:subject-category:access-subject", "urn:oasis:names:tc:xacml:1.0:subject:subject-id");
         PepAttributeInterface a = newPrivateAttribute("timer", "http://www.w3.org/2001/XMLSchema#double", Double.toString(maxDuration), "http://localhost:8080/federation-id-prov/saml", subject);
-        request.add(a);
+        request.replace(a);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class TestPIPTimer extends StandAlonePIP {
             PepAttributeInterface subject = request.getAttribute("urn:oasis:names:tc:xacml:1.0:subject-category:access-subject", "urn:oasis:names:tc:xacml:1.0:subject:subject-id");
             PepAttributeInterface a = newPrivateAttribute("timer", "http://www.w3.org/2001/XMLSchema#double", "0", "http://localhost:8080/federation-id-prov/saml", subject);
             a.setExpires(new Date());
-            request.add(a);
+            request.replace(a);
         }
     }
 
