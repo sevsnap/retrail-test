@@ -7,6 +7,7 @@ package it.cnr.iit.retrail.test;
 import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
 import it.cnr.iit.retrail.client.PEPInterface;
 import it.cnr.iit.retrail.client.impl.PEP;
+import it.cnr.iit.retrail.commons.DomUtils;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
 import it.cnr.iit.retrail.commons.impl.PepAttribute;
 import it.cnr.iit.retrail.commons.impl.PepResponse;
@@ -31,6 +32,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
 /**
  *
@@ -44,12 +46,13 @@ public class MainTest {
 
     static final Logger log = LoggerFactory.getLogger(PIPTest.class);
     static UConInterface ucon = null;
-    static PEPInterface pep = null;
+    static PEP pep = null;
 
     static PIPSessions pipSessions = null;
     static TestPIPTimer pipTimer = null;
     PepRequest pepRequest = null;
     static String lastObligation = null;
+    static int revokes = 0;
 
     public MainTest() {
     }
@@ -72,6 +75,7 @@ public class MainTest {
                 @Override
                 public synchronized void onRevokeAccess(PepSession session) throws Exception {
                     log.warn("automatic end access disabled for test purposes - {}", session);
+                    revokes++;
                 }
 
                 @Override
@@ -128,18 +132,15 @@ public class MainTest {
             }
             assertEquals(0, u.size());
 
-            pepRequest = PepRequest.newInstance(
-                    "fedoraRole",
-                    "urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination",
-                    " ",
-                    "issuer");
-            PepAttribute attribute = new PepAttribute(
-                    "urn:fedora:names:fedora:2.1:resource:datastream:id",
-                    PepAttribute.DATATYPES.STRING,
-                    "FOPDISSEM",
-                    "issuer",
-                    PepAttribute.CATEGORIES.RESOURCE);
-            pepRequest.add(attribute);
+            pepRequest = PepRequest.newInstance("Carniani", "MANAGE", "VM", "ziopino");
+            PepAttribute a = new PepAttribute(PepAttribute.IDS.ACTION,
+                    PepAttribute.DATATYPES.STRING, "USE", "ziopino",
+                    PepAttribute.CATEGORIES.ACTION);
+            pepRequest.add(a);
+            PepAttribute b = new PepAttribute("urn:oasis:names:tc:xacml:1.0:environment:environment-id",
+                    PepAttribute.DATATYPES.STRING, "0", "ziopino",
+                    "urn:oasis:names:tc:xacml:3.0:attribute-category:environment");
+            pepRequest.add(b);
         } catch (Exception e) {
             fail("unexpected exception: " + e.getMessage());
         }
@@ -157,18 +158,73 @@ public class MainTest {
     @Test
     public void test1_TryListOfSubjectIds() throws Exception {
         log.info("testing pre-access policy");
-        PepRequest req = PepRequest.newInstance("Carniani", "MANAGE", "VM", "ziopino");
-        PepAttribute a = new PepAttribute(PepAttribute.IDS.ACTION, 
-                PepAttribute.DATATYPES.STRING, "USE", "ziopino", 
-                PepAttribute.CATEGORIES.ACTION);
-        req.add(a);
-        PepAttribute b = new PepAttribute("urn:oasis:names:tc:xacml:1.0:environment:environment-id", 
-                PepAttribute.DATATYPES.STRING, "0", "ziopino",
-                "urn:oasis:names:tc:xacml:3.0:attribute-category:environment");
-        req.add(b);
-        PepSession pepSession = pep.tryAccess(req);
+        PepSession pepSession = pep.tryAccess(pepRequest);
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
         PepSession pepResponse = pep.endAccess(pepSession);
+        log.info("ok");
+    }
+
+    @Test
+    public void test2_CheckDoubleRevocationAtOnce() throws Exception {
+        log.info("testing double revocation in bulk mode");
+        ucon.stopRecording();
+        revokes = 0;
+        ucon.startRecording(new File(("serverRecord.xml")));
+        PepSession pepSession1 = pep.tryAccess(pepRequest);
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession1.getDecision());
+        PepSession pepSession2 = pep.tryAccess(pepRequest);
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession2.getDecision());
+        assertEquals(2, pep.getSessions().size());
+        pep.startAccess(pepSession1);
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession1.getDecision());
+        pep.startAccess(pepSession2);
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession1.getDecision());
+        log.info("forcing reevaluation of the ONGOING sessions by resetting the on policy");
+        ucon.setPolicy(UConInterface.PolicyEnum.ON, UsageController.class.getResource("/META-INF/policies3/on3.xml"));
+        Thread.sleep(500);
+        assertEquals(2, revokes);
+        pep.endAccess(pepSession1);
+        pep.endAccess(pepSession2);
+        log.info("checking if recorded log is working");
+        Document doc = DomUtils.read(new File("serverRecord.xml"));
+        assertEquals(1, doc.getElementsByTagName("methodCall").getLength());
+        assertEquals(2, doc.getElementsByTagName("Session").getLength());
+        log.info("ok");
+    }
+
+    @Test
+    public void test3_CheckDoubleRevocationAsDistinctCalls() throws Exception {
+        log.info("testing double revocation as distinct calls");
+        revokes = 0;
+        ucon.startRecording(new File(("serverRecord.xml")));
+        PepSession pepSession1 = pep.tryAccess(pepRequest);
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession1.getDecision());
+        pep.assignCustomId(pepSession1.getUuid(), null, "SESSION-1");
+        PepSession pepSession2 = pep.tryAccess(pepRequest);
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession2.getDecision());
+        pep.assignCustomId(pepSession2.getUuid(), null, "SESSION-2");
+        assertEquals(2, pep.getSessions().size());
+        pep.startAccess(pepSession1);
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession1.getDecision());
+        log.info("forcing reevaluation of the ONGOING sessions by setting the on policy again");
+        ucon.setPolicy(UConInterface.PolicyEnum.ON, UsageController.class.getResource("/META-INF/policies3/on3.xml"));
+        Thread.sleep(250);
+        assertEquals(1, revokes);
+        log.info("resetting the on policy");
+        ucon.setPolicy(UConInterface.PolicyEnum.ON, (URL)null);
+        pep.startAccess(pepSession2);
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession2.getDecision());
+        log.info("forcing reevaluation of the ONGOING sessions by setting the on policy again");
+        ucon.setPolicy(UConInterface.PolicyEnum.ON, UsageController.class.getResource("/META-INF/policies3/on3.xml"));
+        Thread.sleep(250);
+        assertEquals(PepResponse.DecisionEnum.Deny, pepSession2.getDecision());
+        assertEquals(2, revokes);
+        pep.endAccess(pepSession1);
+        pep.endAccess(pepSession2);
+        log.info("checking if recorded log in append mode is working");
+        Document doc = DomUtils.read(new File("serverRecord.xml"));
+        assertEquals(2, doc.getElementsByTagName("methodCall").getLength());
+        assertEquals(2, doc.getElementsByTagName("Session").getLength());
         log.info("ok");
     }
 
