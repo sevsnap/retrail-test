@@ -19,9 +19,12 @@ import it.cnr.iit.retrail.server.impl.UCon;
 import static it.cnr.iit.retrail.test.DALTest.dal;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.client.XmlRpcClient;
+import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
@@ -33,6 +36,7 @@ import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  *
@@ -155,8 +159,41 @@ public class MainTest {
      *
      * @throws java.lang.Exception
      */
+    
+    private void testRawRequest(String resourceName) throws Exception {
+        log.info("testing raw xmlrpc request (not using the PEP interface): {}", resourceName);
+        XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
+        config.setServerURL(new URL(pdpUrlString));
+        config.setEnabledForExtensions(true);
+        XmlRpcClient client = new XmlRpcClient();
+        client.setConfig(config);
+        InputStream is = getClass().getResourceAsStream(resourceName);
+        Document doc = DomUtils.read(is);
+        Object[] params = {doc.getDocumentElement(), pepUrlString, "rawreq"};
+        Document reply = (Document) client.execute("UCon.tryAccess", params);
+        Element decision = (Element) reply.getElementsByTagName("Decision").item(0);
+        assertEquals("Permit", decision.getTextContent());
+        Object[] params2 = {null, "rawreq"};
+        reply = (Document) client.execute("UCon.endAccess", params2);
+        decision = (Element) reply.getElementsByTagName("Decision").item(0);
+        assertEquals("Permit", decision.getTextContent());
+        log.info("ok");
+    }
+    
     @Test
-    public void test1_TryListOfSubjectIds() throws Exception {
+    public void test1_TryListOfSubjectIdsRawReq1() throws Exception {
+        log.info("testing separated Attribute+AttributeValue");
+        testRawRequest("/META-INF/policies3/rawRequest.xml");
+    }
+
+    @Test
+    public void test1_TryListOfSubjectIdsRawReq2() throws Exception {
+        log.info("testing joint Attribute+AttributeValue(s)");
+        testRawRequest("/META-INF/policies3/rawRequest2.xml");
+    }
+    
+    @Test
+    public void test2_TryListOfSubjectIds() throws Exception {
         log.info("testing pre-access policy");
         PepSession pepSession = pep.tryAccess(pepRequest);
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
@@ -165,7 +202,7 @@ public class MainTest {
     }
 
     @Test
-    public void test2_CheckDoubleRevocationAtOnce() throws Exception {
+    public void test3_CheckDoubleRevocationAtOnce() throws Exception {
         log.info("testing double revocation in bulk mode");
         ucon.stopRecording();
         revokes = 0;
@@ -193,7 +230,7 @@ public class MainTest {
     }
 
     @Test
-    public void test3_CheckDoubleRevocationAsDistinctCalls() throws Exception {
+    public void test4_CheckDoubleRevocationAsDistinctCalls() throws Exception {
         log.info("testing double revocation as distinct calls");
         revokes = 0;
         ucon.startRecording(new File(("serverRecord.xml")));
