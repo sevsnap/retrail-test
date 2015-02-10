@@ -12,6 +12,7 @@ import it.cnr.iit.retrail.commons.impl.PepResponse;
 import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.commons.Status;
 import it.cnr.iit.retrail.server.impl.UCon;
+import it.cnr.iit.retrail.server.impl.UConFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,7 +56,7 @@ public class SimpleTest {
         try {      
             // prepare server 
             URL pdpUrl = new URL(pdpUrlString);
-            ucon = (UCon) UCon.getInstance(pdpUrl);
+            ucon = UConFactory.getInstance(pdpUrl);
             // Telling server to use a self-signed certificate and
             // trust any client.
             InputStream ks = SimpleTest.class.getResourceAsStream(defaultKeystoreName);

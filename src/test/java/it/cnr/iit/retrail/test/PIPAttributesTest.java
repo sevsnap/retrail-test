@@ -17,7 +17,7 @@ import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.dal.UconAttribute;
 import it.cnr.iit.retrail.server.dal.DAL;
 import it.cnr.iit.retrail.server.dal.UconSession;
-import it.cnr.iit.retrail.server.impl.UCon;
+import it.cnr.iit.retrail.server.impl.UConFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -61,8 +61,10 @@ public class PIPAttributesTest {
     public static void setUpClass() throws Exception {
         log.warn("Setting up environment...");
         try {
-            // start server
-            ucon = UCon.getInstance();
+            URL pdpUrl = new URL(pdpUrlString);
+            URL myUrl = new URL(pepUrlString);
+           // start server
+            ucon = UConFactory.getInstance(pdpUrl);
             ucon.setPolicy(UConInterface.PolicyEnum.PRE, UsageController.class.getResource("/META-INF/policies2/pre2.xml"));
             ucon.setPolicy(UConInterface.PolicyEnum.TRYSTART, UsageController.class.getResource("/META-INF/policies2/trystart2.xml"));
             ucon.setPolicy(UConInterface.PolicyEnum.ON, UsageController.class.getResource("/META-INF/policies2/on2.xml"));
@@ -81,8 +83,6 @@ public class PIPAttributesTest {
             ucon.init();
             ucon.startRecording(new File("serverRecord.xml"));
             // start client
-            URL pdpUrl = new URL(pdpUrlString);
-            URL myUrl = new URL(pepUrlString);
             
             pep = new PEP(pdpUrl, myUrl) {
                 @Override

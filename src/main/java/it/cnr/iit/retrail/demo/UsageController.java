@@ -8,15 +8,11 @@ package it.cnr.iit.retrail.demo;
 import it.cnr.iit.retrail.client.impl.PEP;
 import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.server.UConInterface;
-import it.cnr.iit.retrail.server.impl.UCon;
+import it.cnr.iit.retrail.server.impl.UConFactory;
 import it.cnr.iit.retrail.test.TestPIPReputation;
 import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
 import it.cnr.iit.retrail.test.TestPIPTimer;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
-
-import org.apache.xmlrpc.XmlRpcException;
 
 public class UsageController extends PEP {
 
@@ -44,7 +40,7 @@ public class UsageController extends PEP {
     static public UsageController getInstance() throws Exception {
         if (instance == null) {
             log.info("Setting up Ucon embedded server...");
-            ucon = UCon.getInstance(new URL(pdpUrlString));
+            ucon = UConFactory.getInstance(new URL(pdpUrlString));
             changePoliciesTo("/META-INF/policies1/pre1.xml",
                              "/META-INF/policies1/on1.xml",
                              "/META-INF/policies1/post1.xml",

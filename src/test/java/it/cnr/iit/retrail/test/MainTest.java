@@ -16,6 +16,7 @@ import it.cnr.iit.retrail.demo.UsageController;
 import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.dal.UconSession;
 import it.cnr.iit.retrail.server.impl.UCon;
+import it.cnr.iit.retrail.server.impl.UConFactory;
 import static it.cnr.iit.retrail.test.DALTest.dal;
 import java.io.File;
 import java.io.IOException;
@@ -65,14 +66,14 @@ public class MainTest {
     public static void setUpClass() throws Exception {
         log.warn("Setting up environment...");
         try {
+            URL pdpUrl = new URL(pdpUrlString);
+            URL myUrl = new URL(pepUrlString);
             // start server
-            ucon = UCon.getInstance();
+            ucon = UConFactory.getInstance(pdpUrl);
             ucon.setPolicy(UConInterface.PolicyEnum.PRE, UsageController.class.getResource("/META-INF/policies3/pre3.xml"));
             ucon.init();
             ucon.startRecording(new File(("serverRecord.xml")));
             // start client
-            URL pdpUrl = new URL(pdpUrlString);
-            URL myUrl = new URL(pepUrlString);
 
             pep = new PEP(pdpUrl, myUrl) {
 

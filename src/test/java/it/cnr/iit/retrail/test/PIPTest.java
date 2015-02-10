@@ -16,7 +16,7 @@ import it.cnr.iit.retrail.demo.UsageController;
 import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.dal.UconAttribute;
 import it.cnr.iit.retrail.server.dal.UconSession;
-import it.cnr.iit.retrail.server.impl.UCon;
+import it.cnr.iit.retrail.server.impl.UConFactory;
 import static it.cnr.iit.retrail.test.DALTest.dal;
 import java.io.File;
 import java.io.IOException;
@@ -60,8 +60,11 @@ public class PIPTest {
     public static void setUpClass() throws Exception {
         log.warn("Setting up environment...");
         try {
+            URL pdpUrl = new URL(pdpUrlString);
+            URL myUrl = new URL(pepUrlString);
+
             // start server
-            ucon = UCon.getInstance();
+            ucon = UConFactory.getInstance(pdpUrl);
             ucon.setPolicy(UConInterface.PolicyEnum.PRE, UsageController.class.getResource("/META-INF/policies1/pre1.xml"));
             ucon.setPolicy(UConInterface.PolicyEnum.TRYSTART, UsageController.class.getResource("/META-INF/policies1/trystart1.xml"));
             ucon.setPolicy(UConInterface.PolicyEnum.ON, UsageController.class.getResource("/META-INF/policies1/on1.xml"));
@@ -76,8 +79,6 @@ public class PIPTest {
             ucon.init();
             ucon.startRecording(new File(("serverRecord.xml")));
             // start client
-            URL pdpUrl = new URL(pdpUrlString);
-            URL myUrl = new URL(pepUrlString);
 
             pep = new PEP(pdpUrl, myUrl) {
 
