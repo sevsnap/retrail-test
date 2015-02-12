@@ -8,7 +8,6 @@ import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
 import it.cnr.iit.retrail.commons.PepAttributeInterface;
 import it.cnr.iit.retrail.commons.Status;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
-import it.cnr.iit.retrail.commons.impl.PepAttribute;
 import it.cnr.iit.retrail.server.dal.UconAttribute;
 import it.cnr.iit.retrail.server.dal.DAL;
 import it.cnr.iit.retrail.server.dal.UconRequest;
@@ -65,8 +64,8 @@ public class DALTest {
 
     @Before
     public void setUp() throws MalformedURLException {
-        pipSessions.init();
-        pipReputation.init();
+        pipSessions.init(null);
+        pipReputation.init(null);
         assertEquals(0, dal.listSessions().size());
         //pipTimer.init();
         Collection<UconAttribute> l = dal.listAttributes(new URL(pepUrlString));

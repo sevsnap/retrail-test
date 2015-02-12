@@ -46,8 +46,8 @@ import org.w3c.dom.Element;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MainTest {
 
-    static final String pdpUrlString = "http://localhost:8080";
-    static final String pepUrlString = "http://localhost:8081";
+    static final String pdpUrlString = "http://localhost:8083";
+    static final String pepUrlString = "http://localhost:8084";
 
     static final Logger log = LoggerFactory.getLogger(PIPTest.class);
     static UConInterface ucon = null;
@@ -172,11 +172,11 @@ public class MainTest {
         Document doc = DomUtils.read(is);
         Object[] params = {doc.getDocumentElement(), pepUrlString, "rawreq"};
         Document reply = (Document) client.execute("UCon.tryAccess", params);
-        Element decision = (Element) reply.getElementsByTagName("Decision").item(0);
+        Element decision = (Element) reply.getElementsByTagNameNS("*", "Decision").item(0);
         assertEquals("Permit", decision.getTextContent());
         Object[] params2 = {null, "rawreq"};
         reply = (Document) client.execute("UCon.endAccess", params2);
-        decision = (Element) reply.getElementsByTagName("Decision").item(0);
+        decision = (Element) reply.getElementsByTagNameNS("*", "Decision").item(0);
         assertEquals("Permit", decision.getTextContent());
         log.info("ok");
     }
@@ -226,7 +226,7 @@ public class MainTest {
         log.info("checking if recorded log is working");
         Document doc = DomUtils.read(new File("serverRecord.xml"));
         assertEquals(1, doc.getElementsByTagName("methodCall").getLength());
-        assertEquals(2, doc.getElementsByTagName("Session").getLength());
+        assertEquals(2, doc.getElementsByTagNameNS("*", "Session").getLength());
         log.info("ok");
     }
 
@@ -262,7 +262,7 @@ public class MainTest {
         log.info("checking if recorded log in append mode is working");
         Document doc = DomUtils.read(new File("serverRecord.xml"));
         assertEquals(2, doc.getElementsByTagName("methodCall").getLength());
-        assertEquals(2, doc.getElementsByTagName("Session").getLength());
+        assertEquals(2, doc.getElementsByTagNameNS("*", "Session").getLength());
         log.info("ok");
     }
 
