@@ -97,7 +97,7 @@ public class TestPIPTimer extends StandAlonePIP {
                 log.warn("interrupted");
                 interrupted = true;
             } catch (Exception ex) {
-                log.error(ex.getMessage());
+                log.error("while timer running: {}", ex);
             }
         }
         log.info("exiting");

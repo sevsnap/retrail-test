@@ -7,6 +7,8 @@ package it.cnr.iit.retrail.test;
 import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
 import it.cnr.iit.retrail.client.PEPInterface;
 import it.cnr.iit.retrail.client.impl.PEP;
+import it.cnr.iit.retrail.commons.PepRequestInterface;
+import it.cnr.iit.retrail.commons.PepSessionInterface;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
 import it.cnr.iit.retrail.commons.impl.PepResponse;
 import it.cnr.iit.retrail.commons.impl.PepAttribute;
@@ -17,6 +19,7 @@ import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.dal.UconAttribute;
 import it.cnr.iit.retrail.server.dal.UconSession;
 import it.cnr.iit.retrail.server.impl.UConFactory;
+import it.cnr.iit.retrail.server.pip.impl.PIP;
 import static it.cnr.iit.retrail.test.DALTest.dal;
 import java.io.File;
 import java.io.IOException;
@@ -358,5 +361,34 @@ public class PIPTest {
 
         log.info("ok, 2 concurrent tries admitted");
     }
-
+    
+    int refreshed = 0;
+    @Test
+    public void test7_CheckRefreshCalled() throws Exception {   
+        PIP pip = new PIP() {
+            @Override 
+            public void init(UConInterface ucon) {
+                super.init(ucon);
+                refreshed = 0;
+            } 
+            @Override 
+            public void refresh(PepRequestInterface accessRequest, PepSessionInterface session) {
+                refreshed++;
+            } 
+        };
+        ucon.addPIP(pip);
+        beforeTryAccess();
+        assertEquals(0, pipSessions.getSessions());
+        assertEquals(0, refreshed);
+        PepSession pepSession = pep.tryAccess(pepRequest);
+        assertEquals(0, refreshed);
+        afterTryAccess(pepSession);
+        pep.startAccess(pepSession);
+        afterStartAccess(pepSession);
+        assertEquals(1, refreshed);
+        pep.endAccess(pepSession);
+        afterEndAccess(pepSession);
+        assertEquals(2, refreshed);
+    }
+    
 }
