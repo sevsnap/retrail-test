@@ -3,6 +3,27 @@
         RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable" Version="1.0">
     <Description>Test on-authorization policy</Description>
     <Target></Target>
+    <Rule Effect="Permit" RuleId="ANY_EXCEPT_FAIL_TO_OK">
+        <Target>
+            <AnyOf>
+                <AllOf>
+                    <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:not">
+                        <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">FAIL</AttributeValue>
+                            <AttributeDesignator AttributeId="state" Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true"/>
+                        </Match>
+                    </Condition>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">RIGHT_PASSWORD</AttributeValue>
+                        <AttributeDesignator AttributeId="password" Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true"/>
+                    </Match>
+                </AllOf>
+            </AnyOf>
+        </Target>
+        <ObligationExpressions> 
+            <ObligationExpression ObligationId="state=OK" FulfillOn="Permit"/>
+        </ObligationExpressions> 
+    </Rule>
     <Rule Effect="Deny" RuleId="A_TO_B">
         <Target>
             <AnyOf>

@@ -138,7 +138,7 @@ public class PIPStateTest {
             PepAttribute attribute = new PepAttribute(
                     "password",
                     PepAttribute.DATATYPES.STRING,
-                    "WRONG",
+                    "BAD_PASSWORD",
                     "issuer",
                     PepAttribute.CATEGORIES.SUBJECT);
             pepRequest.add(attribute);
@@ -156,8 +156,9 @@ public class PIPStateTest {
      *
      * @throws java.lang.Exception
      */
+    
     @Test
-    public void test1_StateChangeABCFAIL() throws Exception {
+    public void test0_StateChangeABCFAIL() throws Exception {
         log.info("testing start-access policy with state change");
         PepSession pepSession = pep.tryAccess(pepRequest);
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
@@ -177,4 +178,76 @@ public class PIPStateTest {
         pepResponse = pep.endAccess(pepSession);
         log.info("ok");
     }
+    
+    @Test
+    public void test1_StateChangeAOK() throws Exception {
+        log.info("testing start-access policy with state change");
+        PepAttribute attribute = new PepAttribute(
+                "password",
+                PepAttribute.DATATYPES.STRING,
+                "RIGHT_PASSWORD",
+                "issuer",
+                PepAttribute.CATEGORIES.SUBJECT);
+        pepRequest.replace(attribute);
+        PepSession pepSession = pep.tryAccess(pepRequest);
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
+        assertEquals("A", pipState.listManagedAttributes().iterator().next().getValue());
+        PepSession pepResponse = pep.startAccess(pepSession);
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
+        assertEquals("OK", pipState.listManagedAttributes().iterator().next().getValue());
+        pepResponse = pep.endAccess(pepSession);
+        log.info("ok");
+    }
+
+    @Test
+    public void test2_StateChangeABOK() throws Exception {
+        log.info("testing start-access policy with state change");
+        PepSession pepSession = pep.tryAccess(pepRequest);
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
+        assertEquals("A", pipState.listManagedAttributes().iterator().next().getValue());
+        PepSession pepResponse = pep.startAccess(pepSession);
+        assertEquals(PepResponse.DecisionEnum.Deny, pepSession.getDecision());
+        assertEquals("B", pipState.listManagedAttributes().iterator().next().getValue());
+        PepAttribute attribute = new PepAttribute(
+                "password",
+                PepAttribute.DATATYPES.STRING,
+                "RIGHT_PASSWORD",
+                "issuer",
+                PepAttribute.CATEGORIES.SUBJECT);
+        pepRequest.replace(attribute);
+        pep.applyChanges(pepSession, pepRequest);
+        pepResponse = pep.startAccess(pepSession);
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
+        assertEquals("OK", pipState.listManagedAttributes().iterator().next().getValue());
+        pepResponse = pep.endAccess(pepSession);
+        log.info("ok");
+    }
+    
+    @Test
+    public void test3_StateChangeABCOK() throws Exception {
+        log.info("testing start-access policy with state change");
+        PepSession pepSession = pep.tryAccess(pepRequest);
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
+        assertEquals("A", pipState.listManagedAttributes().iterator().next().getValue());
+        PepSession pepResponse = pep.startAccess(pepSession);
+        assertEquals(PepResponse.DecisionEnum.Deny, pepSession.getDecision());
+        assertEquals("B", pipState.listManagedAttributes().iterator().next().getValue());
+        pepResponse = pep.startAccess(pepSession);
+        assertEquals(PepResponse.DecisionEnum.Deny, pepSession.getDecision());
+        assertEquals("C", pipState.listManagedAttributes().iterator().next().getValue());
+        PepAttribute attribute = new PepAttribute(
+                "password",
+                PepAttribute.DATATYPES.STRING,
+                "RIGHT_PASSWORD",
+                "issuer",
+                PepAttribute.CATEGORIES.SUBJECT);
+        pepRequest.replace(attribute);
+        pep.applyChanges(pepSession, pepRequest);
+        pepResponse = pep.startAccess(pepSession);
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
+        assertEquals("OK", pipState.listManagedAttributes().iterator().next().getValue());
+        pepResponse = pep.endAccess(pepSession);
+        log.info("ok");
+    }
+    
 }
