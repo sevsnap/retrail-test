@@ -66,7 +66,7 @@ public class PIPStateTest {
             pipState = new PIPState();
             pipState.setStateAttributeName("state");
             pipState.setStateAttributeValue("A");
-            ucon.addPIP(pipState);
+            ucon.getPIPChain().add(pipState);
             ucon.init();
             ucon.startRecording(new File(("serverRecord.xml")));
             // start client

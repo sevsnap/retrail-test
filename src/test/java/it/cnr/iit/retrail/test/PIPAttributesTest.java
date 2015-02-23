@@ -8,6 +8,7 @@ package it.cnr.iit.retrail.test;
 import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
 import it.cnr.iit.retrail.client.PEPInterface;
 import it.cnr.iit.retrail.client.impl.PEP;
+import it.cnr.iit.retrail.commons.ActionEnum;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
 import it.cnr.iit.retrail.commons.impl.PepResponse;
 import it.cnr.iit.retrail.commons.impl.PepSession;
@@ -65,21 +66,21 @@ public class PIPAttributesTest {
             URL myUrl = new URL(pepUrlString);
            // start server
             ucon = UConFactory.getInstance(pdpUrl);
-            ucon.setPolicy(UConInterface.PolicyEnum.PRE, UsageController.class.getResource("/META-INF/policies2/pre2.xml"));
-            ucon.setPolicy(UConInterface.PolicyEnum.TRYSTART, UsageController.class.getResource("/META-INF/policies2/trystart2.xml"));
-            ucon.setPolicy(UConInterface.PolicyEnum.ON, UsageController.class.getResource("/META-INF/policies2/on2.xml"));
+            ucon.setPolicy("INIT", ActionEnum.tryAccess.name(), UsageController.class.getResourceAsStream("/META-INF/policies2/pre2.xml"));
+            ucon.setPolicy("TRY", ActionEnum.startAccess.name(), UsageController.class.getResourceAsStream("/META-INF/policies2/trystart2.xml"));
+            ucon.setPolicy("ONGOING", ActionEnum.ongoingAccess.name(), UsageController.class.getResourceAsStream("/META-INF/policies2/on2.xml"));
             pipSessions = new PIPSessions();
-            ucon.addPIP(pipSessions);
+            ucon.getPIPChain().add(pipSessions);
             pipReputation = new TestPIPReputation();
             pipReputation.reputationMap.put("user1", "bronze");
             pipReputation.reputationMap.put("user2", "bronze");
             pipReputation.reputationMap.put("user3", "bronze");
             pipReputation.reputationMap.put("user4", "none");
-            ucon.addPIP(pipReputation);
+            ucon.getPIPChain().add(pipReputation);
             pipTimer = new TestPIPTimer(3);
             pipTimer.setResolution(0.25);
             pipTimer.setForStatus(Status.ONGOING);
-            ucon.addPIP(pipTimer);
+            ucon.getPIPChain().add(pipTimer);
             ucon.init();
             ucon.startRecording(new File("serverRecord.xml"));
             // start client
@@ -177,7 +178,6 @@ public class PIPAttributesTest {
         assertNotEquals(Status.DELETED, pepSession.getStatus());
         assertNotEquals(Status.UNKNOWN, pepSession.getStatus());
         assertNotEquals(Status.REVOKED, pepSession.getStatus());
-        assertNotEquals(Status.REJECTED, pepSession.getStatus());
         assertTrue(pep.hasSession(pepSession));
     }
 

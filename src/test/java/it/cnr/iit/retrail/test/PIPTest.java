@@ -68,17 +68,17 @@ public class PIPTest {
 
             // start server
             ucon = UConFactory.getInstance(pdpUrl);
-            ucon.setPolicy(UConInterface.PolicyEnum.PRE, UsageController.class.getResource("/META-INF/policies1/pre1.xml"));
-            ucon.setPolicy(UConInterface.PolicyEnum.TRYSTART, UsageController.class.getResource("/META-INF/policies1/trystart1.xml"));
-            ucon.setPolicy(UConInterface.PolicyEnum.ON, UsageController.class.getResource("/META-INF/policies1/on1.xml"));
+            ucon.setPolicy(UConInterface.PolicyEnum.PRE, UsageController.class.getResourceAsStream("/META-INF/policies1/pre1.xml"));
+            ucon.setPolicy(UConInterface.PolicyEnum.TRYSTART, UsageController.class.getResourceAsStream("/META-INF/policies1/trystart1.xml"));
+            ucon.setPolicy(UConInterface.PolicyEnum.ON, UsageController.class.getResourceAsStream("/META-INF/policies1/on1.xml"));
             pipSessions = new PIPSessions();
-            ucon.addPIP(pipSessions);
+            ucon.getPIPChain().add(pipSessions);
             TestPIPReputation reputation = new TestPIPReputation();
             reputation.reputationMap.put("fedoraRole", "bronze");
             reputation.reputationMap.put("fedoraBadReputation", "bad");
-            ucon.addPIP(reputation);
+            ucon.getPIPChain().add(reputation);
             pipTimer = new TestPIPTimer(2);
-            ucon.addPIP(pipTimer);
+            ucon.getPIPChain().add(pipTimer);
             ucon.init();
             ucon.startRecording(new File(("serverRecord.xml")));
             // start client
@@ -376,7 +376,7 @@ public class PIPTest {
                 refreshed++;
             } 
         };
-        ucon.addPIP(pip);
+        ucon.getPIPChain().add(pip);
         beforeTryAccess();
         assertEquals(0, pipSessions.getSessions());
         assertEquals(0, refreshed);

@@ -30,11 +30,11 @@ public class UsageController extends PEP {
     }
     
     static public void changePoliciesTo(String prePath, String onPath, String postPath, String tryStartPath, String tryEndPath) throws Exception {
-        ucon.setPolicy(UConInterface.PolicyEnum.PRE, UsageController.class.getResource(prePath));
-        ucon.setPolicy(UConInterface.PolicyEnum.ON, UsageController.class.getResource(onPath));
-        ucon.setPolicy(UConInterface.PolicyEnum.POST, UsageController.class.getResource(postPath));
-        ucon.setPolicy(UConInterface.PolicyEnum.TRYSTART, UsageController.class.getResource(tryStartPath));
-        ucon.setPolicy(UConInterface.PolicyEnum.TRYEND, UsageController.class.getResource(tryEndPath));
+        ucon.setPolicy("init-tryaccess", UsageController.class.getResource(prePath));
+        ucon.setPolicy("ongoing-ongoingaccess", UsageController.class.getResource(onPath));
+        ucon.setPolicy("ongoing-endaccess", UsageController.class.getResource(postPath));
+        ucon.setPolicy("try-startaccess", UsageController.class.getResource(tryStartPath));
+        ucon.setPolicy("try-endaccess", UsageController.class.getResource(tryEndPath));
     }
     
     static public UsageController getInstance() throws Exception {
@@ -48,15 +48,15 @@ public class UsageController extends PEP {
                              "/META-INF/policies1/tryend1.xml"
             );
             pipSessions = new PIPSessions();
-            ucon.addPIP(pipSessions);
+            ucon.getPIPChain().add(pipSessions);
             TestPIPReputation reputation = new TestPIPReputation();
             reputation.put("Carniani", "bronze");
             reputation.put("Mori", "bronze");
             reputation.put("ZioPino", "bronze");
             reputation.put("visitor", "none");
-            ucon.addPIP(reputation);
+            ucon.getPIPChain().add(reputation);
             pipTimer = new TestPIPTimer(10);
-            ucon.addPIP(pipTimer);
+            ucon.getPIPChain().add(pipTimer);
             ucon.init();
             
             log.info("Setting up PEP component");
