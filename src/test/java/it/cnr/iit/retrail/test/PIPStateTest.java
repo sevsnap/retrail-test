@@ -62,7 +62,7 @@ public class PIPStateTest {
 
             // start server
             ucon = UConFactory.getInstance(pdpUrl);
-            ucon.loadBehaviour(UsageController.class.getResourceAsStream("/META-INF/ucon4.xml"));
+            ucon.loadBehaviour(UsageController.class.getResourceAsStream("test-ucon4.xml"));
 
             pipState = new PIPState();
             pipState.setStateAttributeName("state");

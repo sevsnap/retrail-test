@@ -628,9 +628,9 @@ public class SimpleTest {
     @Test
     public void testC_EndTwice() throws Exception {
         log.info("start");
-        PepSession pepSession = pep.tryAccess(pepRequest, "ziopino2");
-        ((PEP)pep).assignCustomId(null, pepSession.getCustomId(), "ziopino");
-        assertEquals("ziopino", pepSession.getCustomId());
+        PepSession pepSession = pep.tryAccess(pepRequest, "ziopino5");
+        ((PEP)pep).assignCustomId(null, pepSession.getCustomId(), "ziopino23");
+        assertEquals("ziopino23", pepSession.getCustomId());
         assertTrue(pep.hasSession(pepSession));
         ((PEP)pep).endAccess(null, pepSession.getCustomId());
         assertFalse(pep.hasSession(pepSession));

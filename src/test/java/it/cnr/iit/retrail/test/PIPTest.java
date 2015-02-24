@@ -68,12 +68,12 @@ public class PIPTest {
 
             // start server
             ucon = UConFactory.getInstance(pdpUrl);
-            ucon.loadBehaviour(UsageController.class.getResourceAsStream("/META-INF/ucon1.xml"));
+            ucon.loadBehaviour(UsageController.class.getResourceAsStream("test-ucon1.xml"));
             pipSessions = new PIPSessions();
             ucon.getPIPChain().add(pipSessions);
             TestPIPReputation reputation = new TestPIPReputation();
             reputation.reputationMap.put("fedoraRole", "bronze");
-            reputation.reputationMap.put("fedoraBadReputation", "bad");
+            reputation.reputationMap.put("userWithBadReputation", "bad");
             ucon.getPIPChain().add(reputation);
             pipTimer = new TestPIPTimer(2);
             ucon.getPIPChain().add(pipTimer);
@@ -249,7 +249,7 @@ public class PIPTest {
     public void test3_TryWithBadReputation() throws Exception {
         log.info("testing access with bad reputation");
         PepRequest req = PepRequest.newInstance(
-                "fedoraBadReputation",
+                "userWithBadReputation",
                 "urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination",
                 " ",
                 "issuer");
@@ -351,7 +351,7 @@ public class PIPTest {
         Thread.sleep(ms);
         response = pep.getSession(response.getUuid());
         assertEquals(Status.REVOKED, response.getStatus());
-        assertEquals("sayDenied", lastObligation);
+        assertEquals("sayRevoked", lastObligation);
         assertNotNull(response.getLocalInfo());
         assertEquals("itsOk", response.getLocalInfo().get("tryThis"));
         pep.endAccess(pepSession);
@@ -379,14 +379,14 @@ public class PIPTest {
         assertEquals(0, pipSessions.getSessions());
         assertEquals(0, refreshed);
         PepSession pepSession = pep.tryAccess(pepRequest);
-        assertEquals(0, refreshed);
+        assertEquals(1, refreshed);
         afterTryAccess(pepSession);
         pep.startAccess(pepSession);
         afterStartAccess(pepSession);
-        assertEquals(1, refreshed);
+        assertEquals(2, refreshed);
         pep.endAccess(pepSession);
         afterEndAccess(pepSession);
-        assertEquals(2, refreshed);
+        assertEquals(3, refreshed);
     }
     
 }

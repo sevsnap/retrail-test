@@ -25,7 +25,7 @@
             </AnyOf>
         </Target>
     </Rule>
-    <Rule Effect="Deny" RuleId="test:rule2"/>
+    <Rule Effect="Deny" RuleId="test:rule3"/>
     <ObligationExpressions> 
         <ObligationExpression ObligationId="sayWelcome" FulfillOn="Permit"/> 
         <ObligationExpression ObligationId="sayStandOff" FulfillOn="Deny"/> 

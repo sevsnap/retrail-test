@@ -161,10 +161,13 @@ public class DALTest {
         UconSession uconSession1 = new UconSession();
         uconSession1.setPepUrl(pepUrlString);
         uconSession1.setCustomId("custom1");
+        uconSession1.setStatus(Status.BEGIN);
+        uconSession1.setStateName("INIT"); // FIXME
         uconSession1 = dal.startSession(uconSession1, uconRequest1);  
         assertSessionsValueEquals("0");
         pipSessions.onAfterTryAccess(uconRequest1, uconSession1);
         uconSession1.setStatus(Status.ONGOING);
+        uconSession1.setStateName("ONGOING"); // FIXME
         log.info("calling saveSession() after onAfterTryAccess");
         dal.saveSession(uconSession1, uconRequest1);
         log.info("tryAccess emulated correctly");
@@ -209,6 +212,8 @@ public class DALTest {
         UconSession uconSession1 = new UconSession();
         uconSession1.setPepUrl(pepUrlString);
         uconSession1.setCustomId("custom1");
+        uconSession1.setStatus(Status.BEGIN);
+        uconSession1.setStateName("INIT"); //FIXME
         uconSession1 = dal.startSession(uconSession1, uconRequest1);
         assertReputationValueEquals("bronze", "user1");
         log.info("tryAccess emulated correctly");
@@ -248,6 +253,8 @@ public class DALTest {
         UconSession uconSession1 = new UconSession();
         uconSession1.setUconUrl(new URL(pepUrlString));
         uconSession1.setCustomId("custom1");
+        uconSession1.setStatus(Status.BEGIN);
+        uconSession1.setStateName("INIT"); //FIXME
         uconSession1 = dal.startSession(uconSession1, uconRequest1);
         String sessionUuid1 = uconSession1.getUuid();
         assertReputation(sessionUuid1, "bronze", "user1");
@@ -259,6 +266,8 @@ public class DALTest {
         UconSession uconSession2 = new UconSession();
         uconSession2.setUconUrl(new URL(pepUrlString));
         uconSession2.setCustomId("custom2");
+        uconSession2.setStatus(Status.BEGIN);
+        uconSession2.setStateName("INIT"); //FIXME
         uconSession2 = dal.startSession(uconSession2, uconRequest2);
         String sessionUuid2 = uconSession2.getUuid();
         assertNotEquals(sessionUuid1, sessionUuid2);
