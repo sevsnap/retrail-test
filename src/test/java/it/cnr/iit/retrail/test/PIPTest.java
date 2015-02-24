@@ -68,7 +68,7 @@ public class PIPTest {
 
             // start server
             ucon = UConFactory.getInstance(pdpUrl);
-            ucon.loadBehaviour(UsageController.class.getResourceAsStream("test-ucon1.xml"));
+            ucon.loadBehaviour(UsageController.class.getResourceAsStream("/test-ucon1.xml"));
             pipSessions = new PIPSessions();
             ucon.getPIPChain().add(pipSessions);
             TestPIPReputation reputation = new TestPIPReputation();
