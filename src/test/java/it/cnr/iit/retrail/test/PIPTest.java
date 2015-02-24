@@ -68,9 +68,7 @@ public class PIPTest {
 
             // start server
             ucon = UConFactory.getInstance(pdpUrl);
-            ucon.setPolicy(UConInterface.PolicyEnum.PRE, UsageController.class.getResourceAsStream("/META-INF/policies1/pre1.xml"));
-            ucon.setPolicy(UConInterface.PolicyEnum.TRYSTART, UsageController.class.getResourceAsStream("/META-INF/policies1/trystart1.xml"));
-            ucon.setPolicy(UConInterface.PolicyEnum.ON, UsageController.class.getResourceAsStream("/META-INF/policies1/on1.xml"));
+            ucon.loadBehaviour(UsageController.class.getResourceAsStream("/META-INF/ucon1.xml"));
             pipSessions = new PIPSessions();
             ucon.getPIPChain().add(pipSessions);
             TestPIPReputation reputation = new TestPIPReputation();
@@ -170,7 +168,7 @@ public class PIPTest {
     }
 
     private PepSession afterTryAccess(PepSession pepSession) throws Exception {
-        assertEquals(Status.TRY, pepSession.getStatus());
+        assertEquals(Status.STANDARD, pepSession.getStatus()); // FIXME was TRY
         assertTrue(pep.hasSession(pepSession));
         assertEquals(1, pep.getSessions().size());
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
@@ -181,7 +179,7 @@ public class PIPTest {
 
     private void beforeStartAccess(PepSession pepSession) throws Exception {
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
-        assertEquals(Status.TRY, pepSession.getStatus());
+        assertEquals(Status.STANDARD, pepSession.getStatus()); // FIXME was TRY
     }
 
     private void afterStartAccess(PepSession pepSession) throws Exception {
@@ -192,10 +190,10 @@ public class PIPTest {
 
     private void beforeEndAccess(PepSession pepSession) throws Exception {
         assertEquals(1, pep.getSessions().size());
-        assertNotEquals(Status.DELETED, pepSession.getStatus());
+        assertNotEquals(Status.END, pepSession.getStatus()); // FIXME was DELETED
         assertNotEquals(Status.UNKNOWN, pepSession.getStatus());
         assertNotEquals(Status.REVOKED, pepSession.getStatus());
-        assertNotEquals(Status.REJECTED, pepSession.getStatus());
+        assertNotEquals(Status.END, pepSession.getStatus());// FIXME was REJECTED
         assertTrue(pep.hasSession(pepSession));
     }
 
@@ -203,7 +201,7 @@ public class PIPTest {
         assertFalse(pep.hasSession(response));
         assertEquals(0, pep.getSessions().size());
         assertEquals(pdpUrlString, response.getUconUrl().toString());
-        assertEquals(Status.DELETED, response.getStatus());
+        assertEquals(Status.END, response.getStatus()); // FIXME was DELETED
     }
 
     /**
@@ -257,7 +255,7 @@ public class PIPTest {
                 "issuer");
         PepSession pepSession = pep.tryAccess(req);
         assertEquals(PepResponse.DecisionEnum.Deny, pepSession.getDecision());
-        assertEquals(Status.REJECTED, pepSession.getStatus());
+        assertEquals(Status.END, pepSession.getStatus()); // FIXME was REJECTED
         assertEquals(0, pep.getSessions().size());
         assertEquals(0, pipSessions.getSessions());
         assertEquals("sayStandOff", lastObligation);
@@ -274,7 +272,7 @@ public class PIPTest {
                 "issuer");
         PepSession pepSession = pep.tryAccess(req);
         assertNotEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
-        assertEquals(Status.REJECTED, pepSession.getStatus());
+        assertEquals(Status.END, pepSession.getStatus()); // FIXME was REJECTED
         assertEquals(0, pep.getSessions().size());
         assertEquals(0, pipSessions.getSessions());
         log.info("ok");
@@ -322,7 +320,7 @@ public class PIPTest {
         afterStartAccess(pepSession1);
         assertEquals(1, pipSessions.getSessions());
         pepSession2 = pep.startAccess(pepSession2);
-        assertEquals(Status.TRY, pepSession2.getStatus());
+        assertEquals(Status.STANDARD, pepSession2.getStatus()); // FIXME was TRY
         assertEquals(1, pipSessions.getSessions());
         assertNotEquals(PepResponse.DecisionEnum.Permit, pepSession2.getDecision());
         assertEquals(2, pep.getSessions().size());

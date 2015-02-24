@@ -16,6 +16,7 @@ import it.cnr.iit.retrail.server.dal.UconSession;
 import it.cnr.iit.retrail.server.impl.UConFactory;
 import it.cnr.iit.retrail.server.pip.impl.PIPState;
 import static it.cnr.iit.retrail.test.DALTest.dal;
+import static it.cnr.iit.retrail.test.PIPTest.ucon;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -61,7 +62,7 @@ public class PIPStateTest {
 
             // start server
             ucon = UConFactory.getInstance(pdpUrl);
-            ucon.setPolicy(UConInterface.PolicyEnum.TRYSTART, UsageController.class.getResourceAsStream("/META-INF/policies4/trystart4.xml"));
+            ucon.loadBehaviour(UsageController.class.getResourceAsStream("/META-INF/ucon4.xml"));
 
             pipState = new PIPState();
             pipState.setStateAttributeName("state");

@@ -120,15 +120,16 @@ public class SimpleTest {
     private PepSession afterTryAccess(PepSession pepSession) throws Exception {
         assertEquals(1, pep.getSessions().size());
         assertTrue(pep.hasSession(pepSession));
-        assertEquals(Status.TRY, pepSession.getStatus());
+        assertEquals(Status.STANDARD, pepSession.getStatus());//FIXME was TRY FIXME
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
+        assertNotNull(pepSession.getUconUrl());
         assertEquals(pdpUrlString, pepSession.getUconUrl().toString());
         return pepSession;
     }
     
     private void beforeStartAccess(PepSession pepSession) throws Exception {
         assertEquals(1, pep.getSessions().size());
-        assertEquals(Status.TRY, pepSession.getStatus());
+        assertEquals(Status.STANDARD, pepSession.getStatus());//FIXME was TRY FIXME
     }
 
     private void afterStartAccess(PepSession pepSession) throws Exception {
@@ -139,17 +140,16 @@ public class SimpleTest {
 
     private void beforeEndAccess(PepSession pepSession) throws Exception {
         assertEquals(1, pep.getSessions().size());
-        assertNotEquals(Status.DELETED, pepSession.getStatus());
         assertNotEquals(Status.UNKNOWN, pepSession.getStatus());
         assertNotEquals(Status.REVOKED, pepSession.getStatus());
-        assertNotEquals(Status.REJECTED, pepSession.getStatus());
+        assertNotEquals(Status.END, pepSession.getStatus()); // FIXME was REJECTED
         assertTrue(pep.hasSession(pepSession));
     }
     
     private void afterEndAccess(PepSession response) throws Exception {
         assertFalse(pep.hasSession(response));
         assertEquals(pdpUrlString, response.getUconUrl().toString());
-        assertEquals(Status.DELETED, response.getStatus());
+        assertEquals(Status.END, response.getStatus()); // FIXME was DELETED
     }
     
     /**
@@ -667,7 +667,7 @@ public class SimpleTest {
         log.info("start");
         PepSession pepSession = pep.tryAccess(pepRequest);
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
-        assertEquals(Status.TRY, pepSession.getStatus());
+        assertEquals(Status.STANDARD, pepSession.getStatus());  // FIXME was TRY
         PepSession response = pep.startAccess(pepSession);
         log.info("response {}", response);
         assertEquals(PepResponse.DecisionEnum.Permit, response.getDecision());
@@ -675,8 +675,8 @@ public class SimpleTest {
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
         assertEquals(Status.ONGOING, pepSession.getStatus());
         response = pep.endAccess(response);
-        assertEquals(Status.DELETED, response.getStatus());
-        assertEquals(Status.DELETED, pepSession.getStatus());
+        assertEquals(Status.END, response.getStatus()); // was DELETED
+        assertEquals(Status.END, pepSession.getStatus()); // was DELETED
         log.info("end");
     }
 

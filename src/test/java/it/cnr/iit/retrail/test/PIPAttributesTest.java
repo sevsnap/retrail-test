@@ -19,6 +19,7 @@ import it.cnr.iit.retrail.server.dal.UconAttribute;
 import it.cnr.iit.retrail.server.dal.DAL;
 import it.cnr.iit.retrail.server.dal.UconSession;
 import it.cnr.iit.retrail.server.impl.UConFactory;
+import static it.cnr.iit.retrail.test.PIPTest.ucon;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -66,9 +67,7 @@ public class PIPAttributesTest {
             URL myUrl = new URL(pepUrlString);
            // start server
             ucon = UConFactory.getInstance(pdpUrl);
-            ucon.setPolicy("INIT", ActionEnum.tryAccess.name(), UsageController.class.getResourceAsStream("/META-INF/policies2/pre2.xml"));
-            ucon.setPolicy("TRY", ActionEnum.startAccess.name(), UsageController.class.getResourceAsStream("/META-INF/policies2/trystart2.xml"));
-            ucon.setPolicy("ONGOING", ActionEnum.ongoingAccess.name(), UsageController.class.getResourceAsStream("/META-INF/policies2/on2.xml"));
+            ucon.loadBehaviour(UsageController.class.getResourceAsStream("/META-INF/ucon2.xml"));
             pipSessions = new PIPSessions();
             ucon.getPIPChain().add(pipSessions);
             pipReputation = new TestPIPReputation();
@@ -157,7 +156,7 @@ public class PIPAttributesTest {
     private PepSession afterTryAccess(PepSession pepSession) throws Exception {
         assertTrue(pep.hasSession(pepSession));
         assertEquals(1, pep.getSessions().size());
-        assertEquals(Status.TRY, pepSession.getStatus());
+        assertEquals(Status.STANDARD, pepSession.getStatus());//FIXME was TRY
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
         assertEquals(pdpUrlString, pepSession.getUconUrl().toString());
         return pepSession;
@@ -165,7 +164,7 @@ public class PIPAttributesTest {
 
     private void beforeStartAccess(PepSession pepSession) throws Exception {
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
-        assertEquals(Status.TRY, pepSession.getStatus());
+        assertEquals(Status.STANDARD, pepSession.getStatus()); //FIXME was TRY
     }
 
     private void afterStartAccess(PepSession pepSession) throws Exception {
@@ -175,7 +174,7 @@ public class PIPAttributesTest {
 
     private void beforeEndAccess(PepSession pepSession) throws Exception {
         assertEquals(1, pep.getSessions().size());
-        assertNotEquals(Status.DELETED, pepSession.getStatus());
+        assertNotEquals(Status.END, pepSession.getStatus());// was DELETED
         assertNotEquals(Status.UNKNOWN, pepSession.getStatus());
         assertNotEquals(Status.REVOKED, pepSession.getStatus());
         assertTrue(pep.hasSession(pepSession));
@@ -184,7 +183,7 @@ public class PIPAttributesTest {
     private void afterEndAccess(PepSession response) throws Exception {
         assertFalse(pep.hasSession(response));
         assertEquals(pdpUrlString, response.getUconUrl().toString());
-        assertEquals(Status.DELETED, response.getStatus());
+        assertEquals(Status.END, response.getStatus()); // was DELETED
     }
     
     @Test

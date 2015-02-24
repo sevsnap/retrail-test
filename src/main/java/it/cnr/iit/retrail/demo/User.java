@@ -95,7 +95,7 @@ public class User {
         boolean ok = false;
         try {
             pepSession = UsageController.getInstance().endAccess(pepSession);
-            ok = pepSession.getStatus() == Status.DELETED;
+            ok = pepSession.getStatus() == Status.END;
             pepSession.setCustomId("");
         } catch (Exception e) {
             log.error("Unexpected exception: {}", e.getMessage());

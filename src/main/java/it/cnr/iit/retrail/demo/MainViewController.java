@@ -101,7 +101,7 @@ public class MainViewController extends AnchorPane implements Initializable {
             @Override
             public void handle(MouseEvent t) {
                 try {
-                    if (user.getStatus() == Status.TRY) {
+                    if (user.getStatus() == Status.STANDARD) { // FIXME was TRY
                         if (!user.enterRoom()) {
                             showError("User " + userId + " is not allowed to enter the room!");
                         } else {
@@ -203,13 +203,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                             try {
                                 showMessage("Policy changed: only one person at a time is now allowed");
                                 policyButton.setText("One at a time");
-                                UsageController.changePoliciesTo(
-                                        "/META-INF/policies1/pre1.xml",
-                                        "/META-INF/policies1/on1.xml",
-                                        "/META-INF/policies1/post1.xml",
-                                        "/META-INF/policies1/trystart1.xml",
-                                        "/META-INF/policies1/tryend1.xml"
-                                );
+                                UsageController.loadBehaviour("/META-INF/ucon1.xml");
                             } catch (Exception ex) {
                                 log.error(ex.getMessage());
                             }
@@ -227,13 +221,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                             try {
                                 showMessage("Policy changed: only 2 people at a time are now allowed");
                                 policyButton.setText("Two people");
-                                UsageController.changePoliciesTo(
-                                        "/META-INF/policies2/pre2.xml",
-                                        "/META-INF/policies2/on2.xml",
-                                        "/META-INF/policies2/post2.xml",
-                                        "/META-INF/policies2/trystart2.xml",
-                                        "/META-INF/policies2/tryend2.xml"
-                                );
+                                UsageController.loadBehaviour("/META-INF/ucon2.xml");
                             } catch (Exception ex) {
                                 log.error(ex.getMessage());
                             }
@@ -251,13 +239,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                             try {
                                 showMessage("Policy changed: only one cam inside room");
                                 policyButton.setText("One cam inside");
-                                UsageController.changePoliciesTo(
-                                        "/META-INF/policies3/pre3.xml",
-                                        "/META-INF/policies3/on3.xml",
-                                        "/META-INF/policies3/post3.xml",
-                                        "/META-INF/policies3/trystart3.xml",
-                                        "/META-INF/policies3/tryend3.xml"
-                                );
+                                UsageController.loadBehaviour("/META-INF/ucon3.xml");
                             } catch (Exception ex) {
                                 log.error(ex.getMessage());
                             }
@@ -324,7 +306,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                 leftArrow.setVisible(false);
                 rightArrow.setVisible(true);
                 break;
-            case TRY:
+            case STANDARD: // FIXME was TRY
                 name = "/META-INF/gui/userBlue.png";
                 x = 250;
                 leftArrow.setVisible(true);
