@@ -8,7 +8,6 @@ package it.cnr.iit.retrail.test;
 import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
 import it.cnr.iit.retrail.client.PEPInterface;
 import it.cnr.iit.retrail.client.impl.PEP;
-import it.cnr.iit.retrail.commons.ActionEnum;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
 import it.cnr.iit.retrail.commons.impl.PepResponse;
 import it.cnr.iit.retrail.commons.impl.PepSession;
@@ -19,7 +18,6 @@ import it.cnr.iit.retrail.server.dal.UconAttribute;
 import it.cnr.iit.retrail.server.dal.DAL;
 import it.cnr.iit.retrail.server.dal.UconSession;
 import it.cnr.iit.retrail.server.impl.UConFactory;
-import static it.cnr.iit.retrail.test.PIPTest.ucon;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -67,7 +65,7 @@ public class PIPAttributesTest {
             URL myUrl = new URL(pepUrlString);
            // start server
             ucon = UConFactory.getInstance(pdpUrl);
-            ucon.loadBehaviour(UsageController.class.getResourceAsStream("/test-ucon2.xml"));
+            ucon.loadBehaviour(UsageController.class.getResourceAsStream("/PIPAttributesTest.xml"));
             pipSessions = new PIPSessions();
             ucon.getPIPChain().add(pipSessions);
             pipReputation = new TestPIPReputation();

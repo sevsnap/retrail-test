@@ -62,13 +62,14 @@ public class PIPStateTest {
 
             // start server
             ucon = UConFactory.getInstance(pdpUrl);
-            ucon.loadBehaviour(UsageController.class.getResourceAsStream("/test-ucon4.xml"));
+            ucon.loadBehaviour(UsageController.class.getResourceAsStream("/PIPStateTest.xml"));
 
             pipState = new PIPState();
             pipState.setStateAttributeName("state");
             pipState.setStateAttributeValue("A");
             ucon.getPIPChain().add(pipState);
             ucon.init();
+            ucon.getPIPChain().printInfo();
             ucon.startRecording(new File(("serverRecord.xml")));
             // start client
 
