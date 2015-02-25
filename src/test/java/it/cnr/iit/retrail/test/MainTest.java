@@ -5,7 +5,6 @@
 package it.cnr.iit.retrail.test;
 
 import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
-import it.cnr.iit.retrail.client.PEPInterface;
 import it.cnr.iit.retrail.client.impl.PEP;
 import it.cnr.iit.retrail.commons.DomUtils;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
@@ -15,10 +14,8 @@ import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.demo.UsageController;
 import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.dal.UconSession;
-import it.cnr.iit.retrail.server.impl.UCon;
 import it.cnr.iit.retrail.server.impl.UConFactory;
 import static it.cnr.iit.retrail.test.DALTest.dal;
-import static it.cnr.iit.retrail.test.PIPTest.ucon;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,7 +68,7 @@ public class MainTest {
             URL myUrl = new URL(pepUrlString);
             // start server
             ucon = UConFactory.getInstance(pdpUrl);
-            ucon.loadBehaviour(UsageController.class.getResourceAsStream("/MainTest.xml"));
+            ucon.loadConfiguration(UsageController.class.getResourceAsStream("/MainTest.xml"));
             ucon.init();
             ucon.startRecording(new File(("serverRecord.xml")));
             // start client
@@ -185,13 +182,13 @@ public class MainTest {
     @Test
     public void test1_TryListOfSubjectIdsRawReq1() throws Exception {
         log.info("testing separated Attribute+AttributeValue");
-        testRawRequest("/META-INF/policies3/rawRequest.xml");
+        testRawRequest("/rawRequest.xml");
     }
 
     @Test
     public void test1_TryListOfSubjectIdsRawReq2() throws Exception {
         log.info("testing joint Attribute+AttributeValue(s)");
-        testRawRequest("/META-INF/policies3/rawRequest2.xml");
+        testRawRequest("/rawRequest2.xml");
     }
     
     @Test
@@ -219,7 +216,7 @@ public class MainTest {
         pep.startAccess(pepSession2);
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession1.getDecision());
         log.info("forcing reevaluation of the ONGOING sessions by resetting the on policy");
-        ucon.loadBehaviour(UsageController.class.getResourceAsStream("/MainTest.xml"));
+        ucon.loadConfiguration(UsageController.class.getResourceAsStream("/MainTest.xml"));
         Thread.sleep(500);
         assertEquals(2, revokes);
         pep.endAccess(pepSession1);
@@ -246,15 +243,15 @@ public class MainTest {
         pep.startAccess(pepSession1);
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession1.getDecision());
         log.info("forcing reevaluation of the ONGOING sessions by setting the on policy again");
-        ucon.loadBehaviour(UsageController.class.getResourceAsStream("/MainTest.xml"));
+        ucon.loadConfiguration(UsageController.class.getResourceAsStream("/MainTest.xml"));
         Thread.sleep(250);
         assertEquals(1, revokes);
         log.info("resetting the on policy");
-        ucon.defaultBehaviour();
+        ucon.defaultConfiguration();
         pep.startAccess(pepSession2);
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession2.getDecision());
         log.info("forcing reevaluation of the ONGOING sessions by setting the on policy again");
-        ucon.loadBehaviour(UsageController.class.getResourceAsStream("/MainTest.xml"));
+        ucon.loadConfiguration(UsageController.class.getResourceAsStream("/MainTest.xml"));
         Thread.sleep(250);
         assertEquals(PepResponse.DecisionEnum.Deny, pepSession2.getDecision());
         assertEquals(2, revokes);

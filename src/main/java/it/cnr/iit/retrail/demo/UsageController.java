@@ -30,7 +30,7 @@ public class UsageController extends PEP {
     }
     
     static public void loadBehaviour(String resourceName) throws Exception {
-        ucon.loadBehaviour(UsageController.class.getResourceAsStream(resourceName));
+        ucon.loadConfiguration(UsageController.class.getResourceAsStream(resourceName));
     }
     
     static public UsageController getInstance() throws Exception {
