@@ -221,7 +221,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                             try {
                                 showMessage("Policy changed: only 2 people at a time are now allowed");
                                 policyButton.setText("Two people");
-                                UsageController.loadBehaviour("/META-INF/ucon2.xml");
+                                UsageController.loadBehaviour("/ucon2.xml");
                             } catch (Exception ex) {
                                 log.error(ex.getMessage());
                             }
@@ -239,7 +239,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                             try {
                                 showMessage("Policy changed: only one cam inside room");
                                 policyButton.setText("One cam inside");
-                                UsageController.loadBehaviour("/META-INF/ucon3.xml");
+                                UsageController.loadBehaviour("/ucon3.xml");
                             } catch (Exception ex) {
                                 log.error(ex.getMessage());
                             }

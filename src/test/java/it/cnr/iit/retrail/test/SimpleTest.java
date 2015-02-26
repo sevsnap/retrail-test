@@ -347,6 +347,7 @@ public class SimpleTest {
         PepSession pepSession = pep.tryAccess(pepRequest);
         afterTryAccess(pepSession);
         beforeStartAccess(pepSession);
+        pep.assignCustomId(pepSession.getUuid(), null, "ziopinetto");
         PepSession startResponse = ((PEP)pep).startAccess(null, pepSession.getCustomId());
         afterStartAccess(startResponse);
         afterStartAccess(pepSession);
@@ -680,5 +681,22 @@ public class SimpleTest {
         log.info("end");
     }
 
-    
+      @Test
+    public void testF_AssignSameCustomIdShouldNotWork() throws Exception {
+        log.info("start");
+        PepSession pepSession1 = pep.tryAccess(pepRequest);
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession1.getDecision());
+        PepSession pepSession2 = pep.tryAccess(pepRequest);
+        assertEquals(PepResponse.DecisionEnum.Permit, pepSession1.getDecision());
+        pep.assignCustomId(pepSession1.getUuid(), null, "ziopinetto-recycle");
+        try {
+            pep.assignCustomId(pepSession2.getUuid(), null, "ziopinetto-recycle");
+            fail("Must throw XmlRpcException");
+        } catch(XmlRpcException e) {
+            log.info("correctly threw exception: {}", e.getMessage());
+        }
+        pep.endAccess(pepSession1);
+        pep.endAccess(pepSession2);
+        log.info("end");
+    }
 }

@@ -284,4 +284,46 @@ public class DALTest {
         assertEquals(0, dal.listUnmanagedAttributes(pipReputation.getUUID()).size());
     }
 
+    @Test
+    public void test3_sessionGaloreWithSimpleAttributes() throws Exception {
+        log.info("start");
+        assertEquals(0, dal.listSessions().size());
+        for(int i = 0; i < 2500; i++) {
+            log.info("create session: {}", i);
+            UconSession uconSession1 = new UconSession();
+            uconSession1.setPepUrl(pepUrlString);
+            uconSession1.setCustomId("custom1");
+            uconSession1.setStatus(Status.BEGIN);
+            uconSession1.setStateName("INIT"); //FIXME
+            UconRequest uconRequest = newRequest("user1");
+            dal.startSession(uconSession1, uconRequest);
+        }
+        for(UconSession uconSession: dal.listSessions())
+            dal.endSession(uconSession);
+        assertEquals(0, dal.listSessions().size());
+        log.info("end");
+    }
+  
+    @Test
+    public void test3_sessionGalore() throws Exception {
+        log.info("start");
+        assertEquals(0, dal.listSessions().size());
+        for(int i = 0; i < 2500; i++) {
+            log.info("create session: {}", i);
+            UconSession uconSession1 = new UconSession();
+            uconSession1.setPepUrl(pepUrlString);
+            uconSession1.setCustomId("custom1");
+            uconSession1.setStatus(Status.BEGIN);
+            uconSession1.setStateName("INIT"); //FIXME
+            UconRequest uconRequest = newRequest("user1");
+            UconAttribute shared = dal.newSharedAttribute("ID"+i, "TYPE", "VALUE", "ISSUER", "PEPURL", "FACTORYID");
+            uconRequest.add(shared);
+            dal.startSession(uconSession1, uconRequest);
+        }
+        for(UconSession uconSession: dal.listSessions())
+            dal.endSession(uconSession);
+        assertEquals(0, dal.listSessions().size());
+        log.info("end");
+    }
+    
 }

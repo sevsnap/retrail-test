@@ -37,7 +37,7 @@ public class UsageController extends PEP {
         if (instance == null) {
             log.info("Setting up Ucon embedded server...");
             ucon = UConFactory.getInstance(new URL(pdpUrlString));
-            loadBehaviour("/META-INF/ucon1.xml");
+            loadBehaviour("/ucon1.xml");
             pipSessions = new PIPSessions();
             ucon.getPIPChain().add(pipSessions);
             TestPIPReputation reputation = new TestPIPReputation();
