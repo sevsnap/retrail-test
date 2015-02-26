@@ -100,6 +100,14 @@ public class DALTest {
         //pipTimer.term();
         pipSessions.term();
         pipReputation.term();
+        Collection<UconSession> u = dal.listSessions();
+        if (u.size() > 0) {
+            log.error(", all sessions in the dal should be cleared, but found {}!", u.size());
+        }
+        for (UconSession s : u) {
+            log.error("**** listSessions(): {}", s);
+        }
+        assertEquals(0, u.size());
         Collection<UconAttribute> l = dal.listAttributes(new URL(pepUrlString));
         if (l.size() > 0) {
             log.error("all attributes for {} in the dal should be cleared, but found {}!", pepUrlString, l.size());
@@ -116,14 +124,6 @@ public class DALTest {
             log.error("**** listAttributes(): {}", a);
         }
         assertEquals(0, l.size());
-        Collection<UconSession> u = dal.listSessions();
-        if (u.size() > 0) {
-            log.error(", all attributes in the dal should be cleared, but found {}!", u.size());
-        }
-        for (UconSession s : u) {
-            log.error("**** listSessions(): {}", s);
-        }
-        assertEquals(0, u.size());
         assertEquals(0, dal.listUnmanagedAttributes(pipReputation.getUUID()).size());
         assertEquals(0, dal.listManagedAttributes(pipReputation.getUUID()).size());
         assertEquals(0, dal.listUnmanagedAttributes(pipSessions.getUUID()).size());
@@ -285,14 +285,14 @@ public class DALTest {
     }
 
     @Test
-    public void test3_sessionGaloreWithSimpleAttributes() throws Exception {
+    public void test3_sessionGaloreWithPrivateAttributes() throws Exception {
         log.info("start");
         assertEquals(0, dal.listSessions().size());
         for(int i = 0; i < 2500; i++) {
             log.info("create session: {}", i);
             UconSession uconSession1 = new UconSession();
             uconSession1.setPepUrl(pepUrlString);
-            uconSession1.setCustomId("custom1");
+            uconSession1.setCustomId("custom."+i);
             uconSession1.setStatus(Status.BEGIN);
             uconSession1.setStateName("INIT"); //FIXME
             UconRequest uconRequest = newRequest("user1");
@@ -305,14 +305,14 @@ public class DALTest {
     }
   
     @Test
-    public void test3_sessionGalore() throws Exception {
+    public void test4_sessionGaloreWithSharedAttributes() throws Exception {
         log.info("start");
         assertEquals(0, dal.listSessions().size());
         for(int i = 0; i < 2500; i++) {
             log.info("create session: {}", i);
             UconSession uconSession1 = new UconSession();
             uconSession1.setPepUrl(pepUrlString);
-            uconSession1.setCustomId("custom1");
+            uconSession1.setCustomId("custom."+i);
             uconSession1.setStatus(Status.BEGIN);
             uconSession1.setStateName("INIT"); //FIXME
             UconRequest uconRequest = newRequest("user1");
