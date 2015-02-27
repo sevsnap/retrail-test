@@ -64,6 +64,7 @@ public class DALTest {
 
     @Before
     public void setUp() throws MalformedURLException {
+        dal.begin();
         pipSessions.init(null);
         pipReputation.init(null);
         assertEquals(0, dal.listSessions().size());
@@ -129,6 +130,7 @@ public class DALTest {
         assertEquals(0, dal.listUnmanagedAttributes(pipSessions.getUUID()).size());
         assertEquals(0, dal.listManagedAttributes(pipSessions.getUUID()).size());
         log.info("after teardown everything looks ok!");
+        dal.rollback();
     }
 
     private UconRequest newRequest(String subjectValue) throws Exception {
