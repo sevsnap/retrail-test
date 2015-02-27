@@ -81,8 +81,7 @@ public class TestPIPTimer extends StandAlonePIP {
                 Thread.sleep((int) (1000 * resolution));
                 for (PepAttributeInterface a : listManagedAttributes()) {
                     UconAttribute u = (UconAttribute) a;
-                    Collection<UconSession> sl = u.getSessions();
-                    UconSession s = sl.iterator().next();
+                    UconSession s = u.getSession();
                     if (s.getStatus() == forStatus) {
                         Double ttg = Double.parseDouble(a.getValue());
                         if (ttg > 0) {

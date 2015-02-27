@@ -348,12 +348,18 @@ public class SimpleTest {
         afterTryAccess(pepSession);
         beforeStartAccess(pepSession);
         pep.assignCustomId(pepSession.getUuid(), null, "ziopinetto");
+        assertEquals("ziopinetto", pepSession.getCustomId());
         PepSession startResponse = ((PEP)pep).startAccess(null, pepSession.getCustomId());
+        assertEquals("ziopinetto", pepSession.getCustomId());
+        assertEquals("ziopinetto", startResponse.getCustomId());
         afterStartAccess(startResponse);
         afterStartAccess(pepSession);
         beforeEndAccess(startResponse);
         beforeEndAccess(pepSession);
+        log.warn("XXXXX ending access for customId: {}", pepSession.getCustomId());
+        assertEquals("ziopinetto", pepSession.getCustomId());
         PepSession endResponse = ((PEP)pep).endAccess(null, pepSession.getCustomId());
+        assertEquals("ziopinetto", pepSession.getCustomId());
         afterEndAccess(endResponse);
         afterEndAccess(startResponse);
         afterEndAccess(pepSession);
@@ -647,9 +653,10 @@ public class SimpleTest {
         log.info("start");
         PepSession pepSession = pep.tryAccess(pepRequest);
         PepSession startResponse = pep.startAccess(pepSession);
+        String uuid = pepSession.getUuid(); 
         try {
             PepSession startResponse2 = pep.startAccess(pepSession);
-            fail("Must throw XmlRcpException, got instead " +  startResponse2);
+            fail("Must throw XmlRcpException, got instead " +  startResponse2 + "; original session uuid = "+uuid);
         } catch(XmlRpcException e) {
             log.info("correctly threw exception: {}", e.getMessage());
         }
