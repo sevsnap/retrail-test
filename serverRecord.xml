@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <retrailRecorder>
 <record ms="1">
-<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="1,321"><Result><Decision>Deny</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status></Result><Session uuid="BF337A24-C343-418C-8F44-B2C6D3FB19E9" uconUrl="http://localhost:8083" status="REVOKED" customId="SESSION-1"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
-<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:nil/></value></param></params></methodResponse>
-</record>
-<record ms="318">
-<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="1,435"><Result><Decision>Deny</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status></Result><Session uuid="C28A7F7E-5A91-4592-8CA5-9207241C5FC7" uconUrl="http://localhost:8083" status="REVOKED" customId="SESSION-2"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="3,395"><Result><Decision>Indeterminate</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:missing-attribute"/><StatusMessage>Couldn't find AttributeDesignator attribute</StatusMessage><StatusDetail>
+<MissingAttributeDetail Issuer="http://localhost:8080/federation-id-prov/saml" DataType="http://www.w3.org/2001/XMLSchema#integer" Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" AttributeId="openSessions"/>
+</StatusDetail></Status></Result><Session uuid="7BE8B4CA-8070-41C7-B367-653FE70D4B33" uconUrl="http://localhost:8080" status="REVOKED" ms="1"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
 <methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:nil/></value></param></params></methodResponse>
 </record>
 </retrailRecorder>

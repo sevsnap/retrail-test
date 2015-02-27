@@ -66,7 +66,7 @@
                     </Rule>
                 </Policy>
             </ucon:Action>
-            <ucon:Action name="ongoingAccess" class="OngoingAccessAction" source="ONGOING" target="ONGOING" failTarget="REVOKED">
+            <ucon:Action name="ongoingAccess" class="OngoingAccess" source="ONGOING" target="ONGOING" failTarget="REVOKED">
                 <Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" PolicyId="CNR_Test5" RuleCombiningAlgId="urn:oasis:names:tc:xacml:3.0:rule-combining-algorithm:deny-overrides" Version="1.0">
                     <Description>POL-REVOKE-NOW</Description>
                     <Target/>
