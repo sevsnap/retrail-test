@@ -7,11 +7,10 @@ package it.cnr.iit.retrail.test;
 import it.cnr.iit.retrail.commons.PepAttributeInterface;
 import it.cnr.iit.retrail.commons.PepRequestInterface;
 import it.cnr.iit.retrail.commons.PepSessionInterface;
-import it.cnr.iit.retrail.commons.Status;
+import it.cnr.iit.retrail.commons.StateType;
 import it.cnr.iit.retrail.server.dal.UconAttribute;
 import it.cnr.iit.retrail.server.dal.UconSession;
 import it.cnr.iit.retrail.server.pip.impl.StandAlonePIP;
-import java.util.Collection;
 import java.util.Date;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +22,13 @@ public class TestPIPTimer extends StandAlonePIP {
 
     protected int maxDuration;
     protected double resolution = 1.0;
-    protected Status forStatus = Status.ONGOING;
+    protected StateType forStatus = StateType.ONGOING;
+
+    public TestPIPTimer() {
+        super();
+        this.log = LoggerFactory.getLogger(TestPIPTimer.class);
+        this.maxDuration = 3600;
+    }
 
     public TestPIPTimer(int maxDuration) {
         super();
@@ -40,8 +45,8 @@ public class TestPIPTimer extends StandAlonePIP {
 
     @Override
     public void onAfterStartAccess(PepRequestInterface request, PepSessionInterface session) {
-        if (session.getStatus() != Status.ONGOING) {
-            log.warn("clearing timer attribute because session status = {}", session.getStatus());
+        if (session.getStateType() != StateType.ONGOING) {
+            log.warn("clearing timer attribute because session status = {}", session.getStateType());
             PepAttributeInterface subject = request.getAttribute("urn:oasis:names:tc:xacml:1.0:subject-category:access-subject", "urn:oasis:names:tc:xacml:1.0:subject:subject-id");
             PepAttributeInterface a = newPrivateAttribute("timer", "http://www.w3.org/2001/XMLSchema#double", "0", "http://localhost:8080/federation-id-prov/saml", subject);
             a.setExpires(new Date());
@@ -65,11 +70,11 @@ public class TestPIPTimer extends StandAlonePIP {
         this.resolution = resolution;
     }
 
-    public Status getForStatus() {
+    public StateType getForStatus() {
         return forStatus;
     }
 
-    public void setForStatus(Status forStatus) {
+    public void setForStatus(StateType forStatus) {
         this.forStatus = forStatus;
     }
 
@@ -82,7 +87,7 @@ public class TestPIPTimer extends StandAlonePIP {
                 for (PepAttributeInterface a : listManagedAttributes()) {
                     UconAttribute u = (UconAttribute) a;
                     UconSession s = u.getSession();
-                    if (s.getStatus() == forStatus) {
+                    if (s.getStateType() == forStatus) {
                         Double ttg = Double.parseDouble(a.getValue());
                         if (ttg > 0) {
                             ttg = Double.max(0, ttg - resolution);

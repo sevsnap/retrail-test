@@ -8,9 +8,7 @@ package it.cnr.iit.retrail.demo;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
 import it.cnr.iit.retrail.commons.impl.PepResponse;
 import it.cnr.iit.retrail.commons.impl.PepSession;
-import it.cnr.iit.retrail.commons.Status;
-import java.util.ArrayList;
-import java.util.Collection;
+import it.cnr.iit.retrail.commons.StateType;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,8 +43,12 @@ public class User {
         return id;
     }
 
-    public synchronized Status getStatus() {
-        return pepSession == null ? Status.UNKNOWN : pepSession.getStatus();
+    public synchronized StateType getStateType() {
+        return pepSession == null ? StateType.UNKNOWN : pepSession.getStateType();
+    }
+
+    public synchronized String getStateName() {
+        return pepSession == null ? null : pepSession.getStateName();
     }
 
     public String getCustomId() {
@@ -95,7 +97,7 @@ public class User {
         boolean ok = false;
         try {
             pepSession = UsageController.getInstance().endAccess(pepSession);
-            ok = pepSession.getStatus() == Status.END;
+            ok = pepSession.getStateType() == StateType.END;
             pepSession.setCustomId("");
         } catch (Exception e) {
             log.error("Unexpected exception: {}", e.getMessage());
@@ -105,7 +107,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User " + id + " [status=" + getStatus() + "]";
+        return "User " + id + " [status=" + getStateType() + "]";
     }
 
 }

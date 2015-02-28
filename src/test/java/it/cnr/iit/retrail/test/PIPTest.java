@@ -13,7 +13,7 @@ import it.cnr.iit.retrail.commons.impl.PepRequest;
 import it.cnr.iit.retrail.commons.impl.PepResponse;
 import it.cnr.iit.retrail.commons.impl.PepAttribute;
 import it.cnr.iit.retrail.commons.impl.PepSession;
-import it.cnr.iit.retrail.commons.Status;
+import it.cnr.iit.retrail.commons.StateType;
 import it.cnr.iit.retrail.demo.UsageController;
 import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.dal.UconAttribute;
@@ -69,14 +69,13 @@ public class PIPTest {
             // start server
             ucon = UConFactory.getInstance(pdpUrl);
             ucon.loadConfiguration(UsageController.class.getResourceAsStream("/PIPTest.xml"));
-            pipSessions = new PIPSessions();
-            ucon.getPIPChain().add(pipSessions);
-            TestPIPReputation reputation = new TestPIPReputation();
+            pipSessions = (PIPSessions) ucon.getPIPChain().get(0);
+            TestPIPReputation reputation = (TestPIPReputation) ucon.getPIPChain().get(1);
             reputation.reputationMap.put("fedoraRole", "bronze");
             reputation.reputationMap.put("userWithBadReputation", "bad");
-            ucon.getPIPChain().add(reputation);
-            pipTimer = new TestPIPTimer(2);
-            ucon.getPIPChain().add(pipTimer);
+            pipTimer = (TestPIPTimer) ucon.getPIPChain().get(2);
+            pipTimer.setMaxDuration(2);
+
             ucon.init();
             ucon.startRecording(new File(("serverRecord.xml")));
             // start client
@@ -168,7 +167,8 @@ public class PIPTest {
     }
 
     private PepSession afterTryAccess(PepSession pepSession) throws Exception {
-        assertEquals(Status.STANDARD, pepSession.getStatus()); // FIXME was TRY
+        assertEquals(StateType.PASSIVE, pepSession.getStateType());
+        assertEquals("TRY", pepSession.getStateName());
         assertTrue(pep.hasSession(pepSession));
         assertEquals(1, pep.getSessions().size());
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
@@ -179,21 +179,22 @@ public class PIPTest {
 
     private void beforeStartAccess(PepSession pepSession) throws Exception {
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
-        assertEquals(Status.STANDARD, pepSession.getStatus()); // FIXME was TRY
+        assertEquals(StateType.PASSIVE, pepSession.getStateType());
+        assertEquals("TRY", pepSession.getStateName());
     }
 
     private void afterStartAccess(PepSession pepSession) throws Exception {
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
-        assertEquals(Status.ONGOING, pepSession.getStatus());
+        assertEquals(StateType.ONGOING, pepSession.getStateType());
         assertEquals("sayDetected", lastObligation);
     }
 
     private void beforeEndAccess(PepSession pepSession) throws Exception {
         assertEquals(1, pep.getSessions().size());
-        assertNotEquals(Status.END, pepSession.getStatus()); // FIXME was DELETED
-        assertNotEquals(Status.UNKNOWN, pepSession.getStatus());
-        assertNotEquals(Status.REVOKED, pepSession.getStatus());
-        assertNotEquals(Status.END, pepSession.getStatus());// FIXME was REJECTED
+        assertNotEquals(StateType.END, pepSession.getStateType()); // FIXME was DELETED
+        assertNotEquals(StateType.UNKNOWN, pepSession.getStateType());
+        assertNotEquals(StateType.REVOKED, pepSession.getStateType());
+        assertNotEquals(StateType.END, pepSession.getStateType());// FIXME was REJECTED
         assertTrue(pep.hasSession(pepSession));
     }
 
@@ -201,7 +202,7 @@ public class PIPTest {
         assertFalse(pep.hasSession(response));
         assertEquals(0, pep.getSessions().size());
         assertEquals(pdpUrlString, response.getUconUrl().toString());
-        assertEquals(Status.END, response.getStatus()); // FIXME was DELETED
+        assertEquals(StateType.END, response.getStateType()); // FIXME was DELETED
     }
 
     /**
@@ -256,7 +257,7 @@ public class PIPTest {
                 "issuer");
         PepSession pepSession = pep.tryAccess(req);
         assertEquals(PepResponse.DecisionEnum.Deny, pepSession.getDecision());
-        assertEquals(Status.END, pepSession.getStatus()); // FIXME was REJECTED
+        assertEquals(StateType.END, pepSession.getStateType()); // FIXME was REJECTED
         assertEquals(0, pep.getSessions().size());
         assertEquals(0, pipSessions.getSessions());
         assertEquals("sayStandOff", lastObligation);
@@ -273,7 +274,7 @@ public class PIPTest {
                 "issuer");
         PepSession pepSession = pep.tryAccess(req);
         assertNotEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
-        assertEquals(Status.END, pepSession.getStatus()); // FIXME was REJECTED
+        assertEquals(StateType.END, pepSession.getStateType()); // FIXME was REJECTED
         assertEquals(0, pep.getSessions().size());
         assertEquals(0, pipSessions.getSessions());
         log.info("ok");
@@ -321,7 +322,8 @@ public class PIPTest {
         afterStartAccess(pepSession1);
         assertEquals(1, pipSessions.getSessions());
         pepSession2 = pep.startAccess(pepSession2);
-        assertEquals(Status.STANDARD, pepSession2.getStatus()); // FIXME was TRY
+        assertEquals(StateType.PASSIVE, pepSession2.getStateType());
+        assertEquals("TRY", pepSession2.getStateName());
         assertEquals(1, pipSessions.getSessions());
         assertNotEquals(PepResponse.DecisionEnum.Permit, pepSession2.getDecision());
         assertEquals(2, pep.getSessions().size());
@@ -351,7 +353,7 @@ public class PIPTest {
         log.warn("ok, waiting {} ms for ucon to revoke session", ms);
         Thread.sleep(ms);
         response = pep.getSession(response.getUuid());
-        assertEquals(Status.REVOKED, response.getStatus());
+        assertEquals(StateType.REVOKED, response.getStateType());
         assertEquals("sayRevoked", lastObligation);
         assertNotNull(response.getLocalInfo());
         assertEquals("itsOk", response.getLocalInfo().get("tryThis"));

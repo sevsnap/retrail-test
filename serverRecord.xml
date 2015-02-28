@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <retrailRecorder>
 <record ms="1">
-<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="3,395"><Result><Decision>Indeterminate</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:missing-attribute"/><StatusMessage>Couldn't find AttributeDesignator attribute</StatusMessage><StatusDetail>
-<MissingAttributeDetail Issuer="http://localhost:8080/federation-id-prov/saml" DataType="http://www.w3.org/2001/XMLSchema#integer" Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" AttributeId="openSessions"/>
-</StatusDetail></Status></Result><Session uuid="7BE8B4CA-8070-41C7-B367-653FE70D4B33" uconUrl="http://localhost:8080" status="REVOKED" ms="1"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="1,367"><Result><Decision>Deny</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status><Obligations><Obligation ObligationId="sayRevoked"/></Obligations></Result><Session uuid="CF9B02EB-14E2-4FFE-B171-28F7A6825291" uconUrl="http://localhost:8080" stateType="REVOKED" stateName="REVOKED" ms="1"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
 <methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:nil/></value></param></params></methodResponse>
 </record>
 </retrailRecorder>

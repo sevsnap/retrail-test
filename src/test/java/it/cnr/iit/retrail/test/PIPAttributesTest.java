@@ -10,7 +10,7 @@ import it.cnr.iit.retrail.client.impl.PEP;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
 import it.cnr.iit.retrail.commons.impl.PepResponse;
 import it.cnr.iit.retrail.commons.impl.PepSession;
-import it.cnr.iit.retrail.commons.Status;
+import it.cnr.iit.retrail.commons.StateType;
 import it.cnr.iit.retrail.demo.UsageController;
 import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.dal.UconAttribute;
@@ -75,7 +75,7 @@ public class PIPAttributesTest {
             ucon.getPIPChain().add(pipReputation);
             pipTimer = new TestPIPTimer(3);
             pipTimer.setResolution(0.25);
-            pipTimer.setForStatus(Status.ONGOING);
+            pipTimer.setForStatus(StateType.ONGOING);
             ucon.getPIPChain().add(pipTimer);
             ucon.init();
             ucon.startRecording(new File("serverRecord.xml"));
@@ -158,7 +158,8 @@ public class PIPAttributesTest {
     private PepSession afterTryAccess(PepSession pepSession) throws Exception {
         assertTrue(pep.hasSession(pepSession));
         assertEquals(1, pep.getSessions().size());
-        assertEquals(Status.STANDARD, pepSession.getStatus());//FIXME was TRY
+        assertEquals(StateType.PASSIVE, pepSession.getStateType());
+        assertEquals("TRY", pepSession.getStateName());
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
         assertEquals(pdpUrlString, pepSession.getUconUrl().toString());
         return pepSession;
@@ -166,26 +167,27 @@ public class PIPAttributesTest {
 
     private void beforeStartAccess(PepSession pepSession) throws Exception {
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
-        assertEquals(Status.STANDARD, pepSession.getStatus()); //FIXME was TRY
+        assertEquals(StateType.PASSIVE, pepSession.getStateType());
+        assertEquals("TRY", pepSession.getStateName());
     }
 
     private void afterStartAccess(PepSession pepSession) throws Exception {
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
-        assertEquals(Status.ONGOING, pepSession.getStatus());
+        assertEquals(StateType.ONGOING, pepSession.getStateType());
     }
 
     private void beforeEndAccess(PepSession pepSession) throws Exception {
         assertEquals(1, pep.getSessions().size());
-        assertNotEquals(Status.END, pepSession.getStatus());// was DELETED
-        assertNotEquals(Status.UNKNOWN, pepSession.getStatus());
-        assertNotEquals(Status.REVOKED, pepSession.getStatus());
+        assertNotEquals(StateType.END, pepSession.getStateType());// was DELETED
+        assertNotEquals(StateType.UNKNOWN, pepSession.getStateType());
+        assertNotEquals(StateType.REVOKED, pepSession.getStateType());
         assertTrue(pep.hasSession(pepSession));
     }
 
     private void afterEndAccess(PepSession response) throws Exception {
         assertFalse(pep.hasSession(response));
         assertEquals(pdpUrlString, response.getUconUrl().toString());
-        assertEquals(Status.END, response.getStatus()); // was DELETED
+        assertEquals(StateType.END, response.getStateType()); // was DELETED
     }
 
     @Test
@@ -253,11 +255,11 @@ public class PIPAttributesTest {
         //assertEquals(1, pipReputation.listManagedAttributes().size());
         log.info("Session 1 must not be REVOKED because of reputation interleaving");
         response1 = pep.getSession(response1.getUuid());
-        assertEquals(Status.ONGOING, response1.getStatus());
+        assertEquals(StateType.ONGOING, response1.getStateType());
         //assertEquals(1, pipReputation.listManagedAttributes().size());
         Thread.sleep(1300);
         log.info("Session 1 must now be REVOKED because of time");
-        assertEquals(Status.REVOKED, response1.getStatus());
+        assertEquals(StateType.REVOKED, response1.getStateType());
         //assertEquals(1, pipReputation.listManagedAttributes().size());
         pep.endAccess(response1);
         log.info("ok");
@@ -282,13 +284,13 @@ public class PIPAttributesTest {
         Thread.sleep(2100 + (int) (1000 * pipTimer.getResolution()));
         log.info("by now session 1 must be REVOKED, whilst session 2 should be ONGOING");
         response1 = pep.getSession(response1.getUuid());
-        assertEquals(Status.REVOKED, response1.getStatus());
+        assertEquals(StateType.REVOKED, response1.getStateType());
         response2 = pep.getSession(response2.getUuid());
-        assertEquals(Status.ONGOING, response2.getStatus());
+        assertEquals(StateType.ONGOING, response2.getStateType());
         Thread.sleep(1000);
         log.warn("ok. session 2 should have been now REVOKED as well");
         response2 = pep.getSession(response2.getUuid());
-        assertEquals(Status.REVOKED, response2.getStatus());
+        assertEquals(StateType.REVOKED, response2.getStateType());
         log.debug("ok. restoring global configuration");
         pep.endAccess(response1);
         pep.endAccess(response2);

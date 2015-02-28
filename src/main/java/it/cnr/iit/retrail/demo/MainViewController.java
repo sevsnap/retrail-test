@@ -5,7 +5,7 @@
 package it.cnr.iit.retrail.demo;
 
 import it.cnr.iit.retrail.client.impl.Replay;
-import it.cnr.iit.retrail.commons.Status;
+import it.cnr.iit.retrail.commons.StateType;
 import it.cnr.iit.retrail.commons.impl.PepSession;
 import java.io.File;
 import java.io.IOException;
@@ -79,11 +79,11 @@ public class MainViewController extends AnchorPane implements Initializable {
             @Override
             public void handle(MouseEvent t) {
                 try {
-                    Status prevStatus = user.getStatus();
+                    StateType prevStatus = user.getStateType();
                     log.info("User: {}", user);
                     if (!user.leave()) {
                         showError("User " + userId + " is not allowed to enter the room");
-                    } else if (prevStatus == Status.REVOKED || prevStatus == Status.ONGOING) {
+                    } else if (prevStatus == StateType.REVOKED || prevStatus == StateType.ONGOING) {
                         showMessage("User " + userId + " jas left the room");
                         playSound("/META-INF/gui/doorShut.wav");
                         playSound("/META-INF/gui/footsteps.wav");
@@ -101,7 +101,7 @@ public class MainViewController extends AnchorPane implements Initializable {
             @Override
             public void handle(MouseEvent t) {
                 try {
-                    if (user.getStatus() == Status.STANDARD) { // FIXME was TRY
+                    if (user.getStateName().equals("TRY")) {
                         if (!user.enterRoom()) {
                             showError("User " + userId + " is not allowed to enter the room!");
                         } else {
@@ -299,14 +299,14 @@ public class MainViewController extends AnchorPane implements Initializable {
         ImageView icon = (ImageView) userView.getCenter();
         ImageView leftArrow = (ImageView) userView.getLeft();
         ImageView rightArrow = (ImageView) userView.getRight();
-        switch (user.getStatus()) {
+        switch (user.getStateType()) {
             default:
                 name = "/META-INF/gui/userGray.png";
                 x = 0;
                 leftArrow.setVisible(false);
                 rightArrow.setVisible(true);
                 break;
-            case STANDARD: // FIXME was TRY
+            case PASSIVE:
                 name = "/META-INF/gui/userBlue.png";
                 x = 250;
                 leftArrow.setVisible(true);

@@ -10,7 +10,7 @@ import it.cnr.iit.retrail.commons.DomUtils;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
 import it.cnr.iit.retrail.commons.impl.PepResponse;
 import it.cnr.iit.retrail.commons.impl.PepSession;
-import it.cnr.iit.retrail.commons.Status;
+import it.cnr.iit.retrail.commons.StateType;
 import it.cnr.iit.retrail.server.impl.UCon;
 import it.cnr.iit.retrail.server.impl.UConFactory;
 import java.io.File;
@@ -120,7 +120,8 @@ public class SimpleTest {
     private PepSession afterTryAccess(PepSession pepSession) throws Exception {
         assertEquals(1, pep.getSessions().size());
         assertTrue(pep.hasSession(pepSession));
-        assertEquals(Status.STANDARD, pepSession.getStatus());//FIXME was TRY FIXME
+        assertEquals(StateType.PASSIVE, pepSession.getStateType());
+        assertEquals("TRY", pepSession.getStateName());
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
         assertNotNull(pepSession.getUconUrl());
         assertEquals(pdpUrlString, pepSession.getUconUrl().toString());
@@ -129,27 +130,28 @@ public class SimpleTest {
     
     private void beforeStartAccess(PepSession pepSession) throws Exception {
         assertEquals(1, pep.getSessions().size());
-        assertEquals(Status.STANDARD, pepSession.getStatus());//FIXME was TRY FIXME
+        assertEquals(StateType.PASSIVE, pepSession.getStateType());
+        assertEquals("TRY", pepSession.getStateName());
     }
 
     private void afterStartAccess(PepSession pepSession) throws Exception {
         assertEquals(1, pep.getSessions().size());
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
-        assertEquals(Status.ONGOING, pepSession.getStatus());
+        assertEquals(StateType.ONGOING, pepSession.getStateType());
     }
 
     private void beforeEndAccess(PepSession pepSession) throws Exception {
         assertEquals(1, pep.getSessions().size());
-        assertNotEquals(Status.UNKNOWN, pepSession.getStatus());
-        assertNotEquals(Status.REVOKED, pepSession.getStatus());
-        assertNotEquals(Status.END, pepSession.getStatus()); // FIXME was REJECTED
+        assertNotEquals(StateType.UNKNOWN, pepSession.getStateType());
+        assertNotEquals(StateType.REVOKED, pepSession.getStateType());
+        assertNotEquals(StateType.END, pepSession.getStateType()); // FIXME was REJECTED
         assertTrue(pep.hasSession(pepSession));
     }
     
     private void afterEndAccess(PepSession response) throws Exception {
         assertFalse(pep.hasSession(response));
         assertEquals(pdpUrlString, response.getUconUrl().toString());
-        assertEquals(Status.END, response.getStatus()); // FIXME was DELETED
+        assertEquals(StateType.END, response.getStateType()); // FIXME was DELETED
     }
     
     /**
@@ -675,16 +677,17 @@ public class SimpleTest {
         log.info("start");
         PepSession pepSession = pep.tryAccess(pepRequest);
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
-        assertEquals(Status.STANDARD, pepSession.getStatus());  // FIXME was TRY
+        assertEquals(StateType.PASSIVE, pepSession.getStateType());
+        assertEquals("TRY", pepSession.getStateName());
         PepSession response = pep.startAccess(pepSession);
         log.info("response {}", response);
         assertEquals(PepResponse.DecisionEnum.Permit, response.getDecision());
-        assertEquals(Status.ONGOING, response.getStatus());
+        assertEquals(StateType.ONGOING, response.getStateType());
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
-        assertEquals(Status.ONGOING, pepSession.getStatus());
+        assertEquals(StateType.ONGOING, pepSession.getStateType());
         response = pep.endAccess(response);
-        assertEquals(Status.END, response.getStatus()); // was DELETED
-        assertEquals(Status.END, pepSession.getStatus()); // was DELETED
+        assertEquals(StateType.END, response.getStateType()); // was DELETED
+        assertEquals(StateType.END, pepSession.getStateType()); // was DELETED
         log.info("end");
     }
 

@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ucon:Config xmlns:ucon="http://security.iit.cnr.it/retrail/ucon">
+    <ucon:PIPChain>
+        <ucon:PIP uuid="pipSessions" class="it.cnr.iit.retrail.server.pip.impl.PIPSessions" />
+        <ucon:PIP uuid="pipReputation" class="it.cnr.iit.retrail.test.TestPIPReputation" />
+        <ucon:PIP uuid="pipTimer" class="it.cnr.iit.retrail.test.TestPIPTimer">
+            <!--<ucon:Property name="maxDuration">2</ucon:Property>-->
+        </ucon:PIP>
+    </ucon:PIPChain>
     <ucon:Behaviour>
         <ucon:States>
             <ucon:State name="INIT" type="BEGIN"/>
-            <ucon:State name="TRY" type="STANDARD"/>
+            <ucon:State name="TRY" type="PASSIVE"/>
             <ucon:State name="ONGOING" type="ONGOING"/>
             <ucon:State name="REVOKED" type="REVOKED"/>
             <ucon:State name="REJECTED" type="END"/>
