@@ -10,6 +10,7 @@ import it.cnr.iit.retrail.commons.PepSessionInterface;
 import it.cnr.iit.retrail.commons.StateType;
 import it.cnr.iit.retrail.server.dal.UconAttribute;
 import it.cnr.iit.retrail.server.dal.UconSession;
+import it.cnr.iit.retrail.server.pip.ActionEvent;
 import it.cnr.iit.retrail.server.pip.impl.StandAlonePIP;
 import java.util.Date;
 import org.slf4j.LoggerFactory;
@@ -37,23 +38,26 @@ public class TestPIPTimer extends StandAlonePIP {
     }
 
     @Override
-    public void onBeforeStartAccess(PepRequestInterface request, PepSessionInterface session) {
-        PepAttributeInterface subject = request.getAttribute("urn:oasis:names:tc:xacml:1.0:subject-category:access-subject", "urn:oasis:names:tc:xacml:1.0:subject:subject-id");
-        PepAttributeInterface a = newPrivateAttribute("timer", "http://www.w3.org/2001/XMLSchema#double", Double.toString(maxDuration), "http://localhost:8080/federation-id-prov/saml", subject);
-        request.replace(a);
+    public void fireBeforeActionEvent(ActionEvent e) {
+        if (e.originState.getType() != StateType.ONGOING && e.targetState.getType() == StateType.ONGOING) {
+            log.warn("setting timer attribute because target status = {}", e.targetState.getType());
+            PepAttributeInterface subject = e.request.getAttribute("urn:oasis:names:tc:xacml:1.0:subject-category:access-subject", "urn:oasis:names:tc:xacml:1.0:subject:subject-id");
+            PepAttributeInterface a = newPrivateAttribute("timer", "http://www.w3.org/2001/XMLSchema#double", Double.toString(maxDuration), "http://localhost:8080/federation-id-prov/saml", subject);
+            e.request.replace(a);
+       }
     }
-
+    
     @Override
-    public void onAfterStartAccess(PepRequestInterface request, PepSessionInterface session) {
-        if (session.getStateType() != StateType.ONGOING) {
-            log.warn("clearing timer attribute because session status = {}", session.getStateType());
-            PepAttributeInterface subject = request.getAttribute("urn:oasis:names:tc:xacml:1.0:subject-category:access-subject", "urn:oasis:names:tc:xacml:1.0:subject:subject-id");
+    public void fireAfterActionEvent(ActionEvent e) {
+        if (e.originState.getType() == StateType.ONGOING && e.session.getStateType() != StateType.ONGOING) {
+            log.warn("removing timer attribute because session status = {}", e.session.getStateType());
+            PepAttributeInterface subject = e.request.getAttribute("urn:oasis:names:tc:xacml:1.0:subject-category:access-subject", "urn:oasis:names:tc:xacml:1.0:subject:subject-id");
             PepAttributeInterface a = newPrivateAttribute("timer", "http://www.w3.org/2001/XMLSchema#double", "0", "http://localhost:8080/federation-id-prov/saml", subject);
             a.setExpires(new Date());
-            request.replace(a);
+            e.request.replace(a);
         }
     }
-
+    
     public int getMaxDuration() {
         return maxDuration;
     }

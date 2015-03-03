@@ -167,8 +167,8 @@ public class PIPTest {
     }
 
     private PepSession afterTryAccess(PepSession pepSession) throws Exception {
-        assertEquals(StateType.PASSIVE, pepSession.getStateType());
         assertEquals("TRY", pepSession.getStateName());
+        assertEquals(StateType.PASSIVE, pepSession.getStateType());
         assertTrue(pep.hasSession(pepSession));
         assertEquals(1, pep.getSessions().size());
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
@@ -193,8 +193,8 @@ public class PIPTest {
         assertEquals(1, pep.getSessions().size());
         assertNotEquals(StateType.END, pepSession.getStateType()); // FIXME was DELETED
         assertNotEquals(StateType.UNKNOWN, pepSession.getStateType());
-        assertNotEquals(StateType.REVOKED, pepSession.getStateType());
-        assertNotEquals(StateType.END, pepSession.getStateType());// FIXME was REJECTED
+        assertNotEquals("REVOKED", pepSession.getStateName());
+        assertNotEquals("REJECTED", pepSession.getStateName());// FIXME was REJECTED
         assertTrue(pep.hasSession(pepSession));
     }
 
@@ -322,8 +322,8 @@ public class PIPTest {
         afterStartAccess(pepSession1);
         assertEquals(1, pipSessions.getSessions());
         pepSession2 = pep.startAccess(pepSession2);
-        assertEquals(StateType.PASSIVE, pepSession2.getStateType());
         assertEquals("TRY", pepSession2.getStateName());
+        assertEquals(StateType.PASSIVE, pepSession2.getStateType());
         assertEquals(1, pipSessions.getSessions());
         assertNotEquals(PepResponse.DecisionEnum.Permit, pepSession2.getDecision());
         assertEquals(2, pep.getSessions().size());
@@ -353,7 +353,7 @@ public class PIPTest {
         log.warn("ok, waiting {} ms for ucon to revoke session", ms);
         Thread.sleep(ms);
         response = pep.getSession(response.getUuid());
-        assertEquals(StateType.REVOKED, response.getStateType());
+        assertEquals("REVOKED", response.getStateName());
         assertEquals("sayRevoked", lastObligation);
         assertNotNull(response.getLocalInfo());
         assertEquals("itsOk", response.getLocalInfo().get("tryThis"));

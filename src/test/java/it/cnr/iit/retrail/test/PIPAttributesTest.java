@@ -180,7 +180,7 @@ public class PIPAttributesTest {
         assertEquals(1, pep.getSessions().size());
         assertNotEquals(StateType.END, pepSession.getStateType());// was DELETED
         assertNotEquals(StateType.UNKNOWN, pepSession.getStateType());
-        assertNotEquals(StateType.REVOKED, pepSession.getStateType());
+        assertNotEquals("REVOKED", pepSession.getStateName());
         assertTrue(pep.hasSession(pepSession));
     }
 
@@ -259,7 +259,7 @@ public class PIPAttributesTest {
         //assertEquals(1, pipReputation.listManagedAttributes().size());
         Thread.sleep(1300);
         log.info("Session 1 must now be REVOKED because of time");
-        assertEquals(StateType.REVOKED, response1.getStateType());
+        assertEquals("REVOKED", response1.getStateName());
         //assertEquals(1, pipReputation.listManagedAttributes().size());
         pep.endAccess(response1);
         log.info("ok");
@@ -284,13 +284,13 @@ public class PIPAttributesTest {
         Thread.sleep(2100 + (int) (1000 * pipTimer.getResolution()));
         log.info("by now session 1 must be REVOKED, whilst session 2 should be ONGOING");
         response1 = pep.getSession(response1.getUuid());
-        assertEquals(StateType.REVOKED, response1.getStateType());
+        assertEquals("REVOKED", response1.getStateName());
         response2 = pep.getSession(response2.getUuid());
         assertEquals(StateType.ONGOING, response2.getStateType());
         Thread.sleep(1000);
         log.warn("ok. session 2 should have been now REVOKED as well");
         response2 = pep.getSession(response2.getUuid());
-        assertEquals(StateType.REVOKED, response2.getStateType());
+        assertEquals("REVOKED", response2.getStateName());
         log.debug("ok. restoring global configuration");
         pep.endAccess(response1);
         pep.endAccess(response2);

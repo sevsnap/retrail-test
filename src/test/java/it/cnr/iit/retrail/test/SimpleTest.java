@@ -143,7 +143,7 @@ public class SimpleTest {
     private void beforeEndAccess(PepSession pepSession) throws Exception {
         assertEquals(1, pep.getSessions().size());
         assertNotEquals(StateType.UNKNOWN, pepSession.getStateType());
-        assertNotEquals(StateType.REVOKED, pepSession.getStateType());
+        assertNotEquals("REVOKED", pepSession.getStateName());
         assertNotEquals(StateType.END, pepSession.getStateType()); // FIXME was REJECTED
         assertTrue(pep.hasSession(pepSession));
     }

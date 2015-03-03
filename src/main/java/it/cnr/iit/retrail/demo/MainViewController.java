@@ -79,11 +79,11 @@ public class MainViewController extends AnchorPane implements Initializable {
             @Override
             public void handle(MouseEvent t) {
                 try {
-                    StateType prevStatus = user.getStateType();
+                    String prevStatus = user.getStateName();
                     log.info("User: {}", user);
                     if (!user.leave()) {
                         showError("User " + userId + " is not allowed to enter the room");
-                    } else if (prevStatus == StateType.REVOKED || prevStatus == StateType.ONGOING) {
+                    } else if (prevStatus == "REVOKED" || prevStatus == "ONGOING") {
                         showMessage("User " + userId + " jas left the room");
                         playSound("/META-INF/gui/doorShut.wav");
                         playSound("/META-INF/gui/footsteps.wav");
@@ -299,26 +299,26 @@ public class MainViewController extends AnchorPane implements Initializable {
         ImageView icon = (ImageView) userView.getCenter();
         ImageView leftArrow = (ImageView) userView.getLeft();
         ImageView rightArrow = (ImageView) userView.getRight();
-        switch (user.getStateType()) {
+        switch (user.getStateName()) {
             default:
                 name = "/META-INF/gui/userGray.png";
                 x = 0;
                 leftArrow.setVisible(false);
                 rightArrow.setVisible(true);
                 break;
-            case PASSIVE:
+            case "TRY":
                 name = "/META-INF/gui/userBlue.png";
                 x = 250;
                 leftArrow.setVisible(true);
                 rightArrow.setVisible(true);
                 break;
-            case ONGOING:
+            case "ONGOING":
                 name = "/META-INF/gui/userGreen.png";
                 x = 520;
                 leftArrow.setVisible(true);
                 rightArrow.setVisible(false);
                 break;
-            case REVOKED:
+            case "REVOKED":
                 name = "/META-INF/gui/userRed.png";
                 x = 450;
                 leftArrow.setVisible(true);

@@ -5,7 +5,7 @@
             <ucon:State name="INIT" type="BEGIN"/>
             <ucon:State name="TRY" type="PASSIVE"/>
             <ucon:State name="ONGOING" type="ONGOING"/>
-            <ucon:State name="REVOKED" type="REVOKED"/>
+            <ucon:State name="REVOKED" type="PASSIVE"/>
             <ucon:State name="REJECTED" type="END"/>
             <ucon:State name="DELETED" type="END"/>
         </ucon:States>
@@ -14,22 +14,10 @@
 
                 <Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" PolicyId="pre-policy"
         RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable" Version="1.0">
-                    <Description>Test on-authorization policy</Description>
+                    <Description>Test pre policy</Description>
                     <Target></Target>
                     <Rule Effect="Permit" RuleId="test:rule">
-                        <Target>
-                            <AnyOf>
-                                <AllOf>
-                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:integer-greater-than">
-                                        <AttributeDesignator AttributeId="openSessions" 
-                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
-                                             DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
-                                        </AttributeDesignator>
-                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">3</AttributeValue>
-                                    </Match>
-                                </AllOf>
-                            </AnyOf>
-                        </Target>
+                        <Target/>
                     </Rule>
                     <Rule Effect="Deny" RuleId="test:rule2"/>
                 </Policy>
@@ -64,7 +52,7 @@
                                              Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
                                              DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
                                         </AttributeDesignator>
-                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">3</AttributeValue>
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">2</AttributeValue>
                                     </Match>
 
                                 </AllOf>
@@ -115,7 +103,7 @@
                                              Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
                                              DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
                                         </AttributeDesignator>
-                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">3</AttributeValue>
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">2</AttributeValue>
                                     </Match>
 
                                 </AllOf>

@@ -12,7 +12,7 @@
             <ucon:State name="INIT" type="BEGIN"/>
             <ucon:State name="TRY" type="PASSIVE"/>
             <ucon:State name="ONGOING" type="ONGOING"/>
-            <ucon:State name="REVOKED" type="REVOKED"/>
+            <ucon:State name="REVOKED" type="PASSIVE"/>
             <ucon:State name="REJECTED" type="END"/>
             <ucon:State name="DELETED" type="END"/>
         </ucon:States>
@@ -38,7 +38,7 @@
                                              Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
                                              DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
                                         </AttributeDesignator>
-                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">2</AttributeValue>
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">1</AttributeValue>
                                     </Match>
                                 </AllOf>
                             </AnyOf>
@@ -85,7 +85,7 @@
                                              Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
                                              DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
                                         </AttributeDesignator>
-                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">2</AttributeValue>
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">1</AttributeValue>
                                     </Match>
 
                                 </AllOf>
@@ -116,14 +116,6 @@
                                         </AttributeDesignator>
                                         <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#double">0</AttributeValue>
                                     </Match>
-                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:integer-greater-than">
-                                        <AttributeDesignator AttributeId="openSessions" 
-                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
-                                             DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
-                                        </AttributeDesignator>
-                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">2</AttributeValue>
-                                    </Match>
-
                                 </AllOf>
                             </AnyOf>
                         </Target>
