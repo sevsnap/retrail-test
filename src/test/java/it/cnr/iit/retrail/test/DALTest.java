@@ -69,7 +69,8 @@ public class DALTest {
         pipReputation = new TestPIPReputation();
         pipReputation.reputationMap.put("user1", "bronze");
         pipReputation.reputationMap.put("user2", "gold");
-        pipTimer = new TestPIPTimer(3);
+        pipTimer = new TestPIPTimer();
+        pipTimer.setMaxDuration(3);
         pipTimer.setResolution(0.25);
     }
 
@@ -143,10 +144,10 @@ public class DALTest {
         }
         assertEquals(0, l.size());
         */
-        assertEquals(0, dal.listUnmanagedAttributes(pipReputation.getUUID()).size());
-        assertEquals(0, dal.listManagedAttributes(pipReputation.getUUID()).size());
-        assertEquals(0, dal.listUnmanagedAttributes(pipSessions.getUUID()).size());
-        assertEquals(0, dal.listManagedAttributes(pipSessions.getUUID()).size());
+        assertEquals(0, dal.listUnmanagedAttributes(pipReputation.getUuid()).size());
+        assertEquals(0, dal.listManagedAttributes(pipReputation.getUuid()).size());
+        assertEquals(0, dal.listUnmanagedAttributes(pipSessions.getUuid()).size());
+        assertEquals(0, dal.listManagedAttributes(pipSessions.getUuid()).size());
         log.info("after teardown everything looks ok!");
         dal.rollback();
     }
@@ -164,7 +165,7 @@ public class DALTest {
        
     
     private void assertSessionsValueEquals(String value) {
-        Collection<PepAttributeInterface> l = dal.listManagedAttributes(pipSessions.getUUID());
+        Collection<PepAttributeInterface> l = dal.listManagedAttributes(pipSessions.getUuid());
         assertEquals(1, l.size());
         UconAttribute sessions = (UconAttribute) l.iterator().next();
         assertEquals(pipSessions.id, sessions.getId());
@@ -245,13 +246,13 @@ public class DALTest {
         dal.endSession(uconSession1);
         log.info("endAccess emulated correctly");
         assertEquals(0, dal.listSessions().size());
-//        assertEquals(0, dal.listManagedAttributes(pipSessions.getUUID()).size());
-        assertEquals(0, dal.listUnmanagedAttributes(pipSessions.getUUID()).size());
+//        assertEquals(0, dal.listManagedAttributes(pipSessions.getUuid()).size());
+        assertEquals(0, dal.listUnmanagedAttributes(pipSessions.getUuid()).size());
 //        assertEquals(0, dal.listAttributes().size());
     }
     
     private void assertReputationValueEquals(String value, String forUser) {
-        Collection<PepAttributeInterface> l = dal.listUnmanagedAttributes(pipReputation.getUUID());
+        Collection<PepAttributeInterface> l = dal.listUnmanagedAttributes(pipReputation.getUuid());
         assertEquals(1, l.size());
         UconAttribute reputation = (UconAttribute) l.iterator().next();
         assertEquals(pipReputation.id, reputation.getId());
@@ -287,8 +288,8 @@ public class DALTest {
 
         assertEquals(0, dal.listSessions().size());
 //        assertEquals(0, dal.listAttributes().size());
-        assertEquals(0, dal.listManagedAttributes(pipReputation.getUUID()).size());
-        assertEquals(0, dal.listUnmanagedAttributes(pipReputation.getUUID()).size());
+        assertEquals(0, dal.listManagedAttributes(pipReputation.getUuid()).size());
+        assertEquals(0, dal.listUnmanagedAttributes(pipReputation.getUuid()).size());
     }
 
     private void assertReputation(String sessionUUID, String reputation, String forUserValue) throws Exception {
@@ -339,9 +340,9 @@ public class DALTest {
         assertReputation(sessionUuid1, "bronze", "user1");
         log.info("tryAccess emulated correctly");
         dal.endSession(dal.getSession(sessionUuid1, uconUrl));
-        assertEquals(1, dal.listUnmanagedAttributes(pipReputation.getUUID()).size());
+        assertEquals(1, dal.listUnmanagedAttributes(pipReputation.getUuid()).size());
         dal.endSession(dal.getSession(sessionUuid2, uconUrl));
-        assertEquals(0, dal.listUnmanagedAttributes(pipReputation.getUUID()).size());
+        assertEquals(0, dal.listUnmanagedAttributes(pipReputation.getUuid()).size());
     }
 
     @Test

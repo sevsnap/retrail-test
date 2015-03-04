@@ -54,6 +54,9 @@ public class Main extends Application {
         AnchorPane page;
         try {
             page = (AnchorPane) loader.load(in);
+        } catch(Exception e) {
+            log.error("while loading scene: {}", e);
+            throw e;
         } finally {
             in.close();
         } 

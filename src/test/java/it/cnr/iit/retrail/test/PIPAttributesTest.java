@@ -65,18 +65,13 @@ public class PIPAttributesTest {
             // start server
             ucon = UConFactory.getInstance(pdpUrl);
             ucon.loadConfiguration(UsageController.class.getResourceAsStream("/PIPAttributesTest.xml"));
-            pipSessions = new PIPSessions();
-            ucon.getPIPChain().add(pipSessions);
-            pipReputation = new TestPIPReputation();
+            pipSessions = (PIPSessions) ucon.getPIPChain().get("sessions");
+            pipReputation = (TestPIPReputation) ucon.getPIPChain().get("reputation");
             pipReputation.reputationMap.put("user1", "bronze");
             pipReputation.reputationMap.put("user2", "bronze");
             pipReputation.reputationMap.put("user3", "bronze");
             pipReputation.reputationMap.put("user4", "none");
-            ucon.getPIPChain().add(pipReputation);
-            pipTimer = new TestPIPTimer(3);
-            pipTimer.setResolution(0.25);
-            pipTimer.setForStatus(StateType.ONGOING);
-            ucon.getPIPChain().add(pipTimer);
+            pipTimer = (TestPIPTimer) ucon.getPIPChain().get("timer");
             ucon.init();
             ucon.startRecording(new File("serverRecord.xml"));
             // start client
@@ -280,15 +275,15 @@ public class PIPAttributesTest {
         PepSession response2 = pep.startAccess(pepSession2);
         afterStartAccess(response2);
         assertEquals(2, pipTimer.listManagedAttributes().size());
-        log.warn("ok, waiting for ucon to revoke session 1");
+        log.warn("ok, waiting for ucon to revoke session {}", pepSession1.getUuid());
         Thread.sleep(2100 + (int) (1000 * pipTimer.getResolution()));
-        log.info("by now session 1 must be REVOKED, whilst session 2 should be ONGOING");
+        log.info("by now session {} must be REVOKED, whilst session {} should be ONGOING", pepSession1.getUuid(), pepSession2.getUuid());
         response1 = pep.getSession(response1.getUuid());
         assertEquals("REVOKED", response1.getStateName());
         response2 = pep.getSession(response2.getUuid());
         assertEquals(StateType.ONGOING, response2.getStateType());
         Thread.sleep(1000);
-        log.warn("ok. session 2 should have been now REVOKED as well");
+        log.warn("ok. session {} should have been now REVOKED as well", pepSession2.getUuid());
         response2 = pep.getSession(response2.getUuid());
         assertEquals("REVOKED", response2.getStateName());
         log.debug("ok. restoring global configuration");

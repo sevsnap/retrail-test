@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ucon:Config xmlns:ucon="http://security.iit.cnr.it/retrail/ucon">
     <ucon:PIPChain>
-        <ucon:PIP uuid="pipSessions" class="it.cnr.iit.retrail.server.pip.impl.PIPSessions" />
-        <ucon:PIP uuid="pipReputation" class="it.cnr.iit.retrail.test.TestPIPReputation" />
-        <ucon:PIP uuid="pipTimer" class="it.cnr.iit.retrail.test.TestPIPTimer">
-            <!--<ucon:Property name="maxDuration">2</ucon:Property>-->
+        <ucon:PIP class="it.cnr.iit.retrail.server.pip.impl.PIPSessions">
+            <ucon:Property name="uuid">sessions</ucon:Property>
+        </ucon:PIP>
+        <ucon:PIP class="it.cnr.iit.retrail.test.TestPIPReputation">
+            <ucon:Property name="uuid">reputation</ucon:Property>
+        </ucon:PIP>
+        <ucon:PIP class="it.cnr.iit.retrail.test.TestPIPTimer">
+            <ucon:Property name="uuid">timer</ucon:Property>
+            <ucon:Property name="maxDuration">2</ucon:Property>
         </ucon:PIP>
     </ucon:PIPChain>
     <ucon:Behaviour>

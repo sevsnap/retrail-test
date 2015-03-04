@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ucon:Config xmlns:ucon="http://security.iit.cnr.it/retrail/ucon">
+    <ucon:PIPChain>
+        <ucon:PIP class="it.cnr.iit.retrail.server.pip.impl.PIPSessions">
+            <ucon:Property name="uuid">sessions</ucon:Property>
+        </ucon:PIP>
+        <ucon:PIP class="it.cnr.iit.retrail.test.TestPIPReputation">
+            <ucon:Property name="uuid">reputation</ucon:Property>
+        </ucon:PIP>
+        <ucon:PIP class="it.cnr.iit.retrail.test.TestPIPTimer">
+            <ucon:Property name="uuid">timer</ucon:Property>           
+            <ucon:Property name="maxDuration">3</ucon:Property>
+            <ucon:Property name="resolution">0.25</ucon:Property>
+            <ucon:Property name="forStateType">ONGOING</ucon:Property>
+        </ucon:PIP>
+    </ucon:PIPChain>
     <ucon:Behaviour>
         <ucon:States>
             <ucon:State name="INIT" type="BEGIN"/>
@@ -98,13 +112,7 @@
                                         </AttributeDesignator>
                                         <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#double">0</AttributeValue>
                                     </Match>
-                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:integer-greater-than">
-                                        <AttributeDesignator AttributeId="openSessions" 
-                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
-                                             DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
-                                        </AttributeDesignator>
-                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">2</AttributeValue>
-                                    </Match>
+
 
                                 </AllOf>
                             </AnyOf>

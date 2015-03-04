@@ -5,8 +5,6 @@
 package it.cnr.iit.retrail.test;
 
 import it.cnr.iit.retrail.commons.PepAttributeInterface;
-import it.cnr.iit.retrail.commons.PepRequestInterface;
-import it.cnr.iit.retrail.commons.PepSessionInterface;
 import it.cnr.iit.retrail.commons.StateType;
 import it.cnr.iit.retrail.server.dal.UconAttribute;
 import it.cnr.iit.retrail.server.dal.UconSession;
@@ -23,7 +21,7 @@ public class TestPIPTimer extends StandAlonePIP {
 
     protected int maxDuration;
     protected double resolution = 1.0;
-    protected StateType forStatus = StateType.ONGOING;
+    protected StateType forStateType = StateType.ONGOING;
 
     public TestPIPTimer() {
         super();
@@ -31,15 +29,9 @@ public class TestPIPTimer extends StandAlonePIP {
         this.maxDuration = 3600;
     }
 
-    public TestPIPTimer(int maxDuration) {
-        super();
-        this.log = LoggerFactory.getLogger(TestPIPTimer.class);
-        this.maxDuration = maxDuration;
-    }
-
     @Override
     public void fireBeforeActionEvent(ActionEvent e) {
-        if (e.originState.getType() != StateType.ONGOING && e.targetState.getType() == StateType.ONGOING) {
+        if (e.originState.getType() != forStateType && e.targetState.getType() == forStateType) {
             log.warn("setting timer attribute because target status = {}", e.targetState.getType());
             PepAttributeInterface subject = e.request.getAttribute("urn:oasis:names:tc:xacml:1.0:subject-category:access-subject", "urn:oasis:names:tc:xacml:1.0:subject:subject-id");
             PepAttributeInterface a = newPrivateAttribute("timer", "http://www.w3.org/2001/XMLSchema#double", Double.toString(maxDuration), "http://localhost:8080/federation-id-prov/saml", subject);
@@ -49,7 +41,7 @@ public class TestPIPTimer extends StandAlonePIP {
     
     @Override
     public void fireAfterActionEvent(ActionEvent e) {
-        if (e.originState.getType() == StateType.ONGOING && e.session.getStateType() != StateType.ONGOING) {
+        if (e.originState.getType() == forStateType && e.session.getStateType() != forStateType) {
             log.warn("removing timer attribute because session status = {}", e.session.getStateType());
             PepAttributeInterface subject = e.request.getAttribute("urn:oasis:names:tc:xacml:1.0:subject-category:access-subject", "urn:oasis:names:tc:xacml:1.0:subject:subject-id");
             PepAttributeInterface a = newPrivateAttribute("timer", "http://www.w3.org/2001/XMLSchema#double", "0", "http://localhost:8080/federation-id-prov/saml", subject);
@@ -63,6 +55,7 @@ public class TestPIPTimer extends StandAlonePIP {
     }
 
     public void setMaxDuration(int maxDuration) {
+        log.info("setting maxDuration = {}", maxDuration);
         this.maxDuration = maxDuration;
     }
 
@@ -71,15 +64,17 @@ public class TestPIPTimer extends StandAlonePIP {
     }
 
     public void setResolution(double resolution) {
+        log.info("setting resolution = {}", resolution);
         this.resolution = resolution;
     }
 
-    public StateType getForStatus() {
-        return forStatus;
+    public StateType getForStateType() {
+        return forStateType;
     }
 
-    public void setForStatus(StateType forStatus) {
-        this.forStatus = forStatus;
+    public void setForStateType(StateType forStateType) {
+        log.info("setting forStateType = {}", forStateType);
+        this.forStateType = forStateType;
     }
 
     @Override
@@ -91,7 +86,7 @@ public class TestPIPTimer extends StandAlonePIP {
                 for (PepAttributeInterface a : listManagedAttributes()) {
                     UconAttribute u = (UconAttribute) a;
                     UconSession s = u.getSession();
-                    if (s.getStateType() == forStatus) {
+                    if (s.getStateType() == forStateType) {
                         Double ttg = Double.parseDouble(a.getValue());
                         if (ttg > 0) {
                             ttg = Double.max(0, ttg - resolution);

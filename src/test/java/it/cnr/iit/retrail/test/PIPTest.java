@@ -69,12 +69,11 @@ public class PIPTest {
             // start server
             ucon = UConFactory.getInstance(pdpUrl);
             ucon.loadConfiguration(UsageController.class.getResourceAsStream("/PIPTest.xml"));
-            pipSessions = (PIPSessions) ucon.getPIPChain().get(0);
-            TestPIPReputation reputation = (TestPIPReputation) ucon.getPIPChain().get(1);
+            pipSessions = (PIPSessions) ucon.getPIPChain().get("sessions");
+            TestPIPReputation reputation = (TestPIPReputation) ucon.getPIPChain().get("reputation");
             reputation.reputationMap.put("fedoraRole", "bronze");
             reputation.reputationMap.put("userWithBadReputation", "bad");
-            pipTimer = (TestPIPTimer) ucon.getPIPChain().get(2);
-            pipTimer.setMaxDuration(2);
+            pipTimer = (TestPIPTimer) ucon.getPIPChain().get("timer");
 
             ucon.init();
             ucon.startRecording(new File(("serverRecord.xml")));

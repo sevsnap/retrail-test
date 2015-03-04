@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ucon:Config xmlns:ucon="http://security.iit.cnr.it/retrail/ucon">
+    <ucon:PIPChain>
+        <ucon:PIP class="it.cnr.iit.retrail.server.pip.impl.PIPState">
+            <ucon:Property name="uuid">state</ucon:Property>
+            <ucon:Property name="stateAttributeName">state</ucon:Property>
+            <ucon:Property name="stateAttributeValue">A</ucon:Property>
+        </ucon:PIP>
+    </ucon:PIPChain>
     <ucon:Behaviour>
         <ucon:States>
             <ucon:State name="INIT" type="BEGIN"/>

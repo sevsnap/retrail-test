@@ -48,7 +48,7 @@ public class User {
     }
 
     public synchronized String getStateName() {
-        return pepSession == null ? null : pepSession.getStateName();
+        return pepSession == null ? "" : pepSession.getStateName();
     }
 
     public String getCustomId() {

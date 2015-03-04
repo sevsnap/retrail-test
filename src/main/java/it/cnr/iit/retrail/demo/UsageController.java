@@ -10,8 +10,6 @@ import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.impl.UConFactory;
 import it.cnr.iit.retrail.test.TestPIPReputation;
-import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
-import it.cnr.iit.retrail.test.TestPIPTimer;
 import java.net.URL;
 
 public class UsageController extends PEP {
@@ -21,8 +19,6 @@ public class UsageController extends PEP {
     static private UsageController instance = null;
     static private UConInterface ucon = null;
 
-    static private PIPSessions pipSessions;
-    static private TestPIPTimer pipTimer;
     private MainViewController application = null;
     
     public void setMain(MainViewController application){
@@ -31,6 +27,11 @@ public class UsageController extends PEP {
     
     static public void loadBehaviour(String resourceName) throws Exception {
         ucon.loadConfiguration(UsageController.class.getResourceAsStream(resourceName));
+        TestPIPReputation reputation = (TestPIPReputation) ucon.getPIPChain().get("reputation");
+        reputation.put("Carniani", "bronze");
+        reputation.put("Mori", "bronze");
+        reputation.put("ZioPino", "bronze");
+        reputation.put("visitor", "none");
     }
     
     static public UsageController getInstance() throws Exception {
@@ -38,20 +39,11 @@ public class UsageController extends PEP {
             log.info("Setting up Ucon embedded server...");
             ucon = UConFactory.getInstance(new URL(pdpUrlString));
             loadBehaviour("/ucon1.xml");
-            pipSessions = new PIPSessions();
-            ucon.getPIPChain().add(pipSessions);
-            TestPIPReputation reputation = new TestPIPReputation();
-            reputation.put("Carniani", "bronze");
-            reputation.put("Mori", "bronze");
-            reputation.put("ZioPino", "bronze");
-            reputation.put("visitor", "none");
-            ucon.getPIPChain().add(reputation);
-            pipTimer = new TestPIPTimer(10);
-            ucon.getPIPChain().add(pipTimer);
             ucon.init();
             
             log.info("Setting up PEP component");
             instance = new UsageController(new URL(pdpUrlString), new URL(pepUrlString));
+            
             // clean up previous sessions, if any, by clearing the recoverable
             // access flag. This ensures the next heartbeat we'll have a clean
             // ucon status (the first heartbeat is waited by init()).

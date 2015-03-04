@@ -5,20 +5,16 @@
 package it.cnr.iit.retrail.demo;
 
 import it.cnr.iit.retrail.client.impl.Replay;
-import it.cnr.iit.retrail.commons.StateType;
 import it.cnr.iit.retrail.commons.impl.PepSession;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -69,7 +65,7 @@ public class MainViewController extends AnchorPane implements Initializable {
 
     static final org.slf4j.Logger log = LoggerFactory.getLogger(MainViewController.class);
    
-    private Replay replay = new Replay();
+    private final Replay replay = new Replay();
     
     private void addListeners(final BorderPane userView) throws Exception {
         final String userId = userView.getId();
@@ -83,7 +79,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                     log.info("User: {}", user);
                     if (!user.leave()) {
                         showError("User " + userId + " is not allowed to enter the room");
-                    } else if (prevStatus == "REVOKED" || prevStatus == "ONGOING") {
+                    } else if (prevStatus.equals("REVOKED") || prevStatus.equals("ONGOING")) {
                         showMessage("User " + userId + " jas left the room");
                         playSound("/META-INF/gui/doorShut.wav");
                         playSound("/META-INF/gui/footsteps.wav");
@@ -164,7 +160,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                     if (playButton.isSelected()) {
                         try {
                             FileChooser fileChooser = new FileChooser();
-                            fileChooser.setTitle("Open etrail File");
+                            fileChooser.setTitle("Open Retrail File");
                             fileChooser.getExtensionFilters().addAll(
                                     new FileChooser.ExtensionFilter("XML Files", "*.xml"),
                                     new FileChooser.ExtensionFilter("All Files", "*.*"));
@@ -250,7 +246,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                     .setAll(policy1, policy2, policy3);
 
         } catch (Exception ex) {
-            log.error(ex.getMessage());
+            log.error("while initializing: {}", ex);
         }
     }
 
