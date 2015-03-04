@@ -152,7 +152,7 @@
             </ucon:Action>
             <ucon:Action class="it.cnr.iit.retrail.server.behaviour.EndAccess" source="ONGOING" target="DELETED">
             </ucon:Action>
-            <ucon:Action name="endAccess" class="UconAction" source="REVOKED" target="DELETED"/>
+            <ucon:Action class="it.cnr.iit.retrail.server.behaviour.EndAccess" source="REVOKED" target="DELETED"/>
         </ucon:Actions>
     </ucon:Behaviour>
 </ucon:Config>
