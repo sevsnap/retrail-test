@@ -8,8 +8,10 @@ import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
 import it.cnr.iit.retrail.commons.PepAttributeInterface;
 import it.cnr.iit.retrail.commons.StateType;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
+import it.cnr.iit.retrail.server.behaviour.EndAccess;
+import it.cnr.iit.retrail.server.behaviour.PolicyDrivenAction;
+import it.cnr.iit.retrail.server.behaviour.TryAccess;
 import it.cnr.iit.retrail.server.behaviour.UConState;
-import it.cnr.iit.retrail.server.behaviour.UconAction;
 import it.cnr.iit.retrail.server.dal.UconAttribute;
 import it.cnr.iit.retrail.server.dal.DAL;
 import it.cnr.iit.retrail.server.dal.UconRequest;
@@ -53,10 +55,10 @@ public class DALTest {
     UConState REJECTED = new UConState("TRY", StateType.END);
     UConState REVOKED = new UConState("TRY", StateType.END);
     
-    UconAction tryAccess = new UconAction(INIT, TRY, "tryAccess", null);
-    UconAction startAccess = new UconAction(TRY, ONGOING, "startAccess", null);
-    UconAction endAccess = new UconAction(ONGOING, DELETED, "endAccess", null);
-    UconAction endAccessFromTRY = new UconAction(TRY, DELETED, "endAccess", null);
+    PolicyDrivenAction tryAccess = new TryAccess(INIT, TRY, REJECTED, null, null);
+    PolicyDrivenAction startAccess = new PolicyDrivenAction(TRY, ONGOING, null, null, null);
+    PolicyDrivenAction endAccess = new EndAccess(ONGOING, DELETED, null, null, null);
+    PolicyDrivenAction endAccessFromTRY = new EndAccess(TRY, DELETED, null, null, null);
 
     public DALTest() {
     }
