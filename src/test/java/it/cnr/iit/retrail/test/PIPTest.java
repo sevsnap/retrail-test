@@ -81,7 +81,12 @@ public class PIPTest {
             // start client
 
             pep = new PEP(pdpUrl, myUrl) {
-
+                @Override
+                public void onRecoverAccess(PepSession session) throws Exception {
+                    // Remove previous run stale sessions
+                    endAccess(session);
+                }
+                
                 @Override
                 public synchronized void onRevokeAccess(PepSession session) throws Exception {
                     log.warn("automatic end access disabled for test purposes - {}", session);
@@ -103,11 +108,6 @@ public class PIPTest {
                     session.getObligations().clear();
                 }
             };
-
-            // clean up previous sessions, if any, by clearing the recoverable
-            // access flag. This ensures the next heartbeat we'll have a clean
-            // ucon status (the first heartbeat is waited by init()).
-            pep.setAccessRecoverableByDefault(false);
             pep.startRecording(new File("clientRecord.xml"));
             pep.init();        // We should have no sessions now
         } catch (XmlRpcException | IOException e) {
@@ -349,7 +349,7 @@ public class PIPTest {
         afterStartAccess(response);
         assertNotNull(response.getLocalInfo());
         assertEquals("itsOk", response.getLocalInfo().get("tryThis"));
-        int ms = (int) (1000 * pipTimer.getResolution()) + 1000 * pipTimer.getMaxDuration() + 100;
+        int ms = (int) (1000 * pipTimer.getResolution()) + 1000 * 2 /* pipTimer.getMaxDuration() */ + 100;
         log.warn("ok, waiting {} ms for ucon to revoke session", ms);
         Thread.sleep(ms);
         response = pep.getSession(response.getUuid());

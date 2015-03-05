@@ -66,10 +66,13 @@ public class SimpleTest {
             // prepare client
             URL myUrl = new URL(pepUrlString);
             pep = new PEP(pdpUrl, myUrl);
-            // clean up previous sessions, if any, by clearing the recoverable
-            // access flag. This ensures the next heartbeat we'll have a clean
-            // ucon status (the first heartbeat is waited by init()).
-            pep.setAccessRecoverableByDefault(false);
+            pep = new PEP(pdpUrl, myUrl) {
+                @Override
+                public void onRecoverAccess(PepSession session) throws Exception {
+                    // Remove previous run stale sessions
+                    endAccess(session);
+                }                
+            };
             pep.startRecording(new File("clientRecord.xml"));
             ucon.startRecording(new File("serverRecord.xml"));
             // Allowing client to accept a self-signed certificate;

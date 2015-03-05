@@ -9,7 +9,6 @@
         </ucon:PIP>
         <ucon:PIP class="it.cnr.iit.retrail.server.pip.impl.PIPTimer">
             <ucon:Property name="uuid">timer</ucon:Property>
-            <ucon:Property name="maxDuration">2</ucon:Property>
         </ucon:PIP>
     </ucon:PIPChain>
     <ucon:Behaviour>
@@ -71,12 +70,12 @@
                         <Target>
                             <AnyOf>
                                 <AllOf>
-                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:double-less-than">
+                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:double-greater-than">
                                         <AttributeDesignator AttributeId="timer" 
                                              Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
-                                             DataType="http://www.w3.org/2001/XMLSchema#double" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
+                                             DataType="http://www.w3.org/2001/XMLSchema#double" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
                                         </AttributeDesignator>
-                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#double">0</AttributeValue>
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#double">2</AttributeValue>
                                     </Match>
                                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:integer-greater-than">
                                         <AttributeDesignator AttributeId="openSessions" 
@@ -110,12 +109,12 @@
                         <Target>
                             <AnyOf>
                                 <AllOf>
-                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:double-less-than">
+                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:double-greater-than">
                                         <AttributeDesignator AttributeId="timer" 
                                              Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
-                                             DataType="http://www.w3.org/2001/XMLSchema#double" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
+                                             DataType="http://www.w3.org/2001/XMLSchema#double" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
                                         </AttributeDesignator>
-                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#double">0</AttributeValue>
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#double">2</AttributeValue>
                                     </Match>
                                 </AllOf>
                             </AnyOf>

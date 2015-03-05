@@ -2,7 +2,6 @@
  * CNR - IIT
  * Coded by: 2014 Enrico "KMcC;) Carniani
  */
-
 package it.cnr.iit.retrail.demo;
 
 import it.cnr.iit.retrail.client.impl.PEP;
@@ -20,11 +19,11 @@ public class UsageController extends PEP {
     static private UConInterface ucon = null;
 
     private MainViewController application = null;
-    
-    public void setMain(MainViewController application){
+
+    public void setMain(MainViewController application) {
         this.application = application;
     }
-    
+
     static public void loadBehaviour(String resourceName) throws Exception {
         ucon.loadConfiguration(UsageController.class.getResourceAsStream(resourceName));
         TestPIPReputation reputation = (TestPIPReputation) ucon.getPIPChain().get("reputation");
@@ -33,21 +32,16 @@ public class UsageController extends PEP {
         reputation.put("ZioPino", "bronze");
         reputation.put("visitor", "none");
     }
-    
+
     static public UsageController getInstance() throws Exception {
         if (instance == null) {
             log.info("Setting up Ucon embedded server...");
             ucon = UConFactory.getInstance(new URL(pdpUrlString));
             loadBehaviour("/ucon1.xml");
             ucon.init();
-            
+
             log.info("Setting up PEP component");
             instance = new UsageController(new URL(pdpUrlString), new URL(pepUrlString));
-            
-            // clean up previous sessions, if any, by clearing the recoverable
-            // access flag. This ensures the next heartbeat we'll have a clean
-            // ucon status (the first heartbeat is waited by init()).
-            instance.setAccessRecoverableByDefault(false);
             instance.init();        // We should have no sessions now
         }
         return instance;
@@ -56,10 +50,11 @@ public class UsageController extends PEP {
     private UsageController(URL pdpUrl, URL myUrl) throws Exception {
         super(pdpUrl, myUrl);
     }
-    
+
     @Override
-    protected boolean shouldRecoverAccess(PepSession session) {
-        return super.shouldRecoverAccess(session);
+    public void onRecoverAccess(PepSession session) throws Exception {
+        // Remove previous run stale sessions
+        endAccess(session);
     }
 
     @Override
@@ -67,9 +62,9 @@ public class UsageController extends PEP {
         log.warn("Firing RevokeEvent for user {}!", session.getCustomId());
         application.onRevoke(session);
     }
-    
+
     @Override
     public synchronized void onObligation(PepSession session, String obligation) throws Exception {
-        application.onObligation(session, obligation);  
+        application.onObligation(session, obligation);
     }
 }

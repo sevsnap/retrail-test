@@ -79,15 +79,16 @@ public class PIPAttributesTest {
 
             pep = new PEP(pdpUrl, myUrl) {
                 @Override
+                public void onRecoverAccess(PepSession session) throws Exception {
+                    // Remove previous run stale sessions
+                    endAccess(session);
+                }
+                
+                @Override
                 public synchronized void onRevokeAccess(PepSession session) throws Exception {
                     log.warn("automatic end access disabled for test purposes - {}", session);
                 }
             };
-
-            // clean up previous sessions, if any, by clearing the recoverable
-            // access flag. This ensures the next heartbeat we'll have a clean
-            // ucon status (the first heartbeat is waited by init()).
-            pep.setAccessRecoverableByDefault(false);
             pep.init();        // We should have no sessions now
             pep.startRecording(new File("clientRecord.xml"));
         } catch (XmlRpcException | IOException e) {

@@ -4,7 +4,6 @@
  */
 package it.cnr.iit.retrail.test;
 
-import it.cnr.iit.retrail.server.pip.impl.PIPTimer;
 import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
 import it.cnr.iit.retrail.commons.PepAttributeInterface;
 import it.cnr.iit.retrail.commons.StateType;
@@ -48,15 +47,14 @@ public class DALTest {
     static DAL dal = DAL.getInstance();
     static TestPIPReputation pipReputation;
     static PIPSessions pipSessions;
-    static PIPTimer pipTimer;
-    
+
     static final UConState INIT = new UConState("INIT", StateType.BEGIN);
     static final UConState TRY = new UConState("TRY", StateType.PASSIVE);
-    static final UConState ONGOING = new UConState("TRY", StateType.ONGOING);
-    static final UConState DELETED = new UConState("TRY", StateType.END);
-    static final UConState REJECTED = new UConState("TRY", StateType.END);
-    static final UConState REVOKED = new UConState("TRY", StateType.END);
-    
+    static final UConState ONGOING = new UConState("ONGOING", StateType.ONGOING);
+    static final UConState DELETED = new UConState("DELETED", StateType.END);
+    static final UConState REJECTED = new UConState("REJECTED", StateType.END);
+    static final UConState REVOKED = new UConState("REVOKED", StateType.END);
+
     static final PDPAction tryAccess = new TryAccess(INIT, TRY, null, null);
     static final PDPAction startAccess = new PDPAction(TRY, ONGOING, null, null);
     static final PDPAction endAccess = new EndAccess(ONGOING, DELETED, null, null);
@@ -73,9 +71,6 @@ public class DALTest {
         pipReputation = new TestPIPReputation();
         pipReputation.reputationMap.put("user1", "bronze");
         pipReputation.reputationMap.put("user2", "gold");
-        pipTimer = new PIPTimer();
-        pipTimer.setMaxDuration(3);
-        pipTimer.setResolution(0.25);
         tryAccess.setTargetState(REJECTED, PepResponse.DecisionEnum.Deny);
         tryAccess.setTargetState(REJECTED, PepResponse.DecisionEnum.Indeterminate);
         tryAccess.setTargetState(REJECTED, PepResponse.DecisionEnum.NotApplicable);
@@ -92,7 +87,6 @@ public class DALTest {
         pipSessions.init(null);
         pipReputation.init(null);
         assertEquals(0, dal.listSessions().size());
-        //pipTimer.init();
         Collection<UconAttribute> l = dal.listAttributes(new URL(pepUrlString));
         if (l.size() > 0) {
             log.error("no attribute attributed to {} should be in the dal, found {}!", pepUrlString, l.size());
@@ -108,7 +102,8 @@ public class DALTest {
         for (UconAttribute a : l) {
             log.error("**** listAttributes(): {}", a);
         }
-        assertEquals(0, l.size());
+        assertEquals(1, l.size());
+        assertEquals("openSessions", l.iterator().next().getId());
         Collection<UconSession> u = dal.listSessions();
         if (u.size() > 0) {
             log.error("no session should be in the dal, found {}!", u.size());
@@ -118,11 +113,11 @@ public class DALTest {
         }
         assertEquals(0, u.size());
         log.info("after setup everything looks ok!");
+        dal.commit();
     }
 
     @After
     public void tearDown() throws Exception {
-        //pipTimer.term();
         pipSessions.term();
         pipReputation.term();
         Collection<UconSession> u = dal.listSessions();
@@ -141,22 +136,22 @@ public class DALTest {
             log.error("**** listAttributes({}): {}", pepUrlString, a);
         }
         assertEquals(0, l.size());
-/*
-        l = dal.listAttributes();
-        if (l.size() > 0) {
-            log.error(", all attributes in the dal should be cleared, but found {}!", l.size());
-        }
-        for (UconAttribute a : l) {
-            log.error("**** listAttributes(): {}", a);
-        }
-        assertEquals(0, l.size());
-        */
+        /*
+         l = dal.listAttributes();
+         if (l.size() > 0) {
+         log.error(", all attributes in the dal should be cleared, but found {}!", l.size());
+         }
+         for (UconAttribute a : l) {
+         log.error("**** listAttributes(): {}", a);
+         }
+         assertEquals(0, l.size());
+         */
         assertEquals(0, dal.listUnmanagedAttributes(pipReputation.getUuid()).size());
         assertEquals(0, dal.listManagedAttributes(pipReputation.getUuid()).size());
         assertEquals(0, dal.listUnmanagedAttributes(pipSessions.getUuid()).size());
-        assertEquals(0, dal.listManagedAttributes(pipSessions.getUuid()).size());
+        assertEquals(1, dal.listManagedAttributes(pipSessions.getUuid()).size());
         log.info("after teardown everything looks ok!");
-        dal.rollback();
+        dal.commit();
     }
 
     private UconRequest newRequest(String subjectValue) throws Exception {
@@ -169,8 +164,7 @@ public class DALTest {
         uconRequest.copy(pepRequest);
         return uconRequest;
     }
-       
-    
+
     private void assertSessionsValueEquals(String value) {
         Collection<PepAttributeInterface> l = dal.listManagedAttributes(pipSessions.getUuid());
         assertEquals(1, l.size());
@@ -180,84 +174,62 @@ public class DALTest {
         assertEquals(null, sessions.getParent());
         assertEquals(value, sessions.getValue());
     }
-    
-    private void _onBeforeTryAccess(PIP pip, UconRequest uconRequest) {
-        ActionEvent e = new ActionEvent(tryAccess, uconRequest, null);
-        pip.fireBeforeActionEvent(e);
+
+    private UconSession _onAfter(PDPAction a, PIP pip, UconRequest uconRequest, UconSession uconSession) {
+        dal.begin();
+        try {
+            uconSession.setStateType(((UConState) a.getTargetState()).getType());
+            uconSession.setStateName(a.getTargetState().getName()); // FIXME
+            ActionEvent e = new ActionEvent(a, uconRequest, uconSession);
+            pip.fireAfterActionEvent(e);
+            return dal.saveSession(uconSession, uconRequest);
+        } finally {
+            dal.commit();
+        }
     }
-    
-    private void _onAfterTryAccess(PIP pip, UconRequest uconRequest, UconSession uconSession) {
-        ActionEvent e = new ActionEvent(tryAccess, uconRequest, uconSession);
-        pip.fireAfterActionEvent(e);
+
+    private UconSession _onBefore(PDPAction a, PIP pip, UconRequest uconRequest, UconSession uconSession) {
+        dal.begin();
+        try {
+            ActionEvent e = new ActionEvent(a, uconRequest, uconSession);
+            pip.fireBeforeActionEvent(e);
+            return dal.saveSession(uconSession, uconRequest);
+        } finally {
+            dal.commit();
+        }
     }
-    
-    private void _onBeforeStartAccess(PIP pip, UconRequest uconRequest, UconSession uconSession) {
-        ActionEvent e = new ActionEvent(startAccess, uconRequest, uconSession);
-        pip.fireBeforeActionEvent(e);
-    }
-    
-    private void _onAfterStartAccess(PIP pip, UconRequest uconRequest, UconSession uconSession) {
-        ActionEvent e = new ActionEvent(startAccess, uconRequest, uconSession);
-        pip.fireAfterActionEvent(e);
-    }
-    
-    private void _onBeforeEndAccess(PIP pip, UconRequest uconRequest, UconSession uconSession) {
-        ActionEvent e = new ActionEvent(endAccess, uconRequest, uconSession);
-        pip.fireBeforeActionEvent(e);
-    }
-    
-    private void _onAfterEndAccess(PIP pip, UconRequest uconRequest, UconSession uconSession) {
-        ActionEvent e = new ActionEvent(endAccess, uconRequest, uconSession);
-        pip.fireAfterActionEvent(e);
-    }
-    
-    private void _onBeforeEndAccessFromTRY(PIP pip, UconRequest uconRequest, UconSession uconSession) {
-        ActionEvent e = new ActionEvent(endAccessFromTRY, uconRequest, uconSession);
-        pip.fireBeforeActionEvent(e);
-    }
-    
-    private void _onAfterEndAccessFromTRY(PIP pip, UconRequest uconRequest, UconSession uconSession) {
-        ActionEvent e = new ActionEvent(endAccessFromTRY, uconRequest, uconSession);
-        pip.fireAfterActionEvent(e);
-    }
-    
+
     @Test
     public void test1_SharedManagedAttributeShouldWork() throws Exception {
         UconRequest uconRequest1 = newRequest("user1");
-        _onBeforeTryAccess(pipSessions, uconRequest1);
         log.info("starting session for {}", uconRequest1);
         UconSession uconSession1 = new UconSession();
         uconSession1.setPepUrl(pepUrlString);
         uconSession1.setCustomId("custom1");
         uconSession1.setStateType(StateType.BEGIN);
         uconSession1.setStateName("INIT"); // FIXME
-        uconSession1 = dal.startSession(uconSession1, uconRequest1);  
+        uconSession1 = dal.startSession(uconSession1, uconRequest1);
+        _onBefore(tryAccess, pipSessions, uconRequest1, uconSession1);
         assertSessionsValueEquals("0");
-        _onAfterTryAccess(pipSessions, uconRequest1, uconSession1);
-        uconSession1.setStateType(StateType.ONGOING);
-        uconSession1.setStateName("ONGOING"); // FIXME
-        log.info("calling saveSession() after onAfterTryAccess");
-        dal.saveSession(uconSession1, uconRequest1);
+        _onAfter(tryAccess, pipSessions, uconRequest1, uconSession1);
         log.info("tryAccess emulated correctly");
-        _onBeforeStartAccess(pipSessions, uconRequest1, uconSession1);
-        dal.saveSession(uconSession1, uconRequest1);
-        _onAfterStartAccess(pipSessions, uconRequest1, uconSession1);
-        dal.saveSession(uconSession1, uconRequest1);
+        _onBefore(startAccess, pipSessions, uconRequest1, uconSession1);
+        _onAfter(startAccess, pipSessions, uconRequest1, uconSession1);
         assertSessionsValueEquals("1");
         log.info("startAccess emulated correctly");
-        _onBeforeEndAccess(pipSessions, uconRequest1, uconSession1);
-        dal.saveSession(uconSession1, uconRequest1);
-        _onAfterEndAccess(pipSessions, uconRequest1, uconSession1);
-        dal.saveSession(uconSession1, uconRequest1);
+        _onBefore(endAccess, pipSessions, uconRequest1, uconSession1);
+        _onAfter(endAccess, pipSessions, uconRequest1, uconSession1);
         assertSessionsValueEquals("0");
+        dal.begin();
         dal.endSession(uconSession1);
+        dal.commit();
         log.info("endAccess emulated correctly");
         assertEquals(0, dal.listSessions().size());
 //        assertEquals(0, dal.listManagedAttributes(pipSessions.getUuid()).size());
         assertEquals(0, dal.listUnmanagedAttributes(pipSessions.getUuid()).size());
 //        assertEquals(0, dal.listAttributes().size());
     }
-    
+
     private void assertReputationValueEquals(String value, String forUser) {
         Collection<PepAttributeInterface> l = dal.listUnmanagedAttributes(pipReputation.getUuid());
         assertEquals(1, l.size());
@@ -271,25 +243,22 @@ public class DALTest {
         assertEquals(forUser, reputation.getParent().getValue());
         assertEquals(reputation.getParent().getChildren().iterator().next(), reputation);
     }
-    
+
     @Test
     public void test2_PrivateUnmanagedAttributeWithOneSessionShouldWork() throws Exception {
         UconRequest uconRequest1 = newRequest("user1");
         log.info("emulating tryAccess for {}", uconRequest1);
-        _onBeforeTryAccess(pipReputation, uconRequest1);
         UconSession uconSession1 = new UconSession();
         uconSession1.setPepUrl(pepUrlString);
         uconSession1.setCustomId("custom1");
         uconSession1.setStateType(StateType.BEGIN);
         uconSession1.setStateName("INIT"); //FIXME
         uconSession1 = dal.startSession(uconSession1, uconRequest1);
+        _onBefore(tryAccess, pipReputation, uconRequest1, uconSession1);
         assertReputationValueEquals("bronze", "user1");
         log.info("tryAccess emulated correctly");
-
-        _onBeforeEndAccessFromTRY(pipReputation, uconRequest1, uconSession1);
-        dal.saveSession(uconSession1, uconRequest1);
-        _onAfterEndAccessFromTRY(pipReputation, uconRequest1, uconSession1);
-        dal.saveSession(uconSession1, uconRequest1);
+        _onBefore(endAccessFromTRY, pipReputation, uconRequest1, uconSession1);
+        _onAfter(endAccessFromTRY, pipReputation, uconRequest1, uconSession1);
         dal.endSession(dal.getSession(uconSession1.getUuid(), uconUrl));
         log.info("endAccess emulated correctly");
 
@@ -303,7 +272,7 @@ public class DALTest {
         // check if added attribute is correct
         UconSession uconSession = dal.getSession(sessionUUID, uconUrl);
         PepRequest r = new UconRequest();
-        for(UconAttribute a: uconSession.getAttributes()) {
+        for (UconAttribute a : uconSession.getAttributes()) {
             r.add(a);
         }
         UconAttribute a = (UconAttribute) r.getAttributes(pipReputation.category, pipReputation.id).iterator().next();
@@ -312,37 +281,39 @@ public class DALTest {
         assertEquals(reputation, a.getValue());
         assertEquals(forUserValue, a.getParent().getValue());
     }
-    
+
     @Test
     public void test2_PrivateUnmanagedAttributeWithTwoSessionsShouldNotMessUp() throws Exception {
         UconRequest uconRequest1 = newRequest("user1");
         log.info("emulating tryAccess for {}", uconRequest1);
-        _onBeforeTryAccess(pipReputation, uconRequest1);
         UconSession uconSession1 = new UconSession();
         uconSession1.setUconUrl(new URL(pepUrlString));
         uconSession1.setCustomId("custom1");
         uconSession1.setStateType(StateType.BEGIN);
         uconSession1.setStateName("INIT"); //FIXME
+        dal.begin();
         uconSession1 = dal.startSession(uconSession1, uconRequest1);
+        dal.commit();
+        _onBefore(tryAccess, pipReputation, uconRequest1, uconSession1);
         String sessionUuid1 = uconSession1.getUuid();
         assertReputation(sessionUuid1, "bronze", "user1");
-        _onAfterTryAccess(pipReputation, uconRequest1, uconSession1);
+        _onAfter(tryAccess, pipReputation, uconRequest1, uconSession1);
         log.info("tryAccess emulated correcly");
         UconRequest uconRequest2 = newRequest("user2");
         log.info("emulating tryAccess for {}", uconRequest2);
-        _onBeforeTryAccess(pipReputation, uconRequest2);
         UconSession uconSession2 = new UconSession();
         uconSession2.setUconUrl(new URL(pepUrlString));
         uconSession2.setCustomId("custom2");
         uconSession2.setStateType(StateType.BEGIN);
         uconSession2.setStateName("INIT"); //FIXME
         uconSession2 = dal.startSession(uconSession2, uconRequest2);
+        _onBefore(tryAccess, pipReputation, uconRequest2, uconSession2);
         String sessionUuid2 = uconSession2.getUuid();
         assertNotEquals(sessionUuid1, sessionUuid2);
         // check if added attribute is correct
         assertReputation(sessionUuid2, "gold", "user2");
         assertReputation(sessionUuid1, "bronze", "user1");
-        _onAfterTryAccess(pipReputation, uconRequest2, uconSession2);
+        _onAfter(tryAccess, pipReputation, uconRequest2, uconSession2);
         assertReputation(sessionUuid2, "gold", "user2");
         assertReputation(sessionUuid1, "bronze", "user1");
         log.info("tryAccess emulated correctly");
@@ -356,42 +327,44 @@ public class DALTest {
     public void test3_sessionGaloreWithPrivateAttributes() throws Exception {
         log.info("start");
         assertEquals(0, dal.listSessions().size());
-        for(int i = 0; i < 2500; i++) {
+        for (int i = 0; i < 2500; i++) {
             log.info("create session: {}", i);
             UconSession uconSession1 = new UconSession();
             uconSession1.setPepUrl(pepUrlString);
-            uconSession1.setCustomId("custom."+i);
+            uconSession1.setCustomId("custom." + i);
             uconSession1.setStateType(StateType.BEGIN);
             uconSession1.setStateName("INIT"); //FIXME
             UconRequest uconRequest = newRequest("user1");
             dal.startSession(uconSession1, uconRequest);
         }
-        for(UconSession uconSession: dal.listSessions())
+        for (UconSession uconSession : dal.listSessions()) {
             dal.endSession(uconSession);
+        }
         assertEquals(0, dal.listSessions().size());
         log.info("end");
     }
-  
+
     @Test
     public void test4_sessionGaloreWithSharedAttributes() throws Exception {
         log.info("start");
         assertEquals(0, dal.listSessions().size());
-        for(int i = 0; i < 2500; i++) {
+        for (int i = 0; i < 2500; i++) {
             log.info("create session: {}", i);
             UconSession uconSession1 = new UconSession();
             uconSession1.setPepUrl(pepUrlString);
-            uconSession1.setCustomId("custom."+i);
+            uconSession1.setCustomId("custom." + i);
             uconSession1.setStateType(StateType.BEGIN);
             uconSession1.setStateName("INIT"); //FIXME
             UconRequest uconRequest = newRequest("user1");
-            UconAttribute shared = dal.newSharedAttribute("ID"+i, "TYPE", "VALUE", "ISSUER", "PEPURL", "FACTORYID");
+            UconAttribute shared = dal.newSharedAttribute("ID" + i, "TYPE", "VALUE", "ISSUER", "PEPURL", "FACTORYID");
             uconRequest.add(shared);
             dal.startSession(uconSession1, uconRequest);
         }
-        for(UconSession uconSession: dal.listSessions())
+        for (UconSession uconSession : dal.listSessions()) {
             dal.endSession(uconSession);
+        }
         assertEquals(0, dal.listSessions().size());
         log.info("end");
     }
-    
+
 }

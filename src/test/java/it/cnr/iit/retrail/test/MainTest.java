@@ -4,8 +4,6 @@
  */
 package it.cnr.iit.retrail.test;
 
-import it.cnr.iit.retrail.server.pip.impl.PIPTimer;
-import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
 import it.cnr.iit.retrail.client.impl.PEP;
 import it.cnr.iit.retrail.commons.DomUtils;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
@@ -53,8 +51,6 @@ public class MainTest {
     static UCon ucon = null;
     static PEP pep = null;
 
-    static PIPSessions pipSessions = null;
-    static PIPTimer pipTimer = null;
     PepRequest pepRequest = null;
     static String lastObligation = null;
     static private final Object revokeMonitor = new Object();
@@ -79,9 +75,16 @@ public class MainTest {
             pep = new PEP(pdpUrl, myUrl) {
 
                 @Override
+                public void onRecoverAccess(PepSession session) throws Exception {
+                    // Remove previous run stale sessions
+                    endAccess(session);
+                }
+                
+                @Override
                 public void onRevokeAccess(PepSession session) throws Exception {
                     synchronized(revokeMonitor) {
                         revoked++;
+                        revokeMonitor.notifyAll();
                     }
                 }
 
@@ -102,10 +105,6 @@ public class MainTest {
                 }
             };
 
-            // clean up previous sessions, if any, by clearing the recoverable
-            // access flag. This ensures the next heartbeat we'll have a clean
-            // ucon status (the first heartbeat is waited by init()).
-            pep.setAccessRecoverableByDefault(false);
             pep.startRecording(new File("clientRecord.xml"));
             pep.init();        // We should have no sessions now
         } catch (XmlRpcException | IOException e) {
@@ -193,7 +192,6 @@ public class MainTest {
         }
         long elapsedMs = System.currentTimeMillis() - startMs;
         log.info("all {} sessions closed; total endAccess time [E{}] = {} ms, normalized = {} ms", n, n, elapsedMs, elapsedMs/n);
-        assertEquals(0, pipSessions.getSessions());
     }
     /**
      * Test of tryAccess method, of class PEP.
@@ -253,7 +251,7 @@ public class MainTest {
         openConcurrentSessions(n);
         startConcurrentSessions();
         log.info("forcing reevaluation of the ONGOING sessions");
-        ucon.wakeup();        
+        ucon.wakeup();
         long startMs = System.currentTimeMillis();
         log.info("waiting for {} revocations", n);
         synchronized (revokeMonitor) {
@@ -273,6 +271,5 @@ public class MainTest {
         assertEquals(n, revoked);
         log.info("ok");
     }
-
 
 }

@@ -10,8 +10,8 @@
             <ucon:Property name="uuid">reputation</ucon:Property>
         </ucon:PIP>
         <ucon:PIP class="it.cnr.iit.retrail.server.pip.impl.PIPTimer">
-            <ucon:Property name="uuid">timer</ucon:Property>           
-            <ucon:Property name="maxDuration">10</ucon:Property>
+            <ucon:Property name="uuid">timer</ucon:Property>
+            <ucon:Property name="attributeId">timer</ucon:Property>
             <ucon:Property name="resolution">1</ucon:Property>
             <ucon:Property name="forStateType">ONGOING</ucon:Property>
         </ucon:PIP>
@@ -69,27 +69,20 @@
             </ucon:Action>
             <ucon:Action name="startAccess" class="it.cnr.iit.retrail.server.behaviour.PDPAction" source="TRY" target="ONGOING">
 
-                <Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" PolicyId="on-policy"
+                <Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" PolicyId="trystart-policy"
         RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable" Version="1.0">
-                    <Description>Test on-authorization policy</Description>
+                    <Description>trystart-authorization policy</Description>
                     <Target></Target>
                     <Rule Effect="Permit" RuleId="test:rule">
                         <Target>
                             <AnyOf>
                                 <AllOf>
-                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:double-less-than">
-                                        <AttributeDesignator AttributeId="timer" 
-                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
-                                             DataType="http://www.w3.org/2001/XMLSchema#double" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
-                                        </AttributeDesignator>
-                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#double">0</AttributeValue>
-                                    </Match>
                                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:integer-greater-than">
                                         <AttributeDesignator AttributeId="openSessions" 
                                              Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
                                              DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
                                         </AttributeDesignator>
-                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">2</AttributeValue>
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">1</AttributeValue>
                                     </Match>
 
                                 </AllOf>
@@ -130,12 +123,12 @@
                         <Target>
                             <AnyOf>
                                 <AllOf>
-                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:double-less-than">
+                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:double-greater-than">
                                         <AttributeDesignator AttributeId="timer" 
                                              Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
-                                             DataType="http://www.w3.org/2001/XMLSchema#double" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
+                                             DataType="http://www.w3.org/2001/XMLSchema#double" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
                                         </AttributeDesignator>
-                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#double">0</AttributeValue>
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#double">10</AttributeValue>
                                     </Match>
                                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:integer-greater-than">
                                         <AttributeDesignator AttributeId="openSessions" 
