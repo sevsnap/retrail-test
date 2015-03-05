@@ -8,8 +8,9 @@ import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
 import it.cnr.iit.retrail.commons.PepAttributeInterface;
 import it.cnr.iit.retrail.commons.StateType;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
+import it.cnr.iit.retrail.commons.impl.PepResponse;
 import it.cnr.iit.retrail.server.behaviour.EndAccess;
-import it.cnr.iit.retrail.server.behaviour.PolicyDrivenAction;
+import it.cnr.iit.retrail.server.behaviour.PDPAction;
 import it.cnr.iit.retrail.server.behaviour.TryAccess;
 import it.cnr.iit.retrail.server.behaviour.UConState;
 import it.cnr.iit.retrail.server.dal.UconAttribute;
@@ -48,17 +49,17 @@ public class DALTest {
     static PIPSessions pipSessions;
     static TestPIPTimer pipTimer;
     
-    UConState INIT = new UConState("INIT", StateType.BEGIN);
-    UConState TRY = new UConState("TRY", StateType.PASSIVE);
-    UConState ONGOING = new UConState("TRY", StateType.ONGOING);
-    UConState DELETED = new UConState("TRY", StateType.END);
-    UConState REJECTED = new UConState("TRY", StateType.END);
-    UConState REVOKED = new UConState("TRY", StateType.END);
+    static final UConState INIT = new UConState("INIT", StateType.BEGIN);
+    static final UConState TRY = new UConState("TRY", StateType.PASSIVE);
+    static final UConState ONGOING = new UConState("TRY", StateType.ONGOING);
+    static final UConState DELETED = new UConState("TRY", StateType.END);
+    static final UConState REJECTED = new UConState("TRY", StateType.END);
+    static final UConState REVOKED = new UConState("TRY", StateType.END);
     
-    PolicyDrivenAction tryAccess = new TryAccess(INIT, TRY, REJECTED, null, null);
-    PolicyDrivenAction startAccess = new PolicyDrivenAction(TRY, ONGOING, null, null, null);
-    PolicyDrivenAction endAccess = new EndAccess(ONGOING, DELETED, null, null, null);
-    PolicyDrivenAction endAccessFromTRY = new EndAccess(TRY, DELETED, null, null, null);
+    static final PDPAction tryAccess = new TryAccess(INIT, TRY, null, null);
+    static final PDPAction startAccess = new PDPAction(TRY, ONGOING, null, null);
+    static final PDPAction endAccess = new EndAccess(ONGOING, DELETED, null, null);
+    static final PDPAction endAccessFromTRY = new EndAccess(TRY, DELETED, null, null);
 
     public DALTest() {
     }
@@ -74,6 +75,9 @@ public class DALTest {
         pipTimer = new TestPIPTimer();
         pipTimer.setMaxDuration(3);
         pipTimer.setResolution(0.25);
+        tryAccess.setTargetState(REJECTED, PepResponse.DecisionEnum.Deny);
+        tryAccess.setTargetState(REJECTED, PepResponse.DecisionEnum.Indeterminate);
+        tryAccess.setTargetState(REJECTED, PepResponse.DecisionEnum.NotApplicable);
     }
 
     @AfterClass

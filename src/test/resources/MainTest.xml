@@ -10,7 +10,10 @@
             <ucon:State name="DELETED" type="END"/>
         </ucon:States>
         <ucon:Actions>
-            <ucon:Action class="it.cnr.iit.retrail.server.behaviour.TryAccess" source="INIT" target="TRY" failTarget="REJECTED">
+            <ucon:Action class="it.cnr.iit.retrail.server.behaviour.TryAccess" source="INIT" target="TRY">
+                <ucon:Target decision="Deny" state="REJECTED" />
+                <ucon:Target decision="NotApplicable" state="REJECTED" />
+                <ucon:Target decision="Indeterminate" state="REJECTED" />
                 <Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" PolicyId="CNR_Test5" RuleCombiningAlgId="urn:oasis:names:tc:xacml:3.0:rule-combining-algorithm:deny-overrides" Version="1.0">
                     <Description>POL-5</Description>
                     <Target/>
@@ -44,11 +47,15 @@
                     </Rule>
                 </Policy>
             </ucon:Action>
-            <ucon:Action name="startAccess" class="it.cnr.iit.retrail.server.behaviour.PolicyDrivenAction" source="TRY" target="ONGOING">
+            <ucon:Action name="startAccess" class="it.cnr.iit.retrail.server.behaviour.PDPAction" source="TRY" target="ONGOING">
             </ucon:Action>
             <ucon:Action class="it.cnr.iit.retrail.server.behaviour.EndAccess" source="TRY" target="DELETED">
             </ucon:Action>
-            <ucon:Action class="it.cnr.iit.retrail.server.behaviour.OngoingAccess" source="ONGOING" target="ONGOING" failTarget="REVOKED">
+            <ucon:Action class="it.cnr.iit.retrail.server.behaviour.OngoingAccess" source="ONGOING">
+                <ucon:Target decision="Deny" state="REVOKED" />
+                <ucon:Target decision="NotApplicable" state="REVOKED" />
+                <ucon:Target decision="Indeterminate" state="REVOKED" />
+
                 <Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" PolicyId="CNR_Test5" RuleCombiningAlgId="urn:oasis:names:tc:xacml:3.0:rule-combining-algorithm:deny-overrides" Version="1.0">
                     <Description>POL-REVOKE-NOW</Description>
                     <Target/>

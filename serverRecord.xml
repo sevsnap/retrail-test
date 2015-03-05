@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <retrailRecorder>
-<record ms="1">
-<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="1,367"><Result><Decision>Deny</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status><Obligations><Obligation ObligationId="sayRevoked"/></Obligations></Result><Session uuid="CF9B02EB-14E2-4FFE-B171-28F7A6825291" uconUrl="http://localhost:8080" stateType="REVOKED" stateName="REVOKED" ms="1"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
+<record ms="0">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="1,509"><Result><Decision>Deny</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status></Result><Session uuid="70DB6F4F-C68F-4483-989D-BBCF6C9BF5ED" uconUrl="http://localhost:8080" stateType="PASSIVE" stateName="REVOKED"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:nil/></value></param></params></methodResponse>
+</record>
+<record ms="3982">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="1,198"><Result><Decision>Deny</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status></Result><Session uuid="EAE374DE-0CFC-4A80-B123-633D0BB16E0A" uconUrl="http://localhost:8080" stateType="PASSIVE" stateName="REVOKED"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:nil/></value></param></params></methodResponse>
+</record>
+<record ms="5040">
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="1,115"><Result><Decision>Deny</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status></Result><Session uuid="CD292CFE-A380-47EB-9ADF-BFE283FB9769" uconUrl="http://localhost:8080" stateType="PASSIVE" stateName="REVOKED"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
 <methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:nil/></value></param></params></methodResponse>
 </record>
 </retrailRecorder>
