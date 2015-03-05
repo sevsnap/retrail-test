@@ -4,6 +4,7 @@
  */
 package it.cnr.iit.retrail.test;
 
+import it.cnr.iit.retrail.server.pip.impl.PIPTimer;
 import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
 import it.cnr.iit.retrail.commons.PepAttributeInterface;
 import it.cnr.iit.retrail.commons.StateType;
@@ -47,7 +48,7 @@ public class DALTest {
     static DAL dal = DAL.getInstance();
     static TestPIPReputation pipReputation;
     static PIPSessions pipSessions;
-    static TestPIPTimer pipTimer;
+    static PIPTimer pipTimer;
     
     static final UConState INIT = new UConState("INIT", StateType.BEGIN);
     static final UConState TRY = new UConState("TRY", StateType.PASSIVE);
@@ -72,7 +73,7 @@ public class DALTest {
         pipReputation = new TestPIPReputation();
         pipReputation.reputationMap.put("user1", "bronze");
         pipReputation.reputationMap.put("user2", "gold");
-        pipTimer = new TestPIPTimer();
+        pipTimer = new PIPTimer();
         pipTimer.setMaxDuration(3);
         pipTimer.setResolution(0.25);
         tryAccess.setTargetState(REJECTED, PepResponse.DecisionEnum.Deny);
@@ -305,7 +306,7 @@ public class DALTest {
         for(UconAttribute a: uconSession.getAttributes()) {
             r.add(a);
         }
-        UconAttribute a = (UconAttribute) r.getAttribute(pipReputation.category, pipReputation.id);
+        UconAttribute a = (UconAttribute) r.getAttributes(pipReputation.category, pipReputation.id).iterator().next();
         //log.error("***** reputation: {}, parent: {}", a, a.getParent());
         assertNotEquals(null, a);
         assertEquals(reputation, a.getValue());

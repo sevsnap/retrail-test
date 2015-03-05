@@ -45,7 +45,7 @@ public class TestPIPReputation extends PIP {
     @Override
     public void fireBeforeActionEvent(ActionEvent e) {
         if (e.originState.getType() == StateType.BEGIN) {
-            PepAttributeInterface subject = e.request.getAttribute(category, subjectId);
+            PepAttributeInterface subject = e.request.getAttributes(category, subjectId).iterator().next();
             String reputation = reputationMap.get(subject.getValue());
             if (reputation != null) {
                 log.info("{} - subject {} has reputation {}", e.request, subject.getValue(), reputation);

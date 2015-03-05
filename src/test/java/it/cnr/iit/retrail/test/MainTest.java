@@ -4,6 +4,7 @@
  */
 package it.cnr.iit.retrail.test;
 
+import it.cnr.iit.retrail.server.pip.impl.PIPTimer;
 import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
 import it.cnr.iit.retrail.client.impl.PEP;
 import it.cnr.iit.retrail.commons.DomUtils;
@@ -12,8 +13,8 @@ import it.cnr.iit.retrail.commons.impl.PepAttribute;
 import it.cnr.iit.retrail.commons.impl.PepResponse;
 import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.demo.UsageController;
-import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.dal.UconSession;
+import it.cnr.iit.retrail.server.impl.UCon;
 import it.cnr.iit.retrail.server.impl.UConFactory;
 import static it.cnr.iit.retrail.test.DALTest.dal;
 import java.io.File;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
+import static junit.framework.TestCase.assertEquals;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
@@ -48,14 +50,15 @@ public class MainTest {
     static final String pepUrlString = "http://localhost:8084";
 
     static final Logger log = LoggerFactory.getLogger(PIPTest.class);
-    static UConInterface ucon = null;
+    static UCon ucon = null;
     static PEP pep = null;
 
     static PIPSessions pipSessions = null;
-    static TestPIPTimer pipTimer = null;
+    static PIPTimer pipTimer = null;
     PepRequest pepRequest = null;
     static String lastObligation = null;
-    static int revokes = 0;
+    static private final Object revokeMonitor = new Object();
+    static private int revoked = 0;
 
     public MainTest() {
     }
@@ -76,9 +79,10 @@ public class MainTest {
             pep = new PEP(pdpUrl, myUrl) {
 
                 @Override
-                public synchronized void onRevokeAccess(PepSession session) throws Exception {
-                    log.warn("automatic end access disabled for test purposes - {}", session);
-                    revokes++;
+                public void onRevokeAccess(PepSession session) throws Exception {
+                    synchronized(revokeMonitor) {
+                        revoked++;
+                    }
                 }
 
                 @Override
@@ -126,6 +130,7 @@ public class MainTest {
     @Before
     public void setUp() {
         try {
+            revoked = 0;
             Collection<UconSession> u = dal.listSessions();
             if (u.size() > 0) {
                 log.error("no session should be in the dal, found {}!", u.size());
@@ -153,6 +158,43 @@ public class MainTest {
     public void tearDown() throws Exception {
     }
 
+    private void openConcurrentSessions(int n) throws Exception {
+        log.info("sequentially opening {} concurrent sessions", n);
+        long startMs = System.currentTimeMillis();
+        for (int i = 0; i < n; i++) {
+            log.info("opening session:  {} ", i);
+            PepSession pepSession = pep.tryAccess(pepRequest);
+            assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
+        }
+        long elapsedMs = System.currentTimeMillis() - startMs;
+        log.info("ok, {} concurrent sessions opened; total tryAccess time [T{}] = {} ms, normalized {} ms", n, n, elapsedMs, elapsedMs/n);
+    }
+    
+    private void startConcurrentSessions() throws Exception {
+        int n = pep.getSessions().size();
+        log.info("sequentially starting concurrent sessions");
+        long startMs = System.currentTimeMillis();
+        for (PepSession pepSession: pep.getSessions()) {
+            log.info("starting session:  {} ", pepSession);
+            pepSession = pep.startAccess(pepSession);
+            assertEquals(PepResponse.DecisionEnum.Permit, pepSession.getDecision());
+        }
+        long elapsedMs = System.currentTimeMillis() - startMs;
+        log.info("ok, concurrent sessions opened; total startAccess time [St{}] = {} ms, normalized = {} ms",  n, elapsedMs, elapsedMs/n);
+    }
+
+    private void closeConcurrentSessions() throws Exception {
+        int n = pep.getSessions().size();
+        log.info("sequentially closing {} all sessions", n);
+        long startMs = System.currentTimeMillis();
+        while (!pep.getSessions().isEmpty()) {
+            PepSession pepSession = pep.getSessions().iterator().next();
+            pep.endAccess(pepSession);
+        }
+        long elapsedMs = System.currentTimeMillis() - startMs;
+        log.info("all {} sessions closed; total endAccess time [E{}] = {} ms, normalized = {} ms", n, n, elapsedMs, elapsedMs/n);
+        assertEquals(0, pipSessions.getSessions());
+    }
     /**
      * Test of tryAccess method, of class PEP.
      *
@@ -168,6 +210,7 @@ public class MainTest {
         client.setConfig(config);
         InputStream is = getClass().getResourceAsStream(resourceName);
         Document doc = DomUtils.read(is);
+        //log.info("request = {}", DomUtils.toString(doc));
         Object[] params = {doc.getDocumentElement(), pepUrlString, "rawreq"};
         Document reply = (Document) client.execute("UCon.tryAccess", params);
         Element decision = (Element) reply.getElementsByTagNameNS("*", "Decision").item(0);
@@ -201,67 +244,35 @@ public class MainTest {
     }
 
     @Test
-    public void test3_CheckDoubleRevocationAtOnce() throws Exception {
-        log.info("testing double revocation in bulk mode");
+    public void test3_CheckAsyncNotifier() throws Exception {
+        log.info("testing multiple revocations");
         ucon.stopRecording();
-        revokes = 0;
+        revoked = 0;
         ucon.startRecording(new File(("serverRecord.xml")));
-        PepSession pepSession1 = pep.tryAccess(pepRequest);
-        assertEquals(PepResponse.DecisionEnum.Permit, pepSession1.getDecision());
-        PepSession pepSession2 = pep.tryAccess(pepRequest);
-        assertEquals(PepResponse.DecisionEnum.Permit, pepSession2.getDecision());
-        assertEquals(2, pep.getSessions().size());
-        pep.startAccess(pepSession1);
-        assertEquals(PepResponse.DecisionEnum.Permit, pepSession1.getDecision());
-        pep.startAccess(pepSession2);
-        assertEquals(PepResponse.DecisionEnum.Permit, pepSession1.getDecision());
-        log.info("forcing reevaluation of the ONGOING sessions by resetting the on policy");
-        ucon.loadConfiguration(UsageController.class.getResourceAsStream("/MainTest.xml"));
-        Thread.sleep(500);
-        assertEquals(2, revokes);
-        pep.endAccess(pepSession1);
-        pep.endAccess(pepSession2);
+        int n = 10;
+        openConcurrentSessions(n);
+        startConcurrentSessions();
+        log.info("forcing reevaluation of the ONGOING sessions");
+        ucon.wakeup();        
+        long startMs = System.currentTimeMillis();
+        log.info("waiting for {} revocations", n);
+        synchronized (revokeMonitor) {
+            while (revoked < n) {
+                revokeMonitor.wait();
+                log.info("currently revoked {} sessions", n);
+            }
+        }
+        long elapsedMs = System.currentTimeMillis() - startMs;
+        log.info("{} of {} sessions revoked; total revokeAccess time for PIP [R{}] = {} ms, normalized = {} ms", revoked, n, n, elapsedMs, elapsedMs/n);
+        closeConcurrentSessions();
         log.info("checking if recorded log is working");
         Document doc = DomUtils.read(new File("serverRecord.xml"));
-        assertEquals(1, doc.getElementsByTagName("methodCall").getLength());
-        assertEquals(2, doc.getElementsByTagNameNS("*", "Session").getLength());
+        //int revokeAccessCalls = doc.getElementsByTagName("methodCall").getLength();
+        int revocations = doc.getElementsByTagNameNS("*", "Session").getLength();
+        assertEquals(n, revocations);
+        assertEquals(n, revoked);
         log.info("ok");
     }
 
-    @Test
-    public void test4_CheckDoubleRevocationAsDistinctCalls() throws Exception {
-        log.info("testing double revocation as distinct calls");
-        revokes = 0;
-        ucon.startRecording(new File(("serverRecord.xml")));
-        PepSession pepSession1 = pep.tryAccess(pepRequest);
-        assertEquals(PepResponse.DecisionEnum.Permit, pepSession1.getDecision());
-        pep.assignCustomId(pepSession1.getUuid(), null, "SESSION-1");
-        PepSession pepSession2 = pep.tryAccess(pepRequest);
-        assertEquals(PepResponse.DecisionEnum.Permit, pepSession2.getDecision());
-        pep.assignCustomId(pepSession2.getUuid(), null, "SESSION-2");
-        assertEquals(2, pep.getSessions().size());
-        pep.startAccess(pepSession1);
-        assertEquals(PepResponse.DecisionEnum.Permit, pepSession1.getDecision());
-        log.info("forcing reevaluation of the ONGOING sessions by setting the on policy again");
-        ucon.loadConfiguration(UsageController.class.getResourceAsStream("/MainTest.xml"));
-        Thread.sleep(250);
-        assertEquals(1, revokes);
-        log.info("resetting the on policy");
-        ucon.defaultConfiguration();
-        pep.startAccess(pepSession2);
-        assertEquals(PepResponse.DecisionEnum.Permit, pepSession2.getDecision());
-        log.info("forcing reevaluation of the ONGOING sessions by setting the on policy again");
-        ucon.loadConfiguration(UsageController.class.getResourceAsStream("/MainTest.xml"));
-        Thread.sleep(250);
-        assertEquals(PepResponse.DecisionEnum.Deny, pepSession2.getDecision());
-        assertEquals(2, revokes);
-        pep.endAccess(pepSession1);
-        pep.endAccess(pepSession2);
-        log.info("checking if recorded log in append mode is working");
-        Document doc = DomUtils.read(new File("serverRecord.xml"));
-        assertEquals(2, doc.getElementsByTagName("methodCall").getLength());
-        assertEquals(2, doc.getElementsByTagNameNS("*", "Session").getLength());
-        log.info("ok");
-    }
 
 }

@@ -7,7 +7,7 @@
         <ucon:PIP class="it.cnr.iit.retrail.test.TestPIPReputation">
             <ucon:Property name="uuid">reputation</ucon:Property>
         </ucon:PIP>
-        <ucon:PIP class="it.cnr.iit.retrail.test.TestPIPTimer">
+        <ucon:PIP class="it.cnr.iit.retrail.server.pip.impl.PIPTimer">
             <ucon:Property name="uuid">timer</ucon:Property>
             <ucon:Property name="maxDuration">2</ucon:Property>
         </ucon:PIP>

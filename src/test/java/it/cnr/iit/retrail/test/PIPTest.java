@@ -4,6 +4,7 @@
  */
 package it.cnr.iit.retrail.test;
 
+import it.cnr.iit.retrail.server.pip.impl.PIPTimer;
 import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
 import it.cnr.iit.retrail.client.PEPInterface;
 import it.cnr.iit.retrail.client.impl.PEP;
@@ -52,7 +53,7 @@ public class PIPTest {
     static PEPInterface pep = null;
 
     static PIPSessions pipSessions = null;
-    static TestPIPTimer pipTimer = null;
+    static PIPTimer pipTimer = null;
     PepRequest pepRequest = null;
     static String lastObligation = null;
 
@@ -73,7 +74,7 @@ public class PIPTest {
             TestPIPReputation reputation = (TestPIPReputation) ucon.getPIPChain().get("reputation");
             reputation.reputationMap.put("fedoraRole", "bronze");
             reputation.reputationMap.put("userWithBadReputation", "bad");
-            pipTimer = (TestPIPTimer) ucon.getPIPChain().get("timer");
+            pipTimer = (PIPTimer) ucon.getPIPChain().get("timer");
 
             ucon.init();
             ucon.startRecording(new File(("serverRecord.xml")));

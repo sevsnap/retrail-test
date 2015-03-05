@@ -14,7 +14,7 @@
                 <ucon:Target decision="Deny" state="REJECTED" />
                 <ucon:Target decision="NotApplicable" state="REJECTED" />
                 <ucon:Target decision="Indeterminate" state="REJECTED" />
-                <Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" PolicyId="CNR_Test5" RuleCombiningAlgId="urn:oasis:names:tc:xacml:3.0:rule-combining-algorithm:deny-overrides" Version="1.0">
+                <Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" PolicyId="INIT_TRY" RuleCombiningAlgId="urn:oasis:names:tc:xacml:3.0:rule-combining-algorithm:deny-overrides" Version="1.0">
                     <Description>POL-5</Description>
                     <Target/>
                     <Rule Effect="Permit" RuleId="CNR_Rule5">
@@ -26,25 +26,26 @@
                                         <AttributeDesignator AttributeId="urn:oasis:names:tc:xacml:1.0:subject:subject-id" Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true"/>
                                     </Match>
                                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">VM</AttributeValue>
-                                        <AttributeDesignator AttributeId="urn:oasis:names:tc:xacml:1.0:resource:resource-id" Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true"/>
-                                    </Match>
-                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
                                         <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">MANAGE</AttributeValue>
                                         <AttributeDesignator AttributeId="urn:oasis:names:tc:xacml:1.0:action:action-id" Category="urn:oasis:names:tc:xacml:3.0:attribute-category:action" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true"/>
-                                    </Match>
-                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">0</AttributeValue>
-                                        <AttributeDesignator AttributeId="urn:oasis:names:tc:xacml:1.0:environment:environment-id" Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true"/>
                                     </Match>
                                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
                                         <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">USE</AttributeValue>
                                         <AttributeDesignator AttributeId="urn:oasis:names:tc:xacml:1.0:action:action-id" Category="urn:oasis:names:tc:xacml:3.0:attribute-category:action" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true"/>
                                     </Match>
+                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">VM</AttributeValue>
+                                        <AttributeDesignator AttributeId="urn:oasis:names:tc:xacml:1.0:resource:resource-id" Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true"/>
+                                    </Match>
+                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">0</AttributeValue>
+                                        <AttributeDesignator AttributeId="urn:oasis:names:tc:xacml:1.0:environment:environment-id" Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true"/>
+                                    </Match>
                                 </AllOf>
                             </AnyOf>
                         </Target>
                     </Rule>
+                    <Rule Effect="Deny" RuleId="FINT"/>
                 </Policy>
             </ucon:Action>
             <ucon:Action name="startAccess" class="it.cnr.iit.retrail.server.behaviour.PDPAction" source="TRY" target="ONGOING">
@@ -56,14 +57,13 @@
                 <ucon:Target decision="NotApplicable" state="REVOKED" />
                 <ucon:Target decision="Indeterminate" state="REVOKED" />
 
-                <Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" PolicyId="CNR_Test5" RuleCombiningAlgId="urn:oasis:names:tc:xacml:3.0:rule-combining-algorithm:deny-overrides" Version="1.0">
+                <Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" PolicyId="ONGOING" RuleCombiningAlgId="urn:oasis:names:tc:xacml:3.0:rule-combining-algorithm:deny-overrides" Version="1.0">
                     <Description>POL-REVOKE-NOW</Description>
                     <Target/>
                     <Rule Effect="Deny" RuleId="CNR_REVOKE"/>
                 </Policy>
             </ucon:Action>
-            <ucon:Action class="it.cnr.iit.retrail.server.behaviour.EndAccess" source="ONGOING" target="DELETED">
-            </ucon:Action>
+            <ucon:Action class="it.cnr.iit.retrail.server.behaviour.EndAccess" source="ONGOING" target="DELETED"/>
             <ucon:Action class="it.cnr.iit.retrail.server.behaviour.EndAccess" source="REVOKED" target="DELETED"/>
         </ucon:Actions>
     </ucon:Behaviour>
