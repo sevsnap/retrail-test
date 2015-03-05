@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ucon:Config xmlns:ucon="http://security.iit.cnr.it/retrail/ucon">
+    <ucon:Property name="watchdogPeriod">15</ucon:Property>
+    <ucon:Property name="maxMissedHeartbeats">1</ucon:Property>
     <ucon:PIPChain>
         <ucon:PIP class="it.cnr.iit.retrail.server.pip.impl.PIPSessions">
             <ucon:Property name="uuid">sessions</ucon:Property>
