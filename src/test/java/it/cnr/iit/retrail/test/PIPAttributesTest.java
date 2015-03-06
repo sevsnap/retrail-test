@@ -12,6 +12,7 @@ import it.cnr.iit.retrail.commons.impl.PepRequest;
 import it.cnr.iit.retrail.commons.impl.PepResponse;
 import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.commons.StateType;
+import it.cnr.iit.retrail.commons.impl.PepAttribute;
 import it.cnr.iit.retrail.demo.UsageController;
 import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.dal.UconAttribute;
@@ -268,7 +269,10 @@ public class PIPAttributesTest {
         assertEquals(0, pipTimer.listManagedAttributes().size());
         PepSession response1 = pep.startAccess(pepSession1);
         afterStartAccess(response1);
+        log.info("I should have {} managed attributes, I have {}", 1, pipTimer.listManagedAttributes().size());
+        dal.debugDumpAttributes((Collection<UconAttribute>)(Object)pipTimer.listManagedAttributes());
         assertEquals(1, pipTimer.listManagedAttributes().size());
+        Thread.sleep(1000);
         PepSession pepSession2 = pep.tryAccess(pepRequest2);
         PepSession response2 = pep.startAccess(pepSession2);
         afterStartAccess(response2);

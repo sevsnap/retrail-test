@@ -32,7 +32,7 @@
             <ucon:Action class="it.cnr.iit.retrail.server.behaviour.TryAccess" source="INIT" target="TRY" />
             <ucon:Action name="startAccess" class="it.cnr.iit.retrail.server.behaviour.PDPAction" source="TRY" target="ONGOING">
 
-                <Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" PolicyId="on-policy"
+                <Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" PolicyId="tryStart-policy"
         RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable" Version="1.0">
                     <Description>Test on-authorization policy</Description>
                     <Target></Target>
@@ -46,13 +46,6 @@
                                              Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
                                              DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
                                         </AttributeDesignator>
-                                    </Match>
-                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:double-greater-than">
-                                        <AttributeDesignator AttributeId="timer" 
-                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
-                                             DataType="http://www.w3.org/2001/XMLSchema#double" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
-                                        </AttributeDesignator>
-                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#double">3</AttributeValue>
                                     </Match>
                                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:integer-greater-than">
                                         <AttributeDesignator AttributeId="openSessions" 
