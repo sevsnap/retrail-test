@@ -5,10 +5,9 @@
 package it.cnr.iit.retrail.test;
 
 import it.cnr.iit.retrail.commons.PepAttributeInterface;
-import it.cnr.iit.retrail.commons.PepRequestInterface;
 import it.cnr.iit.retrail.commons.PepSessionInterface;
 import it.cnr.iit.retrail.commons.StateType;
-import it.cnr.iit.retrail.server.behaviour.UConState;
+import it.cnr.iit.retrail.commons.impl.PepAttribute;
 import it.cnr.iit.retrail.server.pip.ActionEvent;
 import it.cnr.iit.retrail.server.pip.impl.PIP;
 import java.util.Date;
@@ -22,35 +21,32 @@ import org.slf4j.LoggerFactory;
  */
 public class TestPIPReputation extends PIP {
 
-    protected final Map<String, String> reputationMap;
-
-    public final String id = "reputation";
-    public final String category = "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject";
-    public final String subjectId = "urn:oasis:names:tc:xacml:1.0:subject:subject-id";
+    public final String category = PepAttribute.CATEGORIES.SUBJECT;
+    public final String subjectId = PepAttribute.IDS.SUBJECT;
+    private Map<String, String> reputation = new HashMap<>();
+    private String attributeId = "reputation";
 
     public TestPIPReputation() {
         super();
-        this.reputationMap = new HashMap<>();
         this.log = LoggerFactory.getLogger(TestPIPReputation.class);
     }
 
-    public void put(String subject, String reputation) {
-        reputationMap.put(subject, reputation);
+    public Map<String, String> getReputation(){
+        return reputation;
     }
-
-    public String get(String subject) {
-        return reputationMap.get(subject);
+    public void setReputation(final Map<String, String> reputation){
+        this.reputation = reputation;
     }
 
     @Override
     public void fireBeforeActionEvent(ActionEvent e) {
         if (e.originState.getType() == StateType.BEGIN) {
             PepAttributeInterface subject = e.request.getAttributes(category, subjectId).iterator().next();
-            String reputation = reputationMap.get(subject.getValue());
+            String rep = getReputation().get(subject.getValue());
             if (reputation != null) {
-                log.info("{} - subject {} has reputation {}", e.request, subject.getValue(), reputation);
-                PepAttributeInterface test = newPrivateAttribute(id, "http://www.w3.org/2001/XMLSchema#string", reputation, "http://localhost:8080/federation-id-prov/saml", subject);
-            // Make attribute unmanaged (automatically managed by the UCon)
+                log.info("{} - subject {} has reputation {}", e.request, subject.getValue(), rep);
+                PepAttributeInterface test = newPrivateAttribute(getAttributeId(), PepAttribute.DATATYPES.STRING, rep, subject);
+                // Make attribute unmanaged (automatically managed by the UCon)
                 // because we set an expiry date
                 test.setExpires(new Date());
                 e.request.replace(test);
@@ -60,6 +56,14 @@ public class TestPIPReputation extends PIP {
         }
     }
 
+    public String getAttributeId() {
+        return attributeId;
+    }
+
+    public void setAttributeId(String attributeId) {
+        this.attributeId = attributeId;
+    }
+    
     @Override
     protected void refresh(PepAttributeInterface pepAttribute, PepSessionInterface session) {
         pepAttribute.setExpires(new Date());

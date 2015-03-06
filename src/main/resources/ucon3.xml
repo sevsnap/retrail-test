@@ -6,6 +6,11 @@
         </ucon:PIP>
         <ucon:PIP class="it.cnr.iit.retrail.test.TestPIPReputation">
             <ucon:Property name="uuid">reputation</ucon:Property>
+            <ucon:Property name="attributeId">reputation</ucon:Property>
+            <ucon:Property name="reputation(Carniani)">bronze</ucon:Property>
+            <ucon:Property name="reputation(Mori)">bronze</ucon:Property>
+            <ucon:Property name="reputation(ZioPino)">bronze</ucon:Property>
+            <ucon:Property name="reputation(visitor)">none</ucon:Property>
         </ucon:PIP>
         <ucon:PIP class="it.cnr.iit.retrail.server.pip.impl.PIPTimer">
             <ucon:Property name="uuid">timer</ucon:Property>           

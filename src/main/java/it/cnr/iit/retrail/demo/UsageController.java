@@ -8,7 +8,6 @@ import it.cnr.iit.retrail.client.impl.PEP;
 import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.impl.UConFactory;
-import it.cnr.iit.retrail.test.TestPIPReputation;
 import java.net.URL;
 
 public class UsageController extends PEP {
@@ -26,11 +25,6 @@ public class UsageController extends PEP {
 
     static public void loadBehaviour(String resourceName) throws Exception {
         ucon.loadConfiguration(UsageController.class.getResourceAsStream(resourceName));
-        TestPIPReputation reputation = (TestPIPReputation) ucon.getPIPChain().get("reputation");
-        reputation.put("Carniani", "bronze");
-        reputation.put("Mori", "bronze");
-        reputation.put("ZioPino", "bronze");
-        reputation.put("visitor", "none");
     }
 
     static public UsageController getInstance() throws Exception {

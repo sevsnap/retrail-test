@@ -69,8 +69,8 @@ public class DALTest {
         uconUrl = new URL("http://localhost:8080");
         pipSessions = new PIPSessions();
         pipReputation = new TestPIPReputation();
-        pipReputation.reputationMap.put("user1", "bronze");
-        pipReputation.reputationMap.put("user2", "gold");
+        pipReputation.getReputation().put("user1", "bronze");
+        pipReputation.getReputation().put("user2", "gold");
         tryAccess.setTargetState(REJECTED, PepResponse.DecisionEnum.Deny);
         tryAccess.setTargetState(REJECTED, PepResponse.DecisionEnum.Indeterminate);
         tryAccess.setTargetState(REJECTED, PepResponse.DecisionEnum.NotApplicable);
@@ -169,7 +169,7 @@ public class DALTest {
         Collection<PepAttributeInterface> l = dal.listManagedAttributes(pipSessions.getUuid());
         assertEquals(1, l.size());
         UconAttribute sessions = (UconAttribute) l.iterator().next();
-        assertEquals(pipSessions.id, sessions.getId());
+        assertEquals(pipSessions.getAttributeId(), sessions.getId());
         assertEquals(pipSessions.category, sessions.getCategory());
         assertEquals(null, sessions.getParent());
         assertEquals(value, sessions.getValue());
@@ -234,7 +234,7 @@ public class DALTest {
         Collection<PepAttributeInterface> l = dal.listUnmanagedAttributes(pipReputation.getUuid());
         assertEquals(1, l.size());
         UconAttribute reputation = (UconAttribute) l.iterator().next();
-        assertEquals(pipReputation.id, reputation.getId());
+        assertEquals(pipReputation.getAttributeId(), reputation.getId());
         assertEquals(pipReputation.category, reputation.getCategory());
         assertEquals(value, reputation.getValue());
         assertNotEquals(null, reputation.getParent());
@@ -275,7 +275,7 @@ public class DALTest {
         for (UconAttribute a : uconSession.getAttributes()) {
             r.add(a);
         }
-        UconAttribute a = (UconAttribute) r.getAttributes(pipReputation.category, pipReputation.id).iterator().next();
+        UconAttribute a = (UconAttribute) r.getAttributes(pipReputation.category, pipReputation.getAttributeId()).iterator().next();
         //log.error("***** reputation: {}, parent: {}", a, a.getParent());
         assertNotEquals(null, a);
         assertEquals(reputation, a.getValue());

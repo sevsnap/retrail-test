@@ -71,11 +71,9 @@ public class PIPTest {
             ucon = UConFactory.getInstance(pdpUrl);
             ucon.loadConfiguration(UsageController.class.getResourceAsStream("/PIPTest.xml"));
             pipSessions = (PIPSessions) ucon.getPIPChain().get("sessions");
-            TestPIPReputation reputation = (TestPIPReputation) ucon.getPIPChain().get("reputation");
-            reputation.reputationMap.put("fedoraRole", "bronze");
-            reputation.reputationMap.put("userWithBadReputation", "bad");
             pipTimer = (PIPTimer) ucon.getPIPChain().get("timer");
-
+            TestPIPReputation pipReputation = (TestPIPReputation) ucon.getPIPChain().get("reputation");
+            assertEquals("bronze", pipReputation.getReputation().get("fedoraRole"));
             ucon.init();
             ucon.startRecording(new File(("serverRecord.xml")));
             // start client
@@ -288,21 +286,21 @@ public class PIPTest {
         PepSession pepSession1 = pep.tryAccess(pepRequest);
         afterTryAccess(pepSession1);
         assertEquals(0, pipSessions.getSessions());
-        UconAttribute a = dal.getSharedAttribute(pipSessions.category, pipSessions.id);
+        UconAttribute a = dal.getSharedAttribute(pipSessions.category, pipSessions.getAttributeId());
         //assertEquals(1, a.getSessions().size());
         PepSession pepSession2 = pep.tryAccess(pepRequest);
         assertEquals(PepResponse.DecisionEnum.Permit, pepSession2.getDecision());
         //assertEquals(1, a.getSessions().size());
         assertEquals(0, pipSessions.getSessions());
-        a = dal.getSharedAttribute(pipSessions.category, pipSessions.id);
+        a = dal.getSharedAttribute(pipSessions.category, pipSessions.getAttributeId());
         //assertEquals(2, a.getSessions().size());
         pep.endAccess(pepSession2);
-        a = dal.getSharedAttribute(pipSessions.category, pipSessions.id);
+        a = dal.getSharedAttribute(pipSessions.category, pipSessions.getAttributeId());
         //assertEquals(1, a.getSessions().size());
         pep.endAccess(pepSession1);
         afterEndAccess(pepSession1);
         assertEquals(0, pipSessions.getSessions());
-        a = dal.getSharedAttribute(pipSessions.category, pipSessions.id);
+        a = dal.getSharedAttribute(pipSessions.category, pipSessions.getAttributeId());
         //assertEquals(null, a);
         log.info("ok, 2 concurrent tries admitted");
     }

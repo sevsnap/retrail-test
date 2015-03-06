@@ -8,6 +8,11 @@
         </ucon:PIP>
         <ucon:PIP class="it.cnr.iit.retrail.test.TestPIPReputation">
             <ucon:Property name="uuid">reputation</ucon:Property>
+            <ucon:Property name="attributeId">reputation</ucon:Property>
+            <ucon:Property name="reputation(Carniani)">bronze</ucon:Property>
+            <ucon:Property name="reputation(Mori)">bronze</ucon:Property>
+            <ucon:Property name="reputation(ZioPino)">bronze</ucon:Property>
+            <ucon:Property name="reputation(visitor)">none</ucon:Property>
         </ucon:PIP>
         <ucon:PIP class="it.cnr.iit.retrail.server.pip.impl.PIPTimer">
             <ucon:Property name="uuid">timer</ucon:Property>
@@ -43,13 +48,13 @@
                                         <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">bronze</AttributeValue>
                                         <AttributeDesignator AttributeId="reputation" 
                                              Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
-                                             DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
+                                             DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
                                         </AttributeDesignator>
                                     </Match>
                                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:integer-greater-than">
                                         <AttributeDesignator AttributeId="openSessions" 
                                              Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
-                                             DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
+                                             DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
                                         </AttributeDesignator>
                                         <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">2</AttributeValue>
                                     </Match>
@@ -80,7 +85,7 @@
                                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:integer-greater-than">
                                         <AttributeDesignator AttributeId="openSessions" 
                                              Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
-                                             DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
+                                             DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
                                         </AttributeDesignator>
                                         <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">1</AttributeValue>
                                     </Match>
@@ -133,7 +138,7 @@
                                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:integer-greater-than">
                                         <AttributeDesignator AttributeId="openSessions" 
                                              Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
-                                             DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://localhost:8080/federation-id-prov/saml">
+                                             DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
                                         </AttributeDesignator>
                                         <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">2</AttributeValue>
                                     </Match>

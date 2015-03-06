@@ -68,10 +68,6 @@ public class PIPAttributesTest {
             ucon.loadConfiguration(UsageController.class.getResourceAsStream("/PIPAttributesTest.xml"));
             pipSessions = (PIPSessions) ucon.getPIPChain().get("sessions");
             pipReputation = (TestPIPReputation) ucon.getPIPChain().get("reputation");
-            pipReputation.reputationMap.put("user1", "bronze");
-            pipReputation.reputationMap.put("user2", "bronze");
-            pipReputation.reputationMap.put("user3", "bronze");
-            pipReputation.reputationMap.put("user4", "none");
             pipTimer = (PIPTimer) ucon.getPIPChain().get("timer");
             ucon.init();
             ucon.startRecording(new File("serverRecord.xml"));

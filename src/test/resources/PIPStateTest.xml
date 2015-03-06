@@ -3,8 +3,8 @@
     <ucon:PIPChain>
         <ucon:PIP class="it.cnr.iit.retrail.server.pip.impl.PIPState">
             <ucon:Property name="uuid">state</ucon:Property>
-            <ucon:Property name="stateAttributeName">state</ucon:Property>
-            <ucon:Property name="stateAttributeValue">A</ucon:Property>
+            <ucon:Property name="attributeId">state</ucon:Property>
+            <ucon:Property name="attributeValue">A</ucon:Property>
         </ucon:PIP>
     </ucon:PIPChain>
     <ucon:Behaviour>
