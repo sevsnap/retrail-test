@@ -261,13 +261,13 @@ public class PIPAttributesTest {
     @Test
     public void test4_HierarchicalTimeVariantAttributes() throws Exception {
         log.info("testing if concurrent sessions have their own attribute timers");
+        assertEquals(0, pipTimer.listManagedAttributes().size());
         PepRequest pepRequest1 = newRequest("user1");
         PepRequest pepRequest2 = newRequest("user2");
         PepSession pepSession1 = pep.tryAccess(pepRequest1);
+        assertEquals(0, pipTimer.listManagedAttributes().size());
         PepSession response1 = pep.startAccess(pepSession1);
         afterStartAccess(response1);
-        assertEquals(1, pipTimer.listManagedAttributes().size());
-        Thread.sleep(1000);
         assertEquals(1, pipTimer.listManagedAttributes().size());
         PepSession pepSession2 = pep.tryAccess(pepRequest2);
         PepSession response2 = pep.startAccess(pepSession2);
