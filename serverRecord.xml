@@ -1,43 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <retrailRecorder>
 <record ms="0">
-<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="2,015"><Result><Decision>Deny</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status></Result><Session uuid="6FC78387-0134-40D1-A981-4D71119DA629" uconUrl="http://localhost:8083" stateType="PASSIVE" stateName="REVOKED" ms="1"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
-<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:nil/></value></param></params></methodResponse>
-</record>
-<record ms="9">
-<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="2,342"><Result><Decision>Deny</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status></Result><Session uuid="6F65B28C-8529-438F-B516-7F059DB525A5" uconUrl="http://localhost:8083" stateType="PASSIVE" stateName="REVOKED"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
-<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:nil/></value></param></params></methodResponse>
-</record>
-<record ms="19">
-<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="2,217"><Result><Decision>Deny</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status></Result><Session uuid="CA298E23-A90C-440B-BC4F-45E19B671EE2" uconUrl="http://localhost:8083" stateType="PASSIVE" stateName="REVOKED"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
-<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:nil/></value></param></params></methodResponse>
-</record>
-<record ms="32">
-<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="5,263"><Result><Decision>Deny</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status></Result><Session uuid="5D993AF7-6E8B-4CBE-B814-90498D1BE16D" uconUrl="http://localhost:8083" stateType="PASSIVE" stateName="REVOKED"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
-<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:nil/></value></param></params></methodResponse>
-</record>
-<record ms="41">
-<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="1,933"><Result><Decision>Deny</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status></Result><Session uuid="3FAEE1F5-CE0C-4FA7-87AF-A9F6329860DB" uconUrl="http://localhost:8083" stateType="PASSIVE" stateName="REVOKED"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
-<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:nil/></value></param></params></methodResponse>
-</record>
-<record ms="50">
-<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="2,005"><Result><Decision>Deny</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status></Result><Session uuid="B151CED6-80F6-4599-BE45-21177EBE0EDD" uconUrl="http://localhost:8083" stateType="PASSIVE" stateName="REVOKED"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
-<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:nil/></value></param></params></methodResponse>
-</record>
-<record ms="59">
-<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="1,871"><Result><Decision>Deny</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status></Result><Session uuid="4E6AD586-250E-4061-B0FA-342CA053D927" uconUrl="http://localhost:8083" stateType="PASSIVE" stateName="REVOKED"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
-<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:nil/></value></param></params></methodResponse>
-</record>
-<record ms="68">
-<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="2,094"><Result><Decision>Deny</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status></Result><Session uuid="88E4F75A-97E4-4488-AEBF-71E97EB6544A" uconUrl="http://localhost:8083" stateType="PASSIVE" stateName="REVOKED"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
-<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:nil/></value></param></params></methodResponse>
-</record>
-<record ms="77">
-<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="1,655"><Result><Decision>Deny</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status></Result><Session uuid="2ABC526F-BAB2-4A9E-848C-3C26D6E868DA" uconUrl="http://localhost:8083" stateType="PASSIVE" stateName="REVOKED"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
-<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:nil/></value></param></params></methodResponse>
-</record>
-<record ms="87">
-<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="2,1"><Result><Decision>Deny</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status></Result><Session uuid="B6EB18A4-26A7-4177-B83D-C3852CE63497" uconUrl="http://localhost:8083" stateType="PASSIVE" stateName="REVOKED"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
+<methodCall xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><methodName>PEP.revokeAccess</methodName><params><param><value><array><data><value><ex:dom><Response xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" ms="1,4"><Result><Decision>Deny</Decision><Status><StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/></Status><Obligations><Obligation ObligationId="sayRevoked"/></Obligations></Result><Session uuid="A1CE2B78-81F0-44EC-9255-C755AF42AF1F" uconUrl="http://localhost:8080" stateType="PASSIVE" stateName="REVOKED"/></Response></ex:dom></value></data></array></value></param></params></methodCall>
 <methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions"><params><param><value><ex:nil/></value></param></params></methodResponse>
 </record>
 </retrailRecorder>
