@@ -22,7 +22,7 @@
         </ucon:PIP>
     </ucon:PIPChain>
     <ucon:Behaviour>
-        <ucon:Property name="timeout">2500</ucon:Property>
+        <ucon:Property name="lockTimeout">2.5</ucon:Property>
         <ucon:States>
             <ucon:State name="INIT" type="BEGIN"/>
             <ucon:State name="TRY" type="PASSIVE"/>
