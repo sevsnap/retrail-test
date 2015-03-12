@@ -1,3 +1,5 @@
 target/*
 *log
 *.derby
+clientRecord.xml
+serverRecord.xml
