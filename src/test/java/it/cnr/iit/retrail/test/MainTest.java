@@ -69,7 +69,7 @@ public class MainTest {
             ucon = UConFactory.getInstance(pdpUrl);
             ucon.loadConfiguration(UsageController.class.getResourceAsStream("/MainTest.xml"));
             ucon.init();
-            ucon.startRecording(new File(("serverRecord.xml")));
+            //ucon.startRecording(new File(("serverRecord.xml")));
             // start client
 
             pep = new PEP(pdpUrl, myUrl) {
@@ -244,9 +244,8 @@ public class MainTest {
     @Test
     public void test3_CheckAsyncNotifier() throws Exception {
         log.info("testing multiple revocations");
-        ucon.stopRecording();
         revoked = 0;
-        ucon.startRecording(new File(("serverRecord.xml")));
+        ucon.startRecording(new File("serverRecord.xml"));
         int n = 10;
         openConcurrentSessions(n);
         startConcurrentSessions();
@@ -257,12 +256,13 @@ public class MainTest {
         synchronized (revokeMonitor) {
             while (revoked < n) {
                 revokeMonitor.wait();
-                log.info("currently revoked {} sessions", n);
+                log.info("currently revoked {} of {} sessions", revoked, n);
             }
         }
         long elapsedMs = System.currentTimeMillis() - startMs;
         log.info("{} of {} sessions revoked; total revokeAccess time for PIP [R{}] = {} ms, normalized = {} ms", revoked, n, n, elapsedMs, elapsedMs/n);
         closeConcurrentSessions();
+        ucon.stopRecording();
         log.info("checking if recorded log is working");
         Document doc = DomUtils.read(new File("serverRecord.xml"));
         //int revokeAccessCalls = doc.getElementsByTagName("methodCall").getLength();
