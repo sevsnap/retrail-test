@@ -12,7 +12,6 @@ import it.cnr.iit.retrail.commons.impl.PepRequest;
 import it.cnr.iit.retrail.commons.impl.PepResponse;
 import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.commons.StateType;
-import it.cnr.iit.retrail.commons.impl.PepAttribute;
 import it.cnr.iit.retrail.demo.UsageController;
 import it.cnr.iit.retrail.server.UConInterface;
 import it.cnr.iit.retrail.server.dal.UconAttribute;
@@ -278,7 +277,7 @@ public class PIPAttributesTest {
         afterStartAccess(response2);
         assertEquals(2, pipTimer.listManagedAttributes().size());
         log.warn("ok, waiting for ucon to revoke session {}", pepSession1.getUuid());
-        Thread.sleep(2100 + (int) (1000 * pipTimer.getResolution()));
+        Thread.sleep(3100 + (int) (1000 * pipTimer.getResolution()));
         log.info("by now session {} must be REVOKED, whilst session {} should be ONGOING", pepSession1.getUuid(), pepSession2.getUuid());
         response1 = pep.getSession(response1.getUuid());
         assertEquals("REVOKED", response1.getStateName());

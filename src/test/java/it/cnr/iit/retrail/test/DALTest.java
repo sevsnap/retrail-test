@@ -113,11 +113,11 @@ public class DALTest {
         }
         assertEquals(0, u.size());
         log.info("after setup everything looks ok!");
-        dal.commit();
     }
 
     @After
     public void tearDown() throws Exception {
+        dal.commit();
         pipSessions.term();
         pipReputation.term();
         Collection<UconSession> u = dal.listSessions();
@@ -151,7 +151,6 @@ public class DALTest {
         assertEquals(0, dal.listUnmanagedAttributes(pipSessions.getUuid()).size());
         assertEquals(1, dal.listManagedAttributes(pipSessions.getUuid()).size());
         log.info("after teardown everything looks ok!");
-        dal.commit();
     }
 
     private UconRequest newRequest(String subjectValue) throws Exception {
@@ -201,8 +200,20 @@ public class DALTest {
 
     @Test
     public void test0_dummy() {
+        log.info("testing begin/commit");
+        assertTrue(dal.hasBegun());
     }
-    /*
+    
+    @Test
+    public void test0_dummyNested() {
+        log.info("testing nested begin/commit");
+        assertTrue(dal.hasBegun());
+        dal.begin();
+        assertTrue(dal.hasBegun());
+        dal.commit();
+        assertTrue(dal.hasBegun());
+    }
+    
     @Test
     public void test1_SharedManagedAttributeShouldWork() throws Exception {
         UconRequest uconRequest1 = newRequest("user1");
@@ -370,5 +381,5 @@ public class DALTest {
         assertEquals(0, dal.listSessions().size());
         log.info("end");
     }
-*/
+
 }
