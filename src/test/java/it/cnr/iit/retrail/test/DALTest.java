@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DALTest {
 
-    static final String pepUrlString = "http://localhost:8081";
+    static final String pepUrlString = "http://localhost:8091";
     static URL uconUrl;
 
     static final Logger log = LoggerFactory.getLogger(DALTest.class);
@@ -66,7 +66,7 @@ public class DALTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         log.info("Setting up environment...");
-        uconUrl = new URL("http://localhost:8080");
+        uconUrl = new URL("http://localhost:8090");
         pipSessions = new PIPSessions();
         pipReputation = new TestPIPReputation();
         pipReputation.getReputation().put("user1", "bronze");

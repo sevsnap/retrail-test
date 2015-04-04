@@ -41,8 +41,8 @@ import org.slf4j.LoggerFactory;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PIPAttributesTest {
 
-    static final String pdpUrlString = "http://localhost:8080";
-    static final String pepUrlString = "http://localhost:8081";
+    static final String pdpUrlString = "http://localhost:8090";
+    static final String pepUrlString = "http://localhost:8091";
 
     static final Logger log = LoggerFactory.getLogger(PIPAttributesTest.class);
     static UConInterface ucon = null;

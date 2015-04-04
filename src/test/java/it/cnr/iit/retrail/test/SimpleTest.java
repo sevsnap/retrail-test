@@ -38,8 +38,8 @@ import org.w3c.dom.Node;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SimpleTest {
-    static final String pdpUrlString = "https://localhost:8080";
-    static final String pepUrlString = "https://localhost:8081";
+    static final String pdpUrlString = "https://localhost:8090";
+    static final String pepUrlString = "https://localhost:8091";
     static final String defaultKeystoreName = "/META-INF/keystore.jks";
     static final String defaultKeystorePassword = "uconas4wc";
     static final Logger log = LoggerFactory.getLogger(SimpleTest.class);

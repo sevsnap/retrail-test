@@ -12,8 +12,8 @@ import java.net.URL;
 
 public class UsageController extends PEP {
 
-    static public final String pdpUrlString = "http://0.0.0.0:8080";
-    static private final String pepUrlString = "http://localhost:8081";
+    static public final String pdpUrlString = "http://0.0.0.0:8090";
+    static private final String pepUrlString = "http://localhost:8091";
     static private UsageController instance = null;
     static private UConInterface ucon = null;
 

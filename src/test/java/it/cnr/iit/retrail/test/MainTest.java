@@ -44,8 +44,8 @@ import org.w3c.dom.Element;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MainTest {
 
-    static final String pdpUrlString = "http://localhost:8083";
-    static final String pepUrlString = "http://localhost:8084";
+    static final String pdpUrlString = "http://localhost:8093";
+    static final String pepUrlString = "http://localhost:8094";
 
     static final Logger log = LoggerFactory.getLogger(PIPTest.class);
     static UCon ucon = null;
