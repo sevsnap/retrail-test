@@ -60,7 +60,7 @@
                 <configuration>
                     <script>
                         echo -n "killing previously running retrail on port 809* (if any)..."
-                        netstat --listening --programs -n 2> /dev/null | grep java | grep 809 | awk '{split($7,a,"/"); print a[1]}' | xargs kill 2> /dev/null
+                        lsof | grep java | grep LISTEN | grep 809 | awk '{print $2}' | xargs kill 2> /dev/null
                         echo done.
                         rm -rf retrail.derby
                         exit 0
