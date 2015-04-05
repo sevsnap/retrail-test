@@ -7,6 +7,7 @@ package it.cnr.iit.retrail.test;
 import it.cnr.iit.retrail.server.pip.impl.PIPSessions;
 import it.cnr.iit.retrail.commons.PepAttributeInterface;
 import it.cnr.iit.retrail.commons.StateType;
+import it.cnr.iit.retrail.commons.impl.PepAttribute;
 import it.cnr.iit.retrail.commons.impl.PepRequest;
 import it.cnr.iit.retrail.commons.impl.PepResponse;
 import it.cnr.iit.retrail.server.behaviour.EndAccess;
@@ -371,7 +372,7 @@ public class DALTest {
             uconSession1.setStateType(StateType.BEGIN);
             uconSession1.setStateName("INIT"); //FIXME
             UconRequest uconRequest = newRequest("user1");
-            UconAttribute shared = dal.newSharedAttribute("ID" + i, "TYPE", "VALUE", "ISSUER", "PEPURL", "FACTORYID");
+            UconAttribute shared = dal.newSharedAttribute("ID" + i, PepAttribute.DATATYPES.STRING, "VALUE", "ISSUER", "PEPURL", "FACTORYID");
             uconRequest.add(shared);
             dal.startSession(uconSession1, uconRequest);
         }
