@@ -7,7 +7,7 @@
         </packagings>
         <goals>
             <goal>process-classes</goal>
-            <goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>
+            <!--<goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>-->
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
@@ -23,7 +23,7 @@
         </packagings>
         <goals>
             <goal>process-classes</goal>
-            <goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>
+            <!--<goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>-->
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
@@ -39,7 +39,7 @@
         </packagings>
         <goals>
             <goal>process-classes</goal>
-            <goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>
+            <!--<goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>-->
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
@@ -55,7 +55,7 @@
         </packagings>
         <goals>
             <goal>process-classes</goal>
-            <goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>
+            <!--<goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>-->
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
@@ -70,7 +70,7 @@
             <packaging>*</packaging>
         </packagings>
         <goals>
-            <goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>
+            <!--<goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>-->
             <goal>test-compile</goal>
             <goal>surefire:test</goal>
         </goals>
@@ -84,7 +84,7 @@
             <packaging>*</packaging>
         </packagings>
         <goals>
-            <goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>
+            <!--<goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>-->
             <goal>install</goal>
             
         </goals>
@@ -95,7 +95,7 @@
                 <packaging>*</packaging>
             </packagings>
             <goals>
-                <goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>
+                <!--<goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>-->
                 <goal>clean</goal>
             </goals>
         </action>
@@ -118,7 +118,7 @@
             </packagings>
             <goals>
                 <goal>process-classes</goal>
-                <goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>
+                <!--<goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>-->
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
@@ -157,7 +157,7 @@
             </packagings>
             <goals>
                 <goal>process-classes</goal>
-                <goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>
+                <!--<goal>com.atlassian.maven.plugins:bash-maven-plugin:1.0-SNAPSHOT:run</goal>-->
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
