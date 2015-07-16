@@ -199,7 +199,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                             try {
                                 showMessage("Policy changed: only one person at a time is now allowed");
                                 policyButton.setText("One at a time");
-                                UsageController.loadBehaviour("/META-INF/ucon1.xml");
+                                UsageController.loadBehaviour("/ucon1.xml");
                             } catch (Exception ex) {
                                 log.error(ex.getMessage());
                             }
