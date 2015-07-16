@@ -61,7 +61,7 @@
                 </Policy>
 
             </ucon:Action>
-            <ucon:Action class="it.cnr.iit.retrail.server.behaviour.PDPAction" source="TRY" target="ONGOING">
+            <ucon:Action name="startAccess" class="it.cnr.iit.retrail.server.behaviour.PDPAction" source="TRY" target="ONGOING">
 
                 <Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" PolicyId="trystart-policy"
         RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable" Version="1.0">
@@ -93,7 +93,7 @@
             </ucon:Action>
             <ucon:Action class="it.cnr.iit.retrail.server.behaviour.EndAccess" source="TRY" target="DELETED">
             </ucon:Action>
-            <ucon:Action name="ongoingAccess" class="OngoingAccess" source="ONGOING">
+            <ucon:Action class="it.cnr.iit.retrail.server.behaviour.OngoingAccess" source="ONGOING">
                 <ucon:Target decision="Deny" state="REVOKED" />
                 <ucon:Target decision="NotApplicable" state="REVOKED" />
                 <ucon:Target decision="Indeterminate" state="REVOKED" />
