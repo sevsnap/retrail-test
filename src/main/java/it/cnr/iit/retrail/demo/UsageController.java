@@ -31,7 +31,7 @@ public class UsageController extends PEP {
         if (instance == null) {
             log.info("Setting up Ucon embedded server...");
             ucon = UConFactory.getInstance(new URL(pdpUrlString));
-            loadBehaviour("/ucon2.xml");
+            loadBehaviour("/ucon4.xml");
             ucon.init();
 
             log.info("Setting up PEP component");

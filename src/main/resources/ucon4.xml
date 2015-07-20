@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ucon:Config xmlns:ucon="http://security.iit.cnr.it/retrail/ucon">
+    <ucon:Property name="watchdogPeriod">15</ucon:Property>
+    <ucon:Property name="maxMissedHeartbeats">1</ucon:Property>
+    <ucon:PIPChain>
+        <ucon:PIP class="it.cnr.iit.retrail.server.pip.impl.PIPSessions">
+            <ucon:Property name="uuid">sessions</ucon:Property>
+        </ucon:PIP>
+        <ucon:PIP class="it.cnr.iit.retrail.test.TestPIPRole">
+            <ucon:Property name="uuid">role</ucon:Property>
+            <ucon:Property name="attributeId">role</ucon:Property>
+            <ucon:Property name="role(Carniani)">CNR</ucon:Property>
+            <ucon:Property name="role(Mori)">guest</ucon:Property>
+            <ucon:Property name="role(ZioPino)">guest</ucon:Property>
+            <ucon:Property name="role(visitor)">guest</ucon:Property>
+        </ucon:PIP>
+    </ucon:PIPChain>
+    <ucon:Behaviour>
+        <ucon:Property name="lockTimeout">2.5</ucon:Property>
+        <ucon:States>
+            <ucon:State name="INIT" type="BEGIN"/>
+            <ucon:State name="TRY" type="PASSIVE"/>
+            <ucon:State name="ONGOING" type="ONGOING"/>
+            <ucon:State name="REVOKED" type="PASSIVE"/>
+            <ucon:State name="REJECTED" type="END"/>
+            <ucon:State name="DELETED" type="END"/>
+        </ucon:States>
+        <ucon:Actions>
+            <ucon:Action class="it.cnr.iit.retrail.server.behaviour.TryAccess" source="INIT" target="TRY">
+                <ucon:Target decision="Deny" state="REJECTED" />
+                <ucon:Target decision="NotApplicable" state="REJECTED" />
+                <ucon:Target decision="Indeterminate" state="REJECTED" />
+                <Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" PolicyId="pre-policy"
+        RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable" Version="1.0">
+                    <Description>Test on-authorization policy</Description>
+                    <Target></Target>
+                    <Rule Effect="Permit" RuleId="test:rule">
+                    </Rule>
+                    <Rule Effect="Deny" RuleId="test:rule2"/>
+                    <ObligationExpressions> 
+                        <ObligationExpression ObligationId="sayWelcome" FulfillOn="Permit"/> 
+                        <ObligationExpression ObligationId="showUser" FulfillOn="Permit"/> 
+                        <ObligationExpression ObligationId="sayStandOff" FulfillOn="Deny"/> 
+                        <ObligationExpression ObligationId="showUser" FulfillOn="Deny"/> 
+                    </ObligationExpressions> 
+                </Policy>
+
+            </ucon:Action>
+            <ucon:Action name="startAccess" class="it.cnr.iit.retrail.server.behaviour.PDPAction" source="TRY" target="ONGOING">
+
+                <Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" PolicyId="trystart-policy"
+        RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable" Version="1.0">
+                    <Description>trystart-authorization policy</Description>
+                    <Target></Target>
+                    <Rule Effect="Permit" RuleId="test:rule">
+                        <Target>
+                            <AnyOf>
+                                <AllOf>
+                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">CNR</AttributeValue>
+                                        <AttributeDesignator AttributeId="role" 
+                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
+                                             DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
+                                        </AttributeDesignator>
+                                    </Match>
+                                </AllOf>
+                                <AllOf>
+                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:integer-less-than">
+                                        <AttributeDesignator AttributeId="CNRSessions" 
+                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
+                                             DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
+                                        </AttributeDesignator>
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">0</AttributeValue>
+                                    </Match>
+                                </AllOf>
+                            </AnyOf>
+                        </Target>
+                    </Rule>
+                    <Rule Effect="Deny" RuleId="test:rule2"/>
+                    <ObligationExpressions> 
+                        <ObligationExpression ObligationId="sayDenied" FulfillOn="Deny"/> 
+                        <ObligationExpression ObligationId="showUser" FulfillOn="Deny"/> 
+                        <ObligationExpression ObligationId="sayDetected" FulfillOn="Permit"/> 
+                        <ObligationExpression ObligationId="hideUser" FulfillOn="Permit"/> 
+                    </ObligationExpressions> 
+                </Policy>
+
+            </ucon:Action>
+            <ucon:Action class="it.cnr.iit.retrail.server.behaviour.EndAccess" source="TRY" target="DELETED">
+                <Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" PolicyId="TRYEND"
+                        RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable" 
+                        Version="1.0">
+                    <Description>Default TRYEND policy</Description>
+                    <Target/>
+                    <Rule Effect="Permit" RuleId="TRYENDrule">
+                        <Target/>
+                    </Rule>
+                </Policy>
+            </ucon:Action>
+            <ucon:Action class="it.cnr.iit.retrail.server.behaviour.OngoingAccess" source="ONGOING">
+                <ucon:Target decision="Deny" state="REVOKED" />
+                <ucon:Target decision="NotApplicable" state="REVOKED" />
+                <ucon:Target decision="Indeterminate" state="REVOKED" />
+
+                <Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" PolicyId="on-policy"
+        RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable" Version="1.0">
+                    <Description>Test on-authorization policy</Description>
+                    <Target></Target>
+                    <Rule Effect="Permit" RuleId="test:rule">
+                        <Target>
+                            <AnyOf>
+                                <AllOf>
+                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">CNR</AttributeValue>
+                                        <AttributeDesignator AttributeId="role" 
+                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
+                                             DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
+                                        </AttributeDesignator>
+                                    </Match>
+                                </AllOf>
+                                <AllOf>
+                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:integer-less-than">
+                                        <AttributeDesignator AttributeId="CNRSessions" 
+                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
+                                             DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
+                                        </AttributeDesignator>
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">0</AttributeValue>
+                                    </Match>
+                                </AllOf>
+                            </AnyOf>
+                        </Target>
+                    </Rule>
+                    <Rule Effect="Deny" RuleId="test:rule2"/>
+                    <ObligationExpressions> 
+                        <ObligationExpression ObligationId="sayRevoked" FulfillOn="Deny"/> 
+                        <ObligationExpression ObligationId="showUser" FulfillOn="Deny"/> 
+                    </ObligationExpressions> 
+                </Policy>
+
+            </ucon:Action>
+            <ucon:Action class="it.cnr.iit.retrail.server.behaviour.EndAccess" source="ONGOING" target="DELETED">
+            </ucon:Action>
+            <ucon:Action class="it.cnr.iit.retrail.server.behaviour.EndAccess" source="REVOKED" target="DELETED"/>
+        </ucon:Actions>
+    </ucon:Behaviour>
+</ucon:Config>
