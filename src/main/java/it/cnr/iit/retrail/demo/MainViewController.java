@@ -62,6 +62,8 @@ public class MainViewController extends AnchorPane implements Initializable {
     ToggleButton recButton;
     @FXML
     ToggleButton playButton;
+    @FXML
+    ToggleButton workingTimeButton;
 
     static final org.slf4j.Logger log = LoggerFactory.getLogger(MainViewController.class);
    
@@ -185,6 +187,24 @@ public class MainViewController extends AnchorPane implements Initializable {
                     }
                 }
             });
+            
+            workingTimeButton.setOnAction(new EventHandler<ActionEvent>() {
+
+                @Override
+                public void handle(ActionEvent event) {
+                    try {
+                        if (workingTimeButton.isSelected()) {
+                            workingTimeButton.setText("Working Time");
+                            System.out.println("ciaoooooo");
+                        } else {
+                            workingTimeButton.setText("No Working Time");
+                            System.out.println("noooooo");
+                        }
+                    } catch (Exception ex) {
+                        log.error("while handling workingTimeButtonButton event: {}", ex);
+                    }
+                }
+            });
             policyButton.setText(
                     "One at a time");
             policyButton.setTextFill(Paint.valueOf("black"));
@@ -244,6 +264,7 @@ public class MainViewController extends AnchorPane implements Initializable {
             );
             policyButton.getItems()
                     .setAll(policy1, policy2, policy3);
+            
 
         } catch (Exception ex) {
             log.error("while initializing: {}", ex);

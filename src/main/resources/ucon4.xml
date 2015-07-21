@@ -12,7 +12,7 @@
             <ucon:Property name="role(Carniani)">CNR</ucon:Property>
             <ucon:Property name="role(Mori)">guest</ucon:Property>
             <ucon:Property name="role(ZioPino)">guest</ucon:Property>
-            <ucon:Property name="role(visitor)">guest</ucon:Property>
+            <ucon:Property name="role(visitor)">pulizie</ucon:Property>
         </ucon:PIP>
     </ucon:PIPChain>
     <ucon:Behaviour>

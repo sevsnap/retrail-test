@@ -1,131 +1,124 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.effect.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.*?>
-<?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import java.net.*?>
 <?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="800.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.cnr.iit.retrail.demo.MainViewController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="800.0" styleClass="background" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="it.cnr.iit.retrail.demo.MainViewController">
   <children>
     <AnchorPane id="anchorPane2" prefHeight="412.0" prefWidth="800.0" styleClass="top-segment" AnchorPane.bottomAnchor="38.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <BorderPane id="Mori" fx:id="user2" layoutX="13.0" layoutY="158.0" prefHeight="90.0" prefWidth="130.0">
-               <left>
-                  <ImageView fitHeight="31.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-                     <image>
-                        <Image url="@arrowLeft.png" />
-                     </image>
-                  </ImageView>
-               </left>
-               <right>
-                  <ImageView fitHeight="31.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-                     <image>
-                        <Image url="@arrowRight.png" />
-                     </image>
-                  </ImageView>
-               </right>
-               <center>
-                  <ImageView fitHeight="70.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-                     <image>
-                        <Image url="@userGray.png" />
-                     </image>
-                  </ImageView>
-               </center>
-               <bottom>
-                  <Label prefHeight="18.0" prefWidth="69.0" text="Unknown" textAlignment="RIGHT" BorderPane.alignment="CENTER">
-                     <font>
-                        <Font size="10.0" />
-                     </font>
-                  </Label>
-               </bottom>
-            </BorderPane>
-            <BorderPane id="visitor" fx:id="user3" layoutX="13.0" layoutY="254.0" prefHeight="90.0" prefWidth="130.0">
-               <bottom>
-                  <Label prefHeight="18.0" prefWidth="69.0" text="Unknown" textAlignment="RIGHT" BorderPane.alignment="CENTER">
-                     <font>
-                        <Font size="10.0" />
-                     </font>
-                  </Label>
-               </bottom>
-               <center>
-                  <ImageView fitHeight="70.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-                     <image>
-                        <Image url="@userGray.png" />
-                     </image>
-                  </ImageView>
-               </center>
-               <left>
-                  <ImageView fitHeight="31.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-                     <image>
-                        <Image url="@arrowLeft.png" />
-                     </image>
-                  </ImageView>
-               </left>
-               <right>
-                  <ImageView fitHeight="31.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-                     <image>
-                        <Image url="@arrowRight.png" />
-                     </image>
-                  </ImageView>
-               </right>
-            </BorderPane>
-            <BorderPane id="Carniani" fx:id="user1" layoutX="14.0" layoutY="61.0" prefHeight="90.0" prefWidth="130.0">
-               <bottom>
-                  <Label prefHeight="18.0" prefWidth="69.0" text="Unknown" textAlignment="RIGHT" BorderPane.alignment="CENTER">
-                     <font>
-                        <Font size="10.0" />
-                     </font>
-                  </Label>
-               </bottom>
-               <center>
-                  <ImageView fitHeight="70.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-                     <image>
-                        <Image url="@userGray.png" />
-                     </image>
-                  </ImageView>
-               </center>
-               <left>
-                  <ImageView fitHeight="31.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-                     <image>
-                        <Image url="@arrowLeft.png" />
-                     </image>
-                  </ImageView>
-               </left>
-               <right>
-                  <ImageView fitHeight="31.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-                     <image>
-                        <Image url="@arrowRight.png" />
-                     </image>
-                  </ImageView>
-               </right>
-            </BorderPane>
-            <ImageView disable="true" fitHeight="453.0" fitWidth="369.0" layoutX="424.0" layoutY="5.0" opacity="0.76" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="5.0">
-               <image>
-                  <Image url="@plan.png" />
-               </image>
+      <children>
+        <BorderPane id="Mori" fx:id="user2" layoutX="13.0" layoutY="158.0" prefHeight="90.0" prefWidth="130.0">
+          <bottom>
+            <Label prefHeight="18.0" prefWidth="69.0" text="Unknown" textAlignment="RIGHT" BorderPane.alignment="CENTER">
+              <font>
+                <Font size="10.0" fx:id="x1" />
+              </font>
+            </Label>
+          </bottom>
+          <center>
+            <ImageView fitHeight="70.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+              <image>
+                <Image url="@userGray.png" />
+              </image>
             </ImageView>
-            <MenuButton fx:id="policyButton" layoutX="605.0" layoutY="374.0" mnemonicParsing="false" text="MenuButton">
-              <items>
-                <MenuItem mnemonicParsing="false" text="Action 1" />
-                <MenuItem mnemonicParsing="false" text="Action 2" />
-              </items>
-            </MenuButton>
-         </children>
+          </center>
+          <left>
+            <ImageView fitHeight="31.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+              <image>
+                <Image url="@arrowLeft.png" />
+              </image>
+            </ImageView>
+          </left>
+          <right>
+            <ImageView fitHeight="31.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+              <image>
+                <Image url="@arrowRight.png" />
+              </image>
+            </ImageView>
+          </right>
+        </BorderPane>
+        <BorderPane id="visitor" fx:id="user3" layoutX="13.0" layoutY="254.0" prefHeight="90.0" prefWidth="130.0">
+          <bottom>
+            <Label font="$x1" prefHeight="18.0" prefWidth="69.0" text="Unknown" textAlignment="RIGHT" BorderPane.alignment="CENTER" />
+          </bottom>
+          <center>
+            <ImageView fitHeight="70.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+              <image>
+                <Image url="@userGray.png" />
+              </image>
+            </ImageView>
+          </center>
+          <left>
+            <ImageView fitHeight="31.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+              <image>
+                <Image url="@arrowLeft.png" />
+              </image>
+            </ImageView>
+          </left>
+          <right>
+            <ImageView fitHeight="31.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+              <image>
+                <Image url="@arrowRight.png" />
+              </image>
+            </ImageView>
+          </right>
+        </BorderPane>
+        <BorderPane id="Carniani" fx:id="user1" layoutX="14.0" layoutY="61.0" prefHeight="90.0" prefWidth="130.0">
+          <bottom>
+            <Label font="$x1" prefHeight="18.0" prefWidth="69.0" text="Unknown" textAlignment="RIGHT" BorderPane.alignment="CENTER" />
+          </bottom>
+          <center>
+            <ImageView fitHeight="70.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+              <image>
+                <Image url="@userGray.png" />
+              </image>
+            </ImageView>
+          </center>
+          <left>
+            <ImageView fitHeight="31.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+              <image>
+                <Image url="@arrowLeft.png" />
+              </image>
+            </ImageView>
+          </left>
+          <right>
+            <ImageView fitHeight="31.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+              <image>
+                <Image url="@arrowRight.png" />
+              </image>
+            </ImageView>
+          </right>
+        </BorderPane>
+        <ImageView disable="true" fitHeight="453.0" fitWidth="369.0" opacity="0.76" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="5.0">
+          <image>
+            <Image url="@plan.png" />
+          </image>
+        </ImageView>
+        <MenuButton fx:id="policyButton" layoutX="605.0" layoutY="374.0" mnemonicParsing="false" text="MenuButton">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Action 1" />
+            <MenuItem mnemonicParsing="false" text="Action 2" />
+          </items>
+        </MenuButton>
+        <ToggleButton fx:id="workingTimeButton" layoutX="27.0" layoutY="368.0" mnemonicParsing="false" selected="true" text="Working Time" />
+      </children>
     </AnchorPane>
-    <HBox id="hBox1" alignment="CENTER" layoutX="125.0" layoutY="419.0" prefHeight="34.0" prefWidth="667.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="125.0" AnchorPane.rightAnchor="8.0">
+    <HBox id="hBox1" alignment="CENTER" prefHeight="34.0" prefWidth="667.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="125.0" AnchorPane.rightAnchor="8.0">
       <children>
         <Label id="label2" fx:id="errorMessage" />
       </children>
     </HBox>
-      <ToggleButton fx:id="recButton" layoutX="4.0" layoutY="418.0" mnemonicParsing="false" text="REC" />
-      <ToggleButton fx:id="playButton" layoutX="53.0" layoutY="418.0" mnemonicParsing="false" text="PLAY" />
+    <ToggleButton fx:id="recButton" layoutX="4.0" layoutY="418.0" mnemonicParsing="false" text="REC" />
+    <ToggleButton fx:id="playButton" layoutX="53.0" layoutY="416.0" mnemonicParsing="false" text="PLAY" />
   </children>
   <stylesheets>
     <URL value="@mainView.css" />

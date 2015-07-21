@@ -29,7 +29,7 @@ public class TestPIPRole extends PIP{
 
     public TestPIPRole() {
         super();
-        this.log = LoggerFactory.getLogger(TestPIPReputation.class);
+        this.log = LoggerFactory.getLogger(TestPIPRole.class);
     }
 
     public Map<String, String> getRole(){
