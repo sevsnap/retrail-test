@@ -4,6 +4,7 @@
  */
 package it.cnr.iit.retrail.demo;
 
+import it.cnr.facedetection.MotionDetection;
 import it.cnr.iit.retrail.client.impl.PEP;
 import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.server.UConInterface;
@@ -37,6 +38,8 @@ public class UsageController extends PEP {
             log.info("Setting up PEP component");
             instance = new UsageController(new URL(pdpUrlString), new URL(pepUrlString));
             instance.init();        // We should have no sessions now
+            
+            MotionDetection.startDetection();
         }
         return instance;
     }
@@ -64,5 +67,9 @@ public class UsageController extends PEP {
     
     public UConInterface getUcon(){
         return ucon;
+    }
+    
+    public MainViewController getMainViewController(){
+        return application;
     }
 }

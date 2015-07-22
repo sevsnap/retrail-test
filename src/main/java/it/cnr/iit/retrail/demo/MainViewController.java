@@ -26,6 +26,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -462,5 +463,36 @@ public class MainViewController extends AnchorPane implements Initializable {
     
     public void setUsageController(UsageController usageController){
         this.usageController = usageController;
+    }
+    
+    public synchronized void fireMouseEvent(final String id, final boolean right){
+        Platform.runLater(new Runnable(){
+
+            @Override
+            public void run() {
+                switch(id){
+                     case("Francesco"):
+                         if(right)
+                             user1.getRight().fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true, true, true, true, true, true, true, null));
+                         else
+                             user1.getLeft().fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true, true, true, true, true, true, true, null));
+                         break;
+                     case("Fabio"):
+                         if(right)
+                             user2.getRight().fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true, true, true, true, true, true, true, null));
+                         else
+                             user2.getLeft().fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true, true, true, true, true, true, true, null));
+                         break;
+                     case("Claudio"):
+                         if(right)
+                             user3.getRight().fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true, true, true, true, true, true, true, null));
+                         else
+                             user3.getLeft().fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true, true, true, true, true, true, true, null));
+                         break;
+                 }
+            }
+            
+        });
+ 
     }
 }
