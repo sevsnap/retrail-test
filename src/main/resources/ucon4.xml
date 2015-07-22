@@ -9,10 +9,10 @@
         <ucon:PIP class="it.cnr.iit.retrail.test.TestPIPRole">
             <ucon:Property name="uuid">role</ucon:Property>
             <ucon:Property name="attributeId">role</ucon:Property>
-            <ucon:Property name="role(Carniani)">CNR</ucon:Property>
-            <ucon:Property name="role(Mori)">guest</ucon:Property>
+            <ucon:Property name="role(Francesco)">CNR</ucon:Property>
+            <ucon:Property name="role(Fabio)">guest</ucon:Property>
             <ucon:Property name="role(ZioPino)">guest</ucon:Property>
-            <ucon:Property name="role(visitor)">pulizie</ucon:Property>
+            <ucon:Property name="role(Claudio)">pulizie</ucon:Property>
         </ucon:PIP>
         <ucon:PIP class="it.cnr.iit.retrail.test.TestPIPWorkingTime">
             <ucon:Property name="uuid">workingTime</ucon:Property>
