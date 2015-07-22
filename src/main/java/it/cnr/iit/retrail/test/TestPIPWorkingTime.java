@@ -75,29 +75,5 @@ public class TestPIPWorkingTime extends PIP{
         this.attributeId = attributeId;
     }
     
-    @Override
-    public void fireAfterActionEvent(ActionEvent e) {
-        log.info("originState = {}, e.session = {}", e.originState, e.session);
-        if (e.originState.getType() != StateType.ONGOING
-                && e.session.getStateType() == StateType.ONGOING) {
-            PepAttributeInterface sessions = getSharedAttribute(category, attributeId);
-            assert (sessions != null);
-            Integer v = Integer.parseInt(sessions.getValue()) + 1;
-            log.info("incrementing sessions to {}", v);
-            sessions.setValue(v.toString());
-            e.request.replace(sessions);
-                   
-        } else if ((e.originState.getName().equals("REVOKED") ||
-                e.originState.getType()== StateType.ONGOING)
-                && e.session.getStateType() == StateType.END) {
-            PepAttributeInterface sessions = getSharedAttribute(category, attributeId);
-            assert (sessions != null);
-            Integer v = Integer.parseInt(sessions.getValue()) - 1;
-            log.info("decrementing sessions to {}", v);
-            assert (v >= 0);
-            sessions.setValue(v.toString());
-            e.request.replace(sessions);
-        }
-    }
 
 }
