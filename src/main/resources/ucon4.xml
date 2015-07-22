@@ -14,6 +14,16 @@
             <ucon:Property name="role(ZioPino)">guest</ucon:Property>
             <ucon:Property name="role(visitor)">pulizie</ucon:Property>
         </ucon:PIP>
+        <ucon:PIP class="it.cnr.iit.retrail.test.TestPIPWorkingTime">
+            <ucon:Property name="uuid">workingTime</ucon:Property>
+            <ucon:Property name="attributeId">workingTime</ucon:Property>
+        </ucon:PIP>
+        <ucon:PIP class="it.cnr.iit.retrail.server.pip.impl.PIPTimer">
+            <ucon:Property name="uuid">timer</ucon:Property>
+            <ucon:Property name="attributeId">timer</ucon:Property>
+            <ucon:Property name="resolution">1</ucon:Property>
+            <ucon:Property name="forStateType">ONGOING</ucon:Property>
+        </ucon:PIP>
     </ucon:PIPChain>
     <ucon:Behaviour>
         <ucon:Property name="lockTimeout">2.5</ucon:Property>
@@ -65,12 +75,42 @@
                                     </Match>
                                 </AllOf>
                                 <AllOf>
+                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">guest</AttributeValue>
+                                        <AttributeDesignator AttributeId="role" 
+                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
+                                             DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
+                                        </AttributeDesignator>
+                                    </Match>
                                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:integer-less-than">
                                         <AttributeDesignator AttributeId="CNRSessions" 
                                              Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
                                              DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
                                         </AttributeDesignator>
                                         <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">0</AttributeValue>
+                                    </Match>
+                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:boolean-equal">
+                                        <AttributeDesignator AttributeId="workingTime" 
+                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
+                                             DataType="http://www.w3.org/2001/XMLSchema#boolean" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
+                                        </AttributeDesignator>
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#boolean">true</AttributeValue>
+                                    </Match>
+                                </AllOf>
+                                <AllOf>
+                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">pulizie</AttributeValue>
+                                        <AttributeDesignator AttributeId="role" 
+                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
+                                             DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
+                                        </AttributeDesignator>
+                                    </Match>
+                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:boolean-equal">
+                                        <AttributeDesignator AttributeId="workingTime" 
+                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
+                                             DataType="http://www.w3.org/2001/XMLSchema#boolean" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
+                                        </AttributeDesignator>
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#boolean">false</AttributeValue>
                                     </Match>
                                 </AllOf>
                             </AnyOf>
@@ -119,12 +159,49 @@
                                     </Match>
                                 </AllOf>
                                 <AllOf>
+                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">guest</AttributeValue>
+                                        <AttributeDesignator AttributeId="role" 
+                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
+                                             DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
+                                        </AttributeDesignator>
+                                    </Match>
                                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:integer-less-than">
                                         <AttributeDesignator AttributeId="CNRSessions" 
                                              Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
                                              DataType="http://www.w3.org/2001/XMLSchema#integer" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
                                         </AttributeDesignator>
                                         <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">0</AttributeValue>
+                                    </Match>
+                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:boolean-equal">
+                                        <AttributeDesignator AttributeId="workingTime" 
+                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
+                                             DataType="http://www.w3.org/2001/XMLSchema#boolean" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
+                                        </AttributeDesignator>
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#boolean">true</AttributeValue>
+                                    </Match>
+                                </AllOf>
+                                <AllOf>
+                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">pulizie</AttributeValue>
+                                        <AttributeDesignator AttributeId="role" 
+                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
+                                             DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
+                                        </AttributeDesignator>
+                                    </Match>
+                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:boolean-equal">
+                                        <AttributeDesignator AttributeId="workingTime" 
+                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
+                                             DataType="http://www.w3.org/2001/XMLSchema#boolean" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
+                                        </AttributeDesignator>
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#boolean">false</AttributeValue>
+                                    </Match>
+                                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:double-greater-than">
+                                        <AttributeDesignator AttributeId="timer" 
+                                             Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
+                                             DataType="http://www.w3.org/2001/XMLSchema#double" MustBePresent="true" Issuer="http://security.iit.cnr.it/retrail/ucon">
+                                        </AttributeDesignator>
+                                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#double">10</AttributeValue>
                                     </Match>
                                 </AllOf>
                             </AnyOf>

@@ -43,6 +43,7 @@ public class Main extends Application {
         stage.setResizable(false);
         MainViewController mainViewController = (MainViewController) replaceSceneContent("/META-INF/gui/mainView.fxml");
         UsageController.getInstance().setMain(mainViewController);
+        mainViewController.setUsageController(UsageController.getInstance());
         primaryStage.show();
     }
 

@@ -61,4 +61,8 @@ public class UsageController extends PEP {
     public synchronized void onObligation(PepSession session, String obligation) throws Exception {
         application.onObligation(session, obligation);
     }
+    
+    public UConInterface getUcon(){
+        return ucon;
+    }
 }

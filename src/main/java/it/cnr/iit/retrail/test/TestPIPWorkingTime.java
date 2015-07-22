@@ -55,6 +55,18 @@ public class TestPIPWorkingTime extends PIP{
         return v;
     }
     
+    public void setAttribute(boolean flag){
+        PepAttributeInterface workingTime = getSharedAttribute(category, attributeId);
+        assert (workingTime!= null);
+        workingTime.setValue(Boolean.toString(flag));
+        try {
+            ucon.notifyChanges(workingTime);
+        } catch (Exception ex) {
+            Logger.getLogger(TestPIPWorkingTime.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    
     public String getAttributeId() {
         return attributeId;
     }
@@ -62,7 +74,7 @@ public class TestPIPWorkingTime extends PIP{
     public void setAttributeId(String attributeId) {
         this.attributeId = attributeId;
     }
-
+    
     @Override
     public void fireAfterActionEvent(ActionEvent e) {
         log.info("originState = {}, e.session = {}", e.originState, e.session);

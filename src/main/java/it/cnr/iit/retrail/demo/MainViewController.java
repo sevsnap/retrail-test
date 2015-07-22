@@ -6,6 +6,7 @@ package it.cnr.iit.retrail.demo;
 
 import it.cnr.iit.retrail.client.impl.Replay;
 import it.cnr.iit.retrail.commons.impl.PepSession;
+import it.cnr.iit.retrail.test.TestPIPWorkingTime;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,6 +66,8 @@ public class MainViewController extends AnchorPane implements Initializable {
     @FXML
     ToggleButton workingTimeButton;
 
+    UsageController usageController;
+    
     static final org.slf4j.Logger log = LoggerFactory.getLogger(MainViewController.class);
    
     private final Replay replay = new Replay();
@@ -195,10 +198,10 @@ public class MainViewController extends AnchorPane implements Initializable {
                     try {
                         if (workingTimeButton.isSelected()) {
                             workingTimeButton.setText("Working Time");
-                            System.out.println("ciaoooooo");
+                            ((TestPIPWorkingTime)(usageController.getUcon().getPIPChain().get("workingTime"))).setAttribute(true);
                         } else {
                             workingTimeButton.setText("No Working Time");
-                            System.out.println("noooooo");
+                            ((TestPIPWorkingTime)(usageController.getUcon().getPIPChain().get("workingTime"))).setAttribute(false);
                         }
                     } catch (Exception ex) {
                         log.error("while handling workingTimeButtonButton event: {}", ex);
@@ -206,7 +209,7 @@ public class MainViewController extends AnchorPane implements Initializable {
                 }
             });
             policyButton.setText(
-                    "One at a time");
+                    "Complex policy");
             policyButton.setTextFill(Paint.valueOf("black"));
             MenuItem policy1;
             policy1 = new MenuItem("One at a time");
@@ -262,8 +265,28 @@ public class MainViewController extends AnchorPane implements Initializable {
                         }
                     }
             );
+            
+            MenuItem policy4;
+            policy4 = new MenuItem("Complex policy");
+
+            policy4.setOnAction(
+                    new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event
+                        ) {
+                            try {
+                                showMessage("Policy changed: complex policy");
+                                policyButton.setText("Complex policy");
+                                UsageController.loadBehaviour("/ucon4.xml");
+                            } catch (Exception ex) {
+                                log.error(ex.getMessage());
+                            }
+                        }
+                    }
+            );
+            
             policyButton.getItems()
-                    .setAll(policy1, policy2, policy3);
+                    .setAll(policy4, policy2, policy3, policy1);
             
 
         } catch (Exception ex) {
@@ -435,5 +458,9 @@ public class MainViewController extends AnchorPane implements Initializable {
                 }
             }
         });
+    }
+    
+    public void setUsageController(UsageController usageController){
+        this.usageController = usageController;
     }
 }
