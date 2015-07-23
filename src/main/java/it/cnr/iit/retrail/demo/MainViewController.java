@@ -477,13 +477,13 @@ public class MainViewController extends AnchorPane implements Initializable {
                          else
                              user1.getLeft().fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true, true, true, true, true, true, true, null));
                          break;
-                     case("Fabio"):
+                     case("Matteo"):
                          if(right)
                              user2.getRight().fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true, true, true, true, true, true, true, null));
                          else
                              user2.getLeft().fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true, true, true, true, true, true, true, null));
                          break;
-                     case("Claudio"):
+                     case("Silvio"):
                          if(right)
                              user3.getRight().fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true, true, true, true, true, true, true, null));
                          else

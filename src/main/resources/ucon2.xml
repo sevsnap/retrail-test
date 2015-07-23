@@ -8,9 +8,9 @@
             <ucon:Property name="uuid">reputation</ucon:Property>
             <ucon:Property name="attributeId">reputation</ucon:Property>
             <ucon:Property name="reputation(Francesco)">bronze</ucon:Property>
-            <ucon:Property name="reputation(Fabio)">bronze</ucon:Property>
+            <ucon:Property name="reputation(Matteo)">bronze</ucon:Property>
             <ucon:Property name="reputation(ZioPino)">bronze</ucon:Property>
-            <ucon:Property name="reputation(Caludio)">none</ucon:Property>
+            <ucon:Property name="reputation(Silvio)">none</ucon:Property>
         </ucon:PIP>
         <ucon:PIP class="it.cnr.iit.retrail.server.pip.impl.PIPTimer">
             <ucon:Property name="uuid">timer</ucon:Property>

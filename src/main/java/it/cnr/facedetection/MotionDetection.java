@@ -14,6 +14,10 @@ import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,8 +32,10 @@ import static org.bytedeco.javacpp.opencv_highgui.cvSaveImage;
 
 public class MotionDetection {
 	
-	public static final String XML_FILE = 
-			"resources/haarcascade_frontalface_default.xml";
+    public static final String XML_FILE = 
+                    "resources/haarcascade_frontalface_default.xml";
+    
+    static final int EXIT_INTERVAL = 30;
 	
     static URL url = null;
     static String userpass = "admin:lab182015";
@@ -113,18 +119,20 @@ public class MotionDetection {
 		    			current_face.setSampleIMG(sampleIMG);
 		    			ImageMatchingClient c = new ImageMatchingClient("localhost","8080");
                                         String verifyFaces = c.verifyFacesWithProcessing(current_face);
-                                        System.out.println(verifyFaces);
+//                                        System.out.println(verifyFaces);
                                                 
-                                        String name = "Francesco";
-//                                        if(verifyFaces.split(" ").length == 3) name = verifyFaces.split(" ")[2];
+//                                        String name = "Francesco";
+                                        String name = null;
+                                        if(verifyFaces.split(" ").length == 3) name = verifyFaces.split(" ")[2];
                                         
                                         if(name != null){
                                             try {
-                                                User user = User.getInstance(name);
+                                                User.getInstance(name);
                                                 try {
                                                     PepSession pepSession = UsageController.getInstance().getSession(name);
                                                     if(pepSession == null){
                                                         UsageController.getInstance().getMainViewController().fireMouseEvent(name, true);
+                                                        
 //                                                        boolean isInFrontOfTheDoor = user.goToDoor();
 //                                                        if(isInFrontOfTheDoor){
 //                                                            
@@ -137,7 +145,7 @@ public class MotionDetection {
                                                     
                                                     if(pepSession != null && pepSession.getStateName().equals("TRY")) {
                                                         UsageController.getInstance().getMainViewController().fireMouseEvent(name, true);
-                                                        
+                                                        pepSession.getLocalInfo().put("timestamp", new Timestamp(new java.util.Date().getTime()));
 //                                                        boolean entered = user.enterRoom();
 //                                                        if(entered){
 //                                                            
@@ -151,7 +159,6 @@ public class MotionDetection {
                                                     
                                                     if(pepSession != null && (pepSession.getStateName().equals("ONGOING") || pepSession.getStateName().equals("REVOKED"))){
                                                         pepSession.getLocalInfo().put("timestamp", new Timestamp(new java.util.Date().getTime()));
-                                                        System.out.println("L'utente "+name +" è già dentro");
                                                     }
                                                 } catch (java.lang.Exception ex) {
                                                     Logger.getLogger(MotionDetection.class.getName()).log(Level.SEVERE, null, ex);	       			  
@@ -175,6 +182,35 @@ public class MotionDetection {
 		});
 		
 		t.start();
+                
+                new Thread(new Runnable(){
+
+                @Override
+                public void run() {
+                    try {
+                        while(true){
+                            Collection<PepSession> sessions = UsageController.getInstance().getSessions();
+                            HashMap<String, Object> localInfo = null;
+                            for(PepSession p:sessions){
+                                localInfo = (HashMap<String, Object>) p.getLocalInfo();
+                                if(localInfo != null){
+                                    Timestamp timestamp = (Timestamp)localInfo.get("timestamp");
+                                    if(timestamp != null){
+                                        if(new Date().getTime() >= timestamp.getTime() + 1000*EXIT_INTERVAL){
+                                            UsageController.getInstance().getMainViewController().fireMouseEvent(p.getCustomId(), false);
+                                    }
+                                    }
+                                }
+                            }
+
+                            Thread.sleep(1000);
+                        }
+                    } catch (java.lang.Exception ex) {
+                        Logger.getLogger(MotionDetection.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                    
+                }).start();
 		
 //	        CvMemStorage storage = CvMemStorage.create();
 //	        

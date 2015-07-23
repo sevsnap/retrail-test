@@ -16,7 +16,7 @@
   <children>
     <AnchorPane id="anchorPane2" prefHeight="412.0" prefWidth="800.0" styleClass="top-segment" AnchorPane.bottomAnchor="38.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
-        <BorderPane id="Fabio" fx:id="user2" layoutX="13.0" layoutY="158.0" prefHeight="90.0" prefWidth="130.0">
+        <BorderPane id="Matteo" fx:id="user2" layoutX="13.0" layoutY="158.0" prefHeight="90.0" prefWidth="130.0">
           <bottom>
             <Label prefHeight="18.0" prefWidth="69.0" text="Unknown" textAlignment="RIGHT" BorderPane.alignment="CENTER">
               <font>
@@ -46,7 +46,7 @@
             </ImageView>
           </right>
         </BorderPane>
-        <BorderPane id="Claudio" fx:id="user3" layoutX="13.0" layoutY="254.0" prefHeight="90.0" prefWidth="130.0">
+        <BorderPane id="Silvio" fx:id="user3" layoutX="13.0" layoutY="254.0" prefHeight="90.0" prefWidth="130.0">
           <bottom>
             <Label font="$x1" prefHeight="18.0" prefWidth="69.0" text="Unknown" textAlignment="RIGHT" BorderPane.alignment="CENTER" />
           </bottom>

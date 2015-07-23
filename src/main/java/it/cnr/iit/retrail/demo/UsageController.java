@@ -39,7 +39,7 @@ public class UsageController extends PEP {
             instance = new UsageController(new URL(pdpUrlString), new URL(pepUrlString));
             instance.init();        // We should have no sessions now
             
-            MotionDetection.startDetection();
+           MotionDetection.startDetection();
         }
         return instance;
     }
