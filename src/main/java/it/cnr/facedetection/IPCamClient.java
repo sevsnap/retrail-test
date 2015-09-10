@@ -30,7 +30,7 @@ import org.bytedeco.javacv.FrameGrabber.Exception;
 import static org.bytedeco.javacpp.opencv_core.*;
 import static org.bytedeco.javacpp.opencv_highgui.cvSaveImage;
 
-public class MotionDetection {
+public class IPCamClient {
 	
     public static final String XML_FILE = 
                     "resources/haarcascade_frontalface_default.xml";
@@ -161,10 +161,10 @@ public class MotionDetection {
                                                         pepSession.getLocalInfo().put("timestamp", new Timestamp(new java.util.Date().getTime()));
                                                     }
                                                 } catch (java.lang.Exception ex) {
-                                                    Logger.getLogger(MotionDetection.class.getName()).log(Level.SEVERE, null, ex);	       			  
+                                                    Logger.getLogger(IPCamClient.class.getName()).log(Level.SEVERE, null, ex);	       			  
                                                 }
                                             } catch (java.lang.Exception ex) {
-                                                Logger.getLogger(MotionDetection.class.getName()).log(Level.SEVERE, null, ex);
+                                                Logger.getLogger(IPCamClient.class.getName()).log(Level.SEVERE, null, ex);
                                             }
                                         }
                                     }
@@ -206,7 +206,7 @@ public class MotionDetection {
                             Thread.sleep(1000);
                         }
                     } catch (java.lang.Exception ex) {
-                        Logger.getLogger(MotionDetection.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(IPCamClient.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
                     

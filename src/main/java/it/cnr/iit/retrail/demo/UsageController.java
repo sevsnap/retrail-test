@@ -4,7 +4,7 @@
  */
 package it.cnr.iit.retrail.demo;
 
-import it.cnr.facedetection.MotionDetection;
+import it.cnr.facedetection.IPCamClient;
 import it.cnr.iit.retrail.client.impl.PEP;
 import it.cnr.iit.retrail.commons.impl.PepSession;
 import it.cnr.iit.retrail.server.UConInterface;
@@ -39,7 +39,7 @@ public class UsageController extends PEP {
             instance = new UsageController(new URL(pdpUrlString), new URL(pepUrlString));
             instance.init();        // We should have no sessions now
             
-           MotionDetection.startDetection();
+           IPCamClient.startDetection();
         }
         return instance;
     }

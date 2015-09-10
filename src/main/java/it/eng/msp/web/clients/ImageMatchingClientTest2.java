@@ -1,6 +1,6 @@
 package it.eng.msp.web.clients;
 
-import static it.cnr.facedetection.MotionDetection.*;
+import static it.cnr.facedetection.IPCamClient.*;
 
 public class ImageMatchingClientTest2 {
 
